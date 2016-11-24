@@ -25,3 +25,16 @@ class Card(urwid.WidgetWrap):
     wlist.append(div)
     card = urwid.AttrMap(urwid.Pile(wlist), 'card')
     urwid.WidgetWrap.__init__(self, card)
+
+# class ButtonImage(urwid.WidgetWrap):
+#   def __init__(self, pic, content):
+#
+#     button = urwid.LineBox(urwid.Columns([pic, content]))
+#     urwid.WidgetWrap.__init__(self, button )
+
+class ButtonObject(urwid.Button):
+  def __init__(self, content, on_press=None, user_data=None):
+    self.__super.__init__('', on_press=on_press, user_data=user_data)
+    super(urwid.Button, self).__init__(content)
+
+  # def render(self, size, focus):
