@@ -40,6 +40,6 @@ class Cards(object):
   def genTestButton(self, image, text):
     pic = picRead('../rsc/%s' % image)
     content = urwid.Pile(map(lambda s: urwid.Text(s), text))
-    lbox = urwid.LineBox(urwid.Padding(urwid.Columns([(8,pic), content],4), left=3, right=3))
+    lbox = urwid.LineBox(urwid.Pile([div,urwid.Padding(urwid.Columns([(8,pic), content],4), left=3, right=3), div]))
     # lbox = urwid.LineBox(urwid.Columns([(8,pic), content],3))
     return ButtonObject(lbox)
