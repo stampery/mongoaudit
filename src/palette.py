@@ -11,5 +11,7 @@ palette = [
     ('hr', '', '', '', 'g93', '#fff'),
     ('button', '', '', '', '#d00', '#fff'),
     ('copy', '', '', '', 'g70', 'g93'),
-    ('textbold', '', '', '', '#333,bold', '#fff')
+    ('textbold', '', '', '', '#333,bold', '#fff'),
+    ('focus btn', '','','','light red','#fff'),
+    ( 'image btn','','','','g70','#fff')
 ]

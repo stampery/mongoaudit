@@ -18,28 +18,30 @@ class Cards(object):
         % self.app.name))
     button = urwid.AttrMap(
         TextButton(
-            'START', on_press=self.chooseTest), 'button')
+            'START', on_press=self.choose_test), 'button')
     card = Card(text, header=pic, footer=button)
     self.app.render(card)
 
-  def chooseTest(self, button=None):
+  def choose_test(self, button=None):
     txt = urwid.Text(
-      '%s provides two distinct types of test suites covering  security in different depth. Please choose which tests you want to run:'
-      % self.app.name)
+        '%s provides two distinct types of test suites covering  security in different depth. Please choose which tests you want to run:'
+        % self.app.name)
 
-    basic = self.genTestButton(
-        'bars_min.bmp', [('textbold', 'Basic'),
-                         ('text', 'Analize server perimeter security. (Does not require valid credentials)')])
-    exhaustive = self.genTestButton(
-        'bars_max.bmp', [('textbold', 'Exhaustive'),
-                         ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
+    basic = ImageButton(
+        picRead('../rsc/%s' % 'bars_min.bmp'),
+        [('textbold', 'Basic'),
+         ('text', 'Analize server perimeter security. (Does not require valid credentials)')])
+    exhaustive = ImageButton(
+        picRead('../rsc/%s' % 'bars_max.bmp'),
+        [('textbold', 'Exhaustive'),
+         ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
     content = urwid.Pile([txt, div, basic, exhaustive])
+    urwid.connect_signal(basic, 'click', self.basic_test)
+    urwid.connect_signal(exhaustive, 'click', self.basic_test)
     card = Card(content)
     self.app.render(card)
 
-  def genTestButton(self, image, text):
-    pic = picRead('../rsc/%s' % image)
-    content = urwid.Pile(map(lambda s: urwid.Text(s), text))
-    lbox = urwid.LineBox(urwid.Pile([div,urwid.Padding(urwid.Columns([(8,pic), content],4), left=3, right=3), div]))
-    # lbox = urwid.LineBox(urwid.Columns([(8,pic), content],3))
-    return ButtonObject(lbox)
+
+  def basic_test(self, button):
+    test = urwid.AttrMap(urwid.Text("testing"), 'focus btn')
+    self.app.render(test)
