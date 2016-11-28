@@ -42,6 +42,10 @@ class Cards(object):
     self.app.render(card)
 
 
-  def basic_test(self, button):
-    test = urwid.AttrMap(urwid.Text("testing"), 'focus btn')
-    self.app.render(test)
+  def basic_test(self, _):
+    content = urwid.Text("this is a test")
+    self.app.render(FormCard(content,["field a", "field b"], "button", self.test))
+
+  def test(self, field_a, field_b):
+    card = Card(urwid.Text(field_a + " " + field_b))
+    self.app.render(card)
