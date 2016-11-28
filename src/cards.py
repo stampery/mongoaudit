@@ -7,6 +7,7 @@ from widgets import *
 from testers import *
 
 class Cards(object):
+  credentials = []
 
   def __init__(self, app):
     self.app = app

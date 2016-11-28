@@ -8,9 +8,11 @@ def validate_uri(uri, error_field, error_message, cb):
     error_field.set_error("Invalid URI" )
 
 def parse_mongo_uri(conn):
+  import re
   from pymongo import uri_parser
+  conn = conn.split('://')[-1]
   try:
-    uri = uri_parser.parse_uri(conn)
+    uri = uri_parser.parse_uri("mongodb://" + conn)
   except Exception:
     return []
   else:
