@@ -12,6 +12,8 @@ palette = [
     ('button', '', '', '', '#d00', '#fff'),
     ('copy', '', '', '', 'g70', 'g93'),
     ('textbold', '', '', '', '#333,bold', '#fff'),
-    ('focus btn', '','','','light red','#fff'),
-    ( 'image btn','','','','g70','#fff')
+    ('image button','','','','g70','#fff'),
+    ('image button focus', '','','','#f00','#fff'),
+    ('input', '', '', '', 'g70', '#fff'),
+    ('input focus', '', '', '', 'g42', '#fff'),
 ]

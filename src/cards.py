@@ -18,7 +18,7 @@ class Cards(object):
         % self.app.name))
     button = urwid.AttrMap(
         TextButton(
-            'START', on_press=self.choose_test), 'button')
+            'Start', on_press=self.choose_test), 'button')
     card = Card(text, header=pic, footer=button)
     self.app.render(card)
 
@@ -41,10 +41,11 @@ class Cards(object):
     card = Card(content)
     self.app.render(card)
 
-
   def basic_test(self, _):
-    content = urwid.Text("this is a test")
-    self.app.render(FormCard(content,["field a", "field b"], "button", self.test))
+    intro = urwid.Text('This is a cool test')
+    fields = ['Field a', 'Field b']
+
+    self.app.render(FormCard(intro, fields, 'Next', self.test, back=self.choose_test))
 
   def test(self, field_a, field_b):
     card = Card(urwid.Text(field_a + " " + field_b))
