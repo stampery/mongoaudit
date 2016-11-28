@@ -72,13 +72,14 @@ class FormCard(urwid.WidgetWrap):
     for label in field_labels:
       self.fields.append(InputField(label))
     input_fields = urwid.Pile(self.fields)
-
-    buttons = [TextButton(btn_label, on_press=(lambda _: cb(**(self.get_field_values()))))]
+    self.error_field = urwid.Text('')
+    error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
+    buttons = [TextButton(btn_label, on_press=(lambda _: cb(form=self, **(self.get_field_values()))))]
     if back:
         buttons.insert(0, TextButton('Back', align='left', on_press=back))
     footer = urwid.AttrMap(urwid.Columns(buttons), 'button')
 
-    card = Card(urwid.Pile([content, input_fields]), footer=footer)
+    card = Card(urwid.Pile([content, input_fields, error_row]), footer=footer)
     urwid.WidgetWrap.__init__(self, card)
 
   def get_field_values(self):
@@ -87,3 +88,6 @@ class FormCard(urwid.WidgetWrap):
       values[field.get_label().lower().replace(" ", "_")] = field.get_text()
 
     return values
+
+  def set_error(self, msg):
+    self.error_field.set_text(('error',msg))
