@@ -55,6 +55,17 @@ class InputField(urwid.WidgetWrap):
     return self.label
 
 class FormCard(urwid.WidgetWrap):
+  """
+  Args:
+    content (urwid.Widget): any widget that can be piled
+    field_labels (str[]): labels for the input_fields
+    btn_label (str): label for the button
+    cb (function): callback to invoke when the form button is pressed
+  Note:
+    cb must take the same amount of arguments as labels were passed and each parameter
+    in the callback must be named as the label but in snake case and lower case e.g.
+    'Field Name' =>  field_name
+  """
   def __init__(self, content, field_labels, btn_label, cb):
     self.fields = []
 
@@ -72,6 +83,6 @@ class FormCard(urwid.WidgetWrap):
   def get_field_values(self):
     values = dict()
     for field in self.fields:
-      values[field.get_label().replace(" ", "_")] = field.get_text()
+      values[field.get_label().lower().replace(" ", "_")] = field.get_text()
 
     return values
