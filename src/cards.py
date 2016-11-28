@@ -4,7 +4,7 @@ import urwid
 from picmagic import read as picRead
 from tools import validate_uri
 from widgets import *
-
+from testers import *
 
 class Cards(object):
 
@@ -30,11 +30,11 @@ class Cards(object):
 
     basic = ImageButton(
         picRead('../rsc/%s' % 'bars_min.bmp'),
-        [('textbold', 'Basic'),
+        [('text bold', 'Basic'),
          ('text', 'Analize server perimeter security. (Does not require valid credentials)')])
     exhaustive = ImageButton(
         picRead('../rsc/%s' % 'bars_max.bmp'),
-        [('textbold', 'Exhaustive'),
+        [('text bold', 'Exhaustive'),
          ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
     content = urwid.Pile([txt, div, basic, exhaustive])
     urwid.connect_signal(basic, 'click', self.basic_test)
@@ -52,12 +52,14 @@ class Cards(object):
 
   def exhaustive_test(self, _):
     content = urwid.Pile([
-      urwid.Text(('textbold', 'Exhaustive Test')),
-      urwid.Text(('text', 'For an exhaustive test a valid connection string is required '))
+      urwid.Text(('text bold', 'Exhaustive Test')),
+      div,
+      urwid.Text(('text', 'Please enter your MongoDB URI')),
+      urwid.Text(('text italic', '(mongodb://user:password@domain.tld:port/database)'))
     ])
 
-    validate = lambda form, uri: validate_uri(uri, form, "Invalid Mongo URI", self.run_exhaustive)
-    self.app.render(FormCard(content,["URI"], "Run Test", validate, back=self.exhaustive_test))
+    validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid Mongo URI", self.run_exhaustive)
+    self.app.render(FormCard(content,["MongoDB URI"], "Run exhaustive test", validate, back=self.exhaustive_test))
 
   def run_basic(self, uri):
     card = Card(urwid.Text("working \n" + str(uri)))

@@ -3,7 +3,8 @@
 """
 Is my mongo exposed?
 """
-
+import os
+import sys
 import urwid
 from widgets import *
 from cards import *
@@ -41,6 +42,9 @@ class App(object):
     def key_handler(self, key):
         if key in ('q', 'Q', 'esc'):
             raise urwid.ExitMainLoop()
+        elif key == 'ctrl r':
+            python = sys.executable
+            os.execl(python, python, * sys.argv)
 
     def main(self):
         self.loop.run()
