@@ -37,16 +37,26 @@ class Cards(object):
          ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
     content = urwid.Pile([txt, div, basic, exhaustive])
     urwid.connect_signal(basic, 'click', self.basic_test)
-    urwid.connect_signal(exhaustive, 'click', self.basic_test)
+    urwid.connect_signal(exhaustive, 'click', self.exhaustive_test)
     card = Card(content)
     self.app.render(card)
 
   def basic_test(self, _):
-    intro = urwid.Text('This is a cool test')
-    fields = ['Field a', 'Field b']
+    intro = urwid.Text('Please provide the url for the')
+    fields = ['URL']
+    self.app.render(FormCard(intro, fields, 'Run Test', self.test1, back=self.choose_test))
 
-    self.app.render(FormCard(intro, fields, 'Next', self.test, back=self.choose_test))
+  def exhaustive_test(self, _):
+    content = urwid.Pile([
+      urwid.Text(('textbold', 'Exhaustive Test')),
+      urwid.Text(('text', 'For an exhaustive test a valid connection string is required '))
+    ])
+    self.app.render(FormCard(content,["Connection string"], "Run Test", self.test2))
 
-  def test(self, field_a, field_b):
-    card = Card(urwid.Text(field_a + " " + field_b))
+  def test1(self, url):
+    card = Card(urwid.Text(url))
+    self.app.render(card)
+
+  def test2(self, connection_string):
+    card = Card(urwid.Text(connection_string))
     self.app.render(card)
