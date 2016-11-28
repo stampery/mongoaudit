@@ -32,39 +32,41 @@ class Cards(object):
         picRead('../rsc/%s' % 'bars_min.bmp'),
         [('text bold', 'Basic'),
          ('text', 'Analize server perimeter security. (Does not require valid credentials)')])
-    exhaustive = ImageButton(
+    advanced = ImageButton(
         picRead('../rsc/%s' % 'bars_max.bmp'),
-        [('text bold', 'Exhaustive'),
+        [('text bold', 'Advanced'),
          ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
-    content = urwid.Pile([txt, div, basic, exhaustive])
+    content = urwid.Pile([txt, div, basic, advanced])
     urwid.connect_signal(basic, 'click', self.basic_test)
-    urwid.connect_signal(exhaustive, 'click', self.exhaustive_test)
+    urwid.connect_signal(advanced, 'click', self.advanced_test)
     card = Card(content)
     self.app.render(card)
 
   def basic_test(self, _):
-    intro = urwid.Text('Please provide the url for the')
-    fields = ['URI']
+    intro = urwid.Pile([
+      urwid.Text(('text bold', 'Basic test')),
+      div,
+      urwid.Text(('text', 'Please provide the URI of your MongoDB server')),
+      urwid.Text(('text italic', '(domain.tld:port)'))
+    ])
     validate = lambda form, uri: validate_uri(uri, form, "Invalid URI", self.run_basic)
-    form = FormCard(intro, fields, 'Run Test', validate, back=self.choose_test)
-
+    form = FormCard(intro, ['URI'], 'Run basic test', validate, back=self.choose_test)
     self.app.render(form)
 
-  def exhaustive_test(self, _):
-    content = urwid.Pile([
-      urwid.Text(('text bold', 'Exhaustive Test')),
+  def advanced_test(self, _):
+    intro = urwid.Pile([
+      urwid.Text(('text bold', 'Advanced test')),
       div,
       urwid.Text(('text', 'Please enter your MongoDB URI')),
       urwid.Text(('text italic', '(mongodb://user:password@domain.tld:port/database)'))
     ])
-
-    validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid Mongo URI", self.run_exhaustive)
-    self.app.render(FormCard(content,["MongoDB URI"], "Run exhaustive test", validate, back=self.choose_test))
+    validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid MongoDB URI", self.run_advanced)
+    self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
 
   def run_basic(self, uri):
     card = Card(urwid.Text("working \n" + str(uri)))
     self.app.render(card)
 
-  def run_exhaustive(self, uri):
+  def run_advanced(self, uri):
     card = Card(urwid.Text("working \n" + str(uri)))
     self.app.render(card)
