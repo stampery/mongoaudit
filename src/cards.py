@@ -3,7 +3,7 @@
 import urwid
 from picmagic import read as picRead
 from widgets import *
-
+from testers import *
 
 class Cards(object):
 
@@ -50,10 +50,10 @@ class Cards(object):
     content = urwid.Pile([
       urwid.Text(('text bold', 'Exhaustive Test')),
       div,
-      urwid.Text(('text', 'Please enter your MongoDB connection string')),
+      urwid.Text(('text', 'Please enter your MongoDB URI')),
       urwid.Text(('text italic', '(mongodb://user:password@domain.tld:port/database)'))
     ])
-    self.app.render(FormCard(content,["Connection string"], "Run exhaustive test", self.test2, back=self.choose_test))
+    self.app.render(FormCard(content,["MongoDB URI"], "Run exhaustive test", self.test2, back=self.choose_test))
 
   def test1(self, url):
     card = Card(urwid.Text(url))
