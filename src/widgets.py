@@ -9,6 +9,13 @@ def pad(w, left=2, right=2):
   return urwid.Padding(w, left=left, right=right)
 
 class TextButton(urwid.Button):
+  """
+  Args:
+    label (str): label for the text button
+    on_press (function): callback
+    user_data(): user_data for on_press
+    align (str): (default right)
+  """
   def __init__(self, label, on_press=None, user_data=None, align='right'):
     super(TextButton, self).__init__(label, on_press=on_press, user_data=user_data)
     self._label.align = align
@@ -16,6 +23,12 @@ class TextButton(urwid.Button):
     super(urwid.Button, self).__init__(cols)
 
 class Card(urwid.WidgetWrap):
+  """
+  Args:
+    content (urwid.Widget):
+    header (urwid.Widget):
+    footer (urwid.Widget):
+  """
   def __init__(self, content, header=None, footer=None):
     wlist = []
     if header:
@@ -34,12 +47,24 @@ class ObjectButton(urwid.Button):
     super(urwid.Button, self).__init__(content)
 
 class ImageButton(ObjectButton):
+  """
+  Creates a LineBox button with an image on the left column and text on the right
+  Args:
+    pic (urwid.Pile): object created with picRead
+    text ((palette_class, str)[]): array of string tuples
+  """
   def __init__(self, pic, text):
     content = urwid.Pile([urwid.SelectableIcon(s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
     lbox = urwid.LineBox(urwid.Pile([div, urwid.Padding(urwid.Columns([(8, pic), content], 4), left=3, right=3), div]))
     self.__super.__init__(urwid.AttrMap(urwid.Pile([lbox]), 'image button', 'image button focus'))
 
 class InputField(urwid.WidgetWrap):
+  """
+  Creates an input field with underline and a label
+  Args:
+    label (str): label for the input
+    label_width (int): label width (default 15 characters)
+  """
   def __init__(self, label="", label_width=15):
     self.label = label
     self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
@@ -49,9 +74,17 @@ class InputField(urwid.WidgetWrap):
     urwid.WidgetWrap.__init__(self, cols)
 
   def get_text(self):
+    """
+    Returns:
+      str: value of the input field
+    """
     return self.edit.original_widget.get_text()[0]
 
   def get_label(self):
+    """
+    Returns:
+      str: label for the input field
+    """
     return self.label
 
 class FormCard(urwid.WidgetWrap):
@@ -85,7 +118,12 @@ class FormCard(urwid.WidgetWrap):
   def next(self, _button=None):
     self.cb(form=self, **(self.get_field_values()))
 
+
   def get_field_values(self):
+    """
+    Returns:
+      dict: the keys are the labels of the fields in snake_case
+    """
     values = dict()
     for field in self.fields:
       values[field.get_label().lower().replace(" ", "_")] = field.get_text()
@@ -93,6 +131,10 @@ class FormCard(urwid.WidgetWrap):
     return values
 
   def set_error(self, msg):
+    """
+    Args:
+      msg (str): error message
+    """
     self.error_field.set_text(('error',msg))
 
   def keypress(self, size, key):

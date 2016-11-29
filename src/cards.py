@@ -65,9 +65,13 @@ class Cards(object):
     self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
 
   def run_basic(self, uri):
-    card = Card(urwid.Text("working \n" + str(uri)))
+
+    card = Card(urwid.Pile([urwid.Text("working \n" + str(uri)),
+      TextButton('Back', align='left', on_press=self.basic_test)]))
+
     self.app.render(card)
 
   def run_advanced(self, uri):
-    card = Card(urwid.Text("working \n" + str(uri)))
+    card = Card(urwid.Pile([urwid.Text("working \n" + str(uri)),
+      TextButton('Back', align='left', on_press=self.advanced_test)]))
     self.app.render(card)
