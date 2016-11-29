@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import urwid
+from testers import *
 
 div = urwid.Divider()
 hr = urwid.AttrMap(urwid.Divider('_'), 'hr')
@@ -142,3 +143,33 @@ class FormCard(urwid.WidgetWrap):
       self.next()
     else:
       return self.__super.keypress(size, key)
+
+class TestRunner(urwid.WidgetWrap):
+  """
+  Run and display test
+  Args:
+    cred (dict(str:str)): MongoDB credentials
+    tests (): test to run
+
+  Notes:
+    After the widget has been created the function run must be called
+  """
+  def __init__(self, cred, tests):
+    self.tester = Tester(cred, tests)
+    self.test_results = urwid.Pile([])
+    self.end_result = urwid.Text('')
+    result = urwid.Pile([self.test_results, div, self.end_result])
+    urwid.WidgetWrap.__init__(self, result)
+
+  def each(self, test):
+    options = self.test_results.options()
+    title = urwid.Text('[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':')
+    result = urwid.Text(' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result])
+    self.test_results.contents.extend([(title, options), (result, options)])
+
+  def end(self, res):
+    count = lambda acc, test: acc+1 if test.result is not None else acc
+    self.end_result.set_text('Finished running ' + str(reduce(count, res.tests, 0)) + ' tests')
+
+  def run(self):
+    self.tester.run(self.each, self.end)

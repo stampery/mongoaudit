@@ -18,10 +18,24 @@ class Tester(object):
 class Test(object):
 
   def __init__(self, fn, severity, title, caption, yes, no, breaks=None):
+    """
+    Args:
+      fn ():
+      severity (str):
+      title (str):
+      caption (str):
+      yes ():
+      no ():
+      breaks ():
+    """
     self.fn, self.severity, self.title, self.caption, self.yes, self.no, self.breaks = fn, severity, title, caption, yes, no, breaks
     self.result = None
 
   def run(self, cred):
+    """
+    Args:
+      cred (dict(str:str)): parsed MongoDB URI
+    """
     self.cred = cred
     self.result = self.fn(self)
     return self

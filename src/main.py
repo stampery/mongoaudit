@@ -10,6 +10,7 @@ from widgets import *
 from cards import *
 from palette import palette
 
+
 class App(object):
 
     def __init__(self):

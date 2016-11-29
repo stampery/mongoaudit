@@ -64,14 +64,18 @@ class Cards(object):
     validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid MongoDB URI", self.run_advanced)
     self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
 
-  def run_basic(self, uri):
-
-    card = Card(urwid.Pile([urwid.Text("working \n" + str(uri)),
-      TextButton('Back', align='left', on_press=self.basic_test)]))
-
+  def run_basic(self, cred):
+    intro = urwid.Text(('text bold','Basic test results'))
+    footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.basic_test),'button')
+    test_runner = TestRunner(cred, tests)
+    card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
+    
     self.app.render(card)
+    test_runner.run()
 
-  def run_advanced(self, uri):
+
+
+  def run_advanced(self, cred):
     card = Card(urwid.Pile([urwid.Text("working \n" + str(uri)),
       TextButton('Back', align='left', on_press=self.advanced_test)]))
     self.app.render(card)
