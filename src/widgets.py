@@ -66,8 +66,8 @@ class InputField(urwid.WidgetWrap):
     label (str): label for the input
     label_width (int): label width (default 15 characters)
   """
-  def __init__(self, label="", label_width=15):
-    self.label = label
+  def __init__(self, label="", label_width=15, next=False):
+    self.label, self.next= label, next
     self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
     label = urwid.LineBox(urwid.Text(label), tlcorner=' ', tline=' ', lline=' ', trcorner=' ', blcorner=' ', rline=' ', brcorner=' ', bline=' ' )
     lbox = urwid.AttrMap(urwid.LineBox(self.edit , tlcorner=' ', tline=' ', lline=' ', trcorner=' ', blcorner=' ', rline=' ', brcorner=' ' ), 'input', 'input focus')
@@ -88,6 +88,13 @@ class InputField(urwid.WidgetWrap):
     """
     return self.label
 
+  def keypress(self, size, key):
+    if key is 'enter' and self.next:
+      self.next()
+    else:
+      return self.__super.keypress(size, key)
+
+
 class FormCard(urwid.WidgetWrap):
   """
   Args:
@@ -104,7 +111,7 @@ class FormCard(urwid.WidgetWrap):
   def __init__(self, content, field_labels, btn_label, cb, back=None):
     self.fields, self.cb = [], cb
     for label in field_labels:
-      self.fields.append(InputField(label))
+      self.fields.append(InputField(label, next=self.next))
     input_fields = urwid.Pile(self.fields)
     self.error_field = urwid.Text('')
     error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
@@ -137,12 +144,6 @@ class FormCard(urwid.WidgetWrap):
       msg (str): error message
     """
     self.error_field.set_text(('error',msg))
-
-  def keypress(self, size, key):
-    if key is 'enter':
-      self.next()
-    else:
-      return self.__super.keypress(size, key)
 
 class TestRunner(urwid.WidgetWrap):
   """
