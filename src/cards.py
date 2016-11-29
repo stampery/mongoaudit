@@ -25,9 +25,8 @@ class Cards(object):
     self.app.render(card)
 
   def choose_test(self, button=None):
-    txt = urwid.Text(
-        '%s provides two distinct types of test suites covering  security in different depth. Please choose which tests you want to run:'
-        % self.app.name)
+    txt = urwid.Text([('text bold', self.app.name),
+        ' provides two distinct types of test suites covering  security in different depth. Please choose which tests you want to run:'])
 
     basic = ImageButton(
         picRead('rsc/%s' % 'bars_min.bmp'),
@@ -47,8 +46,7 @@ class Cards(object):
     intro = urwid.Pile([
       urwid.Text(('text bold', 'Basic test')),
       div,
-      urwid.Text(('text', 'Please provide the URI of your MongoDB server')),
-      urwid.Text(('text italic', '(domain.tld:port)'))
+      urwid.Text(['Please provide the URI of your MongoDB server (',('text italic', 'domain.tld:port'), ')'])
     ])
     validate = lambda form, uri: validate_uri(uri, form, "Invalid URI", self.run_basic)
     form = FormCard(intro, ['URI'], 'Run basic test', validate, back=self.choose_test)
@@ -58,8 +56,7 @@ class Cards(object):
     intro = urwid.Pile([
       urwid.Text(('text bold', 'Advanced test')),
       div,
-      urwid.Text(('text', 'Please enter your MongoDB URI')),
-      urwid.Text(('text italic', '(mongodb://user:password@domain.tld:port/database)'))
+      urwid.Text(['Please enter your MongoDB URI (', ('text italic', 'mongodb://user:password@domain.tld:port/database'), ')'])
     ])
     validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid MongoDB URI", self.run_advanced)
     self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
@@ -69,7 +66,7 @@ class Cards(object):
     footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.basic_test),'button')
     test_runner = TestRunner(cred, tests)
     card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
-    
+
     self.app.render(card)
     test_runner.run()
 
