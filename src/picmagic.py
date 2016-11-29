@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
 import urwid
-
 
 def read(path, align='left'):
 
@@ -16,7 +16,7 @@ def read(path, align='left'):
     dec = ord(compo)
     return hex(dec)[2]
 
-  with open(path, 'r') as f:
+  with open(os.path.realpath(path), 'r') as f:
     bytes = f.read()
 
   width = ord(bytes[18])
