@@ -24,6 +24,8 @@ class App(object):
         placeholder = urwid.SolidFill()
         self.loop = urwid.MainLoop(placeholder, palette, unhandled_input=self.key_handler)
         self.loop.widget = urwid.AttrMap(placeholder, 'bg')
+        self.loop.widget._command_map['tab'] = 'cursor down'
+        self.loop.widget._command_map['shift tab'] = 'cursor up'
         self.loop.screen.set_terminal_properties(colors=256)
         self.cards.welcome()
 
@@ -34,8 +36,6 @@ class App(object):
         h1 = urwid.Text(('h1', self.name))
         h2 = urwid.Text(('h2', 'v'+self.version), align='right')
         hg = urwid.AttrMap(urwid.Padding(urwid.Columns([h1, h2]), left=2, right=2, align='center'), 'header')
-        # copy = pad(urwid.Text(('copy', '© 2016 Stampery, Inc. Available under MIT License.')))
-        # body = urwid.Pile([hg, rdiv, card, div, copy])
         body = urwid.Pile([hg, rdiv, card, div])
         w = urwid.Overlay(body, header, 'center', 76, 'top', 'pack', top=1)
         self.loop.widget.original_widget = w

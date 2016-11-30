@@ -17,5 +17,6 @@ palette = [
     ('image button focus', '','','','#f00','#fff'),
     ('input', '', '', '', 'g70', '#fff'),
     ('input focus', '', '', '', 'g42', '#fff'),
-    ('error', '', '', '', '#f00', '#fff')
+    ('error', '', '', '', '#f00', '#fff'),
+    ('text focus', '', '', '', '#d00', 'light gray')
 ]
