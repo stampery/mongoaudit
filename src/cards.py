@@ -69,7 +69,7 @@ class Cards(object):
     footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.basic_test),'button')
     test_runner = TestRunner(cred, tests)
     card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
-    
+
     self.app.render(card)
     test_runner.run()
 

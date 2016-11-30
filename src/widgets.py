@@ -156,16 +156,16 @@ class TestRunner(urwid.WidgetWrap):
   """
   def __init__(self, cred, tests):
     self.tester = Tester(cred, tests)
-    self.test_results = urwid.Pile([])
+    self.test_results = urwid.SimpleListWalker([])
     self.end_result = urwid.Text('')
-    result = urwid.Pile([self.test_results, div, self.end_result])
-    urwid.WidgetWrap.__init__(self, result)
+    boxAdapter = urwid.BoxAdapter(urwid.ListBox(self.test_results), height=12)
+    pile = urwid.Pile([boxAdapter, div, self.end_result])
+    urwid.WidgetWrap.__init__(self, pile)
 
   def each(self, test):
-    options = self.test_results.options()
-    title = urwid.Text('[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':')
-    result = urwid.Text(' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result])
-    self.test_results.contents.extend([(title, options), (result, options)])
+    title = urwid.Text(('text','[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':'))
+    result = urwid.Text(('text',' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result]))
+    self.test_results.contents.extend([urwid.AttrMap(title, 'text', "focus"), urwid.AttrMap(result, 'text', "focus")])
 
   def end(self, res):
     count = lambda acc, test: acc+1 if test.result is not None else acc
