@@ -64,14 +64,19 @@ class Cards(object):
   def run_basic(self, cred):
     intro = urwid.Text(('text bold','Basic test results'))
     footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.basic_test),'button')
-    test_runner = TestRunner(cred, tests)
+    test_runner = TestRunner(cred, tests, self.app)
     card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
+
     self.app.render(card)
     self.app.loop.draw_screen()
     test_runner.run()
 
   def run_advanced(self, cred):
-    card = Card(urwid.Pile([urwid.Text("working \n" + str(uri)),
-      TextButton('Back', align='left', on_press=self.advanced_test)]))
+    intro = urwid.Text(('text bold','Advanced test results'))
+    footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.advanced_test),'button')
+    test_runner = TestRunner(cred, tests, self.app)
+    card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
+
     self.app.render(card)
     self.app.loop.draw_screen()
+    test_runner.run()
