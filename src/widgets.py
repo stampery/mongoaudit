@@ -146,37 +146,45 @@ class FormCard(urwid.WidgetWrap):
     self.error_field.set_text(('error',msg))
 
 class TestRunner(urwid.WidgetWrap):
-  """
-  Run and display test
-  Args:
-    cred (dict(str:str)): MongoDB credentials
-    tests (): test to run
-
-  Notes:
-    After the widget has been created the function run must be called
-  """
-  def __init__(self, cred, tests, app):
+  def __init__(self, title, cred, tests, app, cb):
+    self.title = title
+    self.cb = cb
+    self.number_of_test = len(tests)
     self.app = app
-    self.tester = Tester(cred, tests)
     self.test_results = urwid.SimpleListWalker([])
-    self.end_result = urwid.Text('')
-    boxAdapter = urwid.BoxAdapter(urwid.ListBox(self.test_results), height=12)
-    pile = urwid.Pile([boxAdapter, div, self.end_result])
+    self.tester = Tester(cred, tests)
+
+    self.progress_text = urwid.Text(('progress', '0/' + str(self.number_of_test)))
+    running_display = urwid.Columns([(14, urwid.Text(('text','Running check'))), self.progress_text])
+    self.progress_bar = CustomProgressBar('progress', 'remaining', 0, self.number_of_test)
+    self.text_running = urwid.Text(('text', ''))
+
+    pile = urwid.Pile([div, running_display, self.progress_bar, div, self.text_running])
     urwid.WidgetWrap.__init__(self, pile)
 
+  def update(self, test):
+    self.progress_text.set_text(current + '/' + self.number_of_test )
+    self.text_running.set_text(test)
+    self.app.loop.draw_screen()
+
   def each(self, test):
+    current = self.progress_bar.get_current() + 1
     title = urwid.Text('[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':')
     result = urwid.Text(' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result])
     self.test_results.contents.extend([urwid.AttrMap(title, 'text', "text focus"), urwid.AttrMap(result, 'text', "text focus")])
-    self.app.loop.draw_screen()
 
-  def end(self, res):
-    count = lambda acc, test: acc+1 if test.result is not None else acc
-    self.end_result.set_text('Finished running ' + str(reduce(count, res.tests, 0)) + ' tests')
+    self.progress_text.set_text(('progress', str(current) + '/' + str(self.number_of_test)))
+    self.progress_bar.set_completion(current)
+    self.text_running.set_text('Checking if ' + test.title + "...")
+    self.app.loop.draw_screen()
 
   def run(self):
     self.tester.run(self.each, self.end)
 
+  def end(self, res):
+    count = lambda acc, test: acc+1 if test.result is not None else acc
+    total = urwid.Text('Finished running ' + str(reduce(count, res.tests, 0)) + ' tests')
+    self.cb(self.title, self.test_results, total)
 
 class CustomProgressBar(urwid.ProgressBar):
   """
@@ -208,4 +216,6 @@ class CustomProgressBar(urwid.ProgressBar):
     cf = float(self.current) * maxcol / self.done
     ccol = int(cf)
     txt = urwid.Text([(self.normal, self.semi[1] * ccol), (self.complete, self.semi[1] * (maxcol - ccol))])
-    c = txt.render((maxcol,))
+    c = txt.render(size)
+
+    return c

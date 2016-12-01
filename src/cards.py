@@ -61,22 +61,32 @@ class Cards(object):
     validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid MongoDB URI", self.run_advanced)
     self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
 
+  #TODO run basic and advanced are almost identical, refactor
   def run_basic(self, cred):
-    intro = urwid.Text(('text bold','Basic test results'))
-    footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.basic_test),'button')
-    test_runner = TestRunner(cred, tests, self.app)
-    card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
+    title = 'Basic'
+    test_runner = TestRunner(title, cred, tests, self.app, self.display_results)
+    pic = picRead('rsc/check_basic.bmp', align='right')
 
+    footer = urwid.AttrMap(TextButton('Cancel', align='left', on_press=self.choose_test),'button')
+    card = Card(test_runner, header=pic, footer=footer)
     self.app.render(card)
-    self.app.loop.draw_screen()
     test_runner.run()
+
 
   def run_advanced(self, cred):
-    intro = urwid.Text(('text bold','Advanced test results'))
-    footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.advanced_test),'button')
-    test_runner = TestRunner(cred, tests, self.app)
-    card = Card(urwid.Pile([intro, div, test_runner]), footer=footer)
+    title = 'Advanced'
+    test_runner = TestRunner(title, cred, tests, self.app, self.display_results)
+    pic = picRead('rsc/check_advanced.bmp', align='right')
 
+    footer = urwid.AttrMap(TextButton('Cancel', align='left', on_press=self.choose_test),'button')
+    card = Card(test_runner, header=pic, footer=footer)
     self.app.render(card)
-    self.app.loop.draw_screen()
     test_runner.run()
+
+  def display_results(self, title, list_walker, total):
+    intro = urwid.Text(('text bold',title + ' test results'))
+    footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.choose_test),'button')
+    boxAdapter = urwid.BoxAdapter(urwid.ListBox(list_walker), height=12)
+    pile = urwid.Pile([intro, div, boxAdapter, div, total])
+    card = Card(pile, footer=footer)
+    self.app.render(card)

@@ -19,6 +19,7 @@ palette = [
     ('input focus', '', '', '', 'g42', '#fff'),
     ('error', '', '', '', '#f00', '#fff'),
     ('text focus', '', '', '', '#333', 'light gray'),
-    ('pb-en', 'light red', 'white', ''),
-    ('pb-dis', 'light gray', 'white', '')
+    ('progress', '', '', '', 'light red', '#fff'),
+    ('remaining', '', '', '', 'light gray', '#fff'),
+    ('yellow_title','','','','black,bold','#fc0')
 ]
