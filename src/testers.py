@@ -67,7 +67,7 @@ tests = [
     'Domain exists',
     'The FQDN must exist in order to perform the test.',
     'The provided domain name does exist.',
-    'The provided domain name does not exist \xF0\x9F\x98\xA5',
+    'The provided domain name does not exist.',
     breaks=False
   ),
   Test(

@@ -165,8 +165,8 @@ class TestRunner(urwid.WidgetWrap):
     urwid.WidgetWrap.__init__(self, pile)
 
   def each(self, test):
-    title = urwid.Text(('text','[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':'))
-    result = urwid.Text(('text',' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result]))
+    title = urwid.Text('[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':')
+    result = urwid.Text(' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result])
     self.test_results.contents.extend([urwid.AttrMap(title, 'text', "text focus"), urwid.AttrMap(result, 'text', "text focus")])
     self.app.loop.draw_screen()
 
@@ -176,3 +176,36 @@ class TestRunner(urwid.WidgetWrap):
 
   def run(self):
     self.tester.run(self.each, self.end)
+
+
+class CustomProgressBar(urwid.ProgressBar):
+  """
+  ProgressBar that displays a semigraph instead of a percentage
+  """
+  semi = u'▁▂▃▄▅▆▇█'
+  def get_text(self):
+    """
+    Return the progress bar percentage.
+    """
+    return min(100, max(0, int(self.current * 100 / self.done)))
+
+  def get_current(self):
+    """
+    Return the current value of the ProgressBar
+    """
+    return self.current
+
+  def get_done(self):
+    """
+    Return the end value of the ProgressBar
+    """
+    return self.done
+  def render(self, size, focus=False):
+    """
+    Render the progress bar.
+    """
+    (maxcol,) = size
+    cf = float(self.current) * maxcol / self.done
+    ccol = int(cf)
+    txt = urwid.Text([(self.normal, self.semi[1] * ccol), (self.complete, self.semi[1] * (maxcol - ccol))])
+    c = txt.render((maxcol,))
