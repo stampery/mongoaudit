@@ -195,12 +195,10 @@ class TestRunner(urwid.WidgetWrap):
         [div, running_display, self.progress_bar, div, self.text_running])
     urwid.WidgetWrap.__init__(self, pile)
 
-  def update(self, test):
-    self.progress_text.set_text(current + '/' + self.number_of_test)
-    self.text_running.set_text(test)
-    self.app.loop.draw_screen()
-
   def each(self, test):
+    """
+    Update the description of the test currently running
+    """
     current = self.progress_bar.get_current() + 1
     self.progress_text.set_text(
         ('progress', str(current) + '/' + str(self.number_of_test)))
@@ -209,6 +207,9 @@ class TestRunner(urwid.WidgetWrap):
     self.app.loop.draw_screen()
 
   def run(self):
+    """
+    run tests
+    """
     self.tester.run(self.each, self.end)
 
   def end(self, res):
