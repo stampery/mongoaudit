@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import urwid
 from picmagic import read as picRead
 from tools import validate_uri
@@ -37,46 +36,29 @@ class Cards(object):
         [('text bold', 'Advanced'),
          ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
     content = urwid.Pile([txt, div, basic, advanced])
-    urwid.connect_signal(basic, 'click', self.basic_test)
-    urwid.connect_signal(advanced, 'click', self.advanced_test)
+
+    basic_args = {'title': 'Basic', 'prompt': 'Please provide the URI of your MongoDB server', 'uri_example': 'domain.tld:port',
+                   'uri_error': "Invalid URI", 'tests': tests}
+    urwid.connect_signal(basic, 'click', lambda _: self.uri_prompt(**basic_args))
+    advanced_args = {'title': 'Advanced', 'prompt': 'Please enter your MongoDB URI', 'uri_example': 'mongodb://user:password@domain.tld:port/database',
+                   'uri_error': "Invalid MongoDB URI", 'tests': tests}
+    urwid.connect_signal(advanced, 'click',lambda _: self.uri_prompt(**advanced_args))
     card = Card(content)
     self.app.render(card)
 
-  def basic_test(self, _):
+  def uri_prompt(self, title, prompt, uri_example, uri_error, tests):
     intro = urwid.Pile([
-      urwid.Text(('text bold', 'Basic test')),
+      urwid.Text(('text bold', title + ' test')),
       div,
-      urwid.Text(['Please provide the URI of your MongoDB server (',('text italic', 'domain.tld:port'), ')'])
+      urwid.Text([prompt + ' (',('text italic', uri_example), ')'])
     ])
-    validate = lambda form, uri: validate_uri(uri, form, "Invalid URI", self.run_basic)
-    form = FormCard(intro, ['URI'], 'Run basic test', validate, back=self.choose_test)
+    validate = lambda form, uri: validate_uri(uri, form, uri_error, lambda cred: self.run_test(cred, title, tests))
+    form = FormCard(intro, ['URI'], 'Run ' + title.lower() +' test', validate, back=self.choose_test)
     self.app.render(form)
 
-  def advanced_test(self, _):
-    intro = urwid.Pile([
-      urwid.Text(('text bold', 'Advanced test')),
-      div,
-      urwid.Text(['Please enter your MongoDB URI (', ('text italic', 'mongodb://user:password@domain.tld:port/database'), ')'])
-    ])
-    validate = lambda form, mongodb_uri: validate_uri(mongodb_uri, form, "Invalid MongoDB URI", self.run_advanced)
-    self.app.render(FormCard(intro,["MongoDB URI"], "Run advanced test", validate, back=self.choose_test))
-
-  #TODO run basic and advanced are almost identical, refactor
-  def run_basic(self, cred):
-    title = 'Basic'
+  def run_test(self, cred, title, tests):
     test_runner = TestRunner(title, cred, tests, self.app, self.display_results)
-    pic = picRead('rsc/check_basic.bmp', align='right')
-
-    footer = urwid.AttrMap(TextButton('Cancel', align='left', on_press=self.choose_test),'button')
-    card = Card(test_runner, header=pic, footer=footer)
-    self.app.render(card)
-    test_runner.run()
-
-
-  def run_advanced(self, cred):
-    title = 'Advanced'
-    test_runner = TestRunner(title, cred, tests, self.app, self.display_results)
-    pic = picRead('rsc/check_advanced.bmp', align='right')
+    pic = picRead('rsc/check_' + title.lower() + '.bmp', align='right')
 
     footer = urwid.AttrMap(TextButton('Cancel', align='left', on_press=self.choose_test),'button')
     card = Card(test_runner, header=pic, footer=footer)
