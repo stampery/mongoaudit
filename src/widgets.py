@@ -6,8 +6,10 @@ from testers import *
 div = urwid.Divider()
 hr = urwid.AttrMap(urwid.Divider('_'), 'hr')
 
+
 def pad(w, left=2, right=2):
   return urwid.Padding(w, left=left, right=right)
+
 
 class TextButton(urwid.Button):
   """
@@ -17,11 +19,14 @@ class TextButton(urwid.Button):
     user_data(): user_data for on_press
     align (str): (default right)
   """
+
   def __init__(self, label, on_press=None, user_data=None, align='right'):
-    super(TextButton, self).__init__(label, on_press=on_press, user_data=user_data)
+    super(TextButton, self).__init__(
+        label, on_press=on_press, user_data=user_data)
     self._label.align = align
     cols = urwid.Columns([self._label])
     super(urwid.Button, self).__init__(cols)
+
 
 class Card(urwid.WidgetWrap):
   """
@@ -30,6 +35,7 @@ class Card(urwid.WidgetWrap):
     header (urwid.Widget):
     footer (urwid.Widget):
   """
+
   def __init__(self, content, header=None, footer=None):
     wlist = []
     if header:
@@ -41,11 +47,14 @@ class Card(urwid.WidgetWrap):
     card = urwid.AttrMap(urwid.Pile(wlist), 'card')
     urwid.WidgetWrap.__init__(self, card)
 
+
 class ObjectButton(urwid.Button):
+
   def __init__(self, content, on_press=None, user_data=None):
     self.__super.__init__('', on_press=on_press, user_data=user_data)
 
     super(urwid.Button, self).__init__(content)
+
 
 class ImageButton(ObjectButton):
   """
@@ -54,10 +63,15 @@ class ImageButton(ObjectButton):
     pic (urwid.Pile): object created with picRead
     text ((palette_class, str)[]): array of string tuples
   """
+
   def __init__(self, pic, text):
-    content = urwid.Pile([urwid.SelectableIcon(s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
-    lbox = urwid.LineBox(urwid.Pile([div, urwid.Padding(urwid.Columns([(8, pic), content], 4), left=3, right=3), div]))
-    self.__super.__init__(urwid.AttrMap(urwid.Pile([lbox]), 'image button', 'image button focus'))
+    content = urwid.Pile([urwid.SelectableIcon(
+        s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
+    lbox = urwid.LineBox(urwid.Pile([div, urwid.Padding(
+        urwid.Columns([(8, pic), content], 4), left=3, right=3), div]))
+    self.__super.__init__(urwid.AttrMap(urwid.Pile(
+        [lbox]), 'image button', 'image button focus'))
+
 
 class InputField(urwid.WidgetWrap):
   """
@@ -66,11 +80,14 @@ class InputField(urwid.WidgetWrap):
     label (str): label for the input
     label_width (int): label width (default 15 characters)
   """
+
   def __init__(self, label="", label_width=15, next=False):
-    self.label, self.next= label, next
+    self.label, self.next = label, next
     self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
-    label = urwid.LineBox(urwid.Text(label), tlcorner=' ', tline=' ', lline=' ', trcorner=' ', blcorner=' ', rline=' ', brcorner=' ', bline=' ' )
-    lbox = urwid.AttrMap(urwid.LineBox(self.edit , tlcorner=' ', tline=' ', lline=' ', trcorner=' ', blcorner=' ', rline=' ', brcorner=' ' ), 'input', 'input focus')
+    label = urwid.LineBox(urwid.Text(label), tlcorner=' ', tline=' ', lline=' ',
+                          trcorner=' ', blcorner=' ', rline=' ', brcorner=' ', bline=' ')
+    lbox = urwid.AttrMap(urwid.LineBox(self.edit, tlcorner=' ', tline=' ', lline=' ',
+                                       trcorner=' ', blcorner=' ', rline=' ', brcorner=' '), 'input', 'input focus')
     cols = urwid.Columns([(label_width, label), lbox])
     urwid.WidgetWrap.__init__(self, cols)
 
@@ -108,6 +125,7 @@ class FormCard(urwid.WidgetWrap):
     in the callback must be named as the label but in snake case and lower case e.g.
     'Field Name' =>  field_name
   """
+
   def __init__(self, content, field_labels, btn_label, cb, back=None):
     self.fields, self.cb = [], cb
     for label in field_labels:
@@ -117,7 +135,7 @@ class FormCard(urwid.WidgetWrap):
     error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
     buttons = [TextButton(btn_label, on_press=self.next)]
     if back:
-        buttons.insert(0, TextButton('Back', align='left', on_press=back))
+      buttons.insert(0, TextButton('Back', align='left', on_press=back))
     footer = urwid.AttrMap(urwid.Columns(buttons), 'button')
 
     card = Card(urwid.Pile([content, input_fields, error_row]), footer=footer)
@@ -125,7 +143,6 @@ class FormCard(urwid.WidgetWrap):
 
   def next(self, _button=None):
     self.cb(form=self, **(self.get_field_values()))
-
 
   def get_field_values(self):
     """
@@ -143,37 +160,50 @@ class FormCard(urwid.WidgetWrap):
     Args:
       msg (str): error message
     """
-    self.error_field.set_text(('error',msg))
+    self.error_field.set_text(('error', msg))
+
 
 class TestRunner(urwid.WidgetWrap):
+  """
+  Run the test while displaying the progress
+
+  Args:
+    title (str): title to pass to the callback
+    cred (dict(str: str)): credentials
+    tests (Test[]): tests to run
+    app (App):
+    cb (function):  callback to call when the tests finish running
+  """
+
   def __init__(self, title, cred, tests, app, cb):
     self.title = title
     self.cb = cb
     self.number_of_test = len(tests)
     self.app = app
-    self.test_results = urwid.SimpleListWalker([])
+
     self.tester = Tester(cred, tests)
 
-    self.progress_text = urwid.Text(('progress', '0/' + str(self.number_of_test)))
-    running_display = urwid.Columns([(14, urwid.Text(('text','Running check'))), self.progress_text])
-    self.progress_bar = CustomProgressBar('progress', 'remaining', 0, self.number_of_test)
+    self.progress_text = urwid.Text(
+        ('progress', '0/' + str(self.number_of_test)))
+    running_display = urwid.Columns(
+        [(14, urwid.Text(('text', 'Running check'))), self.progress_text])
+    self.progress_bar = CustomProgressBar(
+        'progress', 'remaining', 0, self.number_of_test)
     self.text_running = urwid.Text(('text', ''))
 
-    pile = urwid.Pile([div, running_display, self.progress_bar, div, self.text_running])
+    pile = urwid.Pile(
+        [div, running_display, self.progress_bar, div, self.text_running])
     urwid.WidgetWrap.__init__(self, pile)
 
   def update(self, test):
-    self.progress_text.set_text(current + '/' + self.number_of_test )
+    self.progress_text.set_text(current + '/' + self.number_of_test)
     self.text_running.set_text(test)
     self.app.loop.draw_screen()
 
   def each(self, test):
     current = self.progress_bar.get_current() + 1
-    title = urwid.Text('[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':')
-    result = urwid.Text(' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result])
-    self.test_results.contents.extend([urwid.AttrMap(title, 'text', "text focus"), urwid.AttrMap(result, 'text', "text focus")])
-
-    self.progress_text.set_text(('progress', str(current) + '/' + str(self.number_of_test)))
+    self.progress_text.set_text(
+        ('progress', str(current) + '/' + str(self.number_of_test)))
     self.progress_bar.set_completion(current)
     self.text_running.set_text('Checking if ' + test.title + "...")
     self.app.loop.draw_screen()
@@ -182,15 +212,28 @@ class TestRunner(urwid.WidgetWrap):
     self.tester.run(self.each, self.end)
 
   def end(self, res):
-    count = lambda acc, test: acc+1 if test.result is not None else acc
-    total = urwid.Text('Finished running ' + str(reduce(count, res.tests, 0)) + ' tests')
-    self.cb(self.title, self.test_results, total)
+    test_results = urwid.SimpleListWalker([])
+    total = 0
+    for test in res.tests:
+      title = urwid.AttrMap(urwid.Text(
+          '[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':'), 'text', "text focus")
+      result = urwid.AttrMap(urwid.Text(
+          ' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result]), 'text', "text focus")
+      test_results.contents.extend([title, result])
+      total += 1
+      if test.result is False:
+        break
+
+    total = urwid.Text('Finished running ' + str(total) + ' tests')
+    self.cb(self.title, test_results, total)
+
 
 class CustomProgressBar(urwid.ProgressBar):
   """
   ProgressBar that displays a semigraph instead of a percentage
   """
   semi = u'▁▂▃▄▅▆▇█'
+
   def get_text(self):
     """
     Return the progress bar percentage.
@@ -208,6 +251,7 @@ class CustomProgressBar(urwid.ProgressBar):
     Return the end value of the ProgressBar
     """
     return self.done
+
   def render(self, size, focus=False):
     """
     Render the progress bar.
@@ -215,7 +259,8 @@ class CustomProgressBar(urwid.ProgressBar):
     (maxcol,) = size
     cf = float(self.current) * maxcol / self.done
     ccol = int(cf)
-    txt = urwid.Text([(self.normal, self.semi[1] * ccol), (self.complete, self.semi[1] * (maxcol - ccol))])
+    txt = urwid.Text([(self.normal, self.semi[1] * ccol),
+                      (self.complete, self.semi[1] * (maxcol - ccol))])
     c = txt.render(size)
 
     return c

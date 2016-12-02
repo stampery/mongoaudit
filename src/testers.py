@@ -8,8 +8,8 @@ class Tester(object):
 
   def run(self, each, end):
     for test in self.tests:
+      each(test)
       res = test.run(self.cred)
-      each(res)
       if test.breaks is not None and res.result is test.breaks:
         break
     end(self)
