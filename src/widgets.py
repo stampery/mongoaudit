@@ -221,14 +221,14 @@ class TestRunner(urwid.WidgetWrap):
       title = urwid.AttrMap(urwid.Text(
           '[' + ['H', 'M', 'L'][test.severity] + '] ' + test.title + ':'), 'text', "text focus")
       result = urwid.AttrMap(urwid.Text(
-          ' ' + ['✘', '✔'][test.result] + ' ' + [test.no, test.yes][test.result]), 'text', "text focus")
+          [(['error', 'ok'][test.result],' ' + ['✘', '✔'][test.result]), ' ' + [test.no, test.yes][test.result]]), 'text', "text focus")
       test_results.contents.extend([title, result])
       total += 1
       if test.breaks == test.result:
         break
 
     total = urwid.Text('Finished running ' + str(total) + ' tests')
-    debug = urwid.Text('debug ' + str(deb.info['version'] if deb.info else deb.info)) # debug
+    debug = urwid.Text('debug ' + str(deb.debug if hasattr(deb, 'debug') else None)) # debug
     total = urwid.Pile([total, debug]) # debug
     #self.app.render(urwid.Text('debug ' + str(deb.info['version']))) #debug
     self.cb(self.title, test_results, total)

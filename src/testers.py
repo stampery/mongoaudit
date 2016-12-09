@@ -5,7 +5,8 @@ class Tester(object):
   def __init__(self, cred, tests):
     self.cred = cred
     self.tests = tests
-    self.info = self.get_info(self.cred)
+    self.conn = self.get_connection()
+    self.info = self.get_info()
 
   def run(self, each, end):
     for test in self.tests:
@@ -15,18 +16,31 @@ class Tester(object):
         break
     #TODO uncomment the next line and remove the test line in order to return only the results
     # end(self.tests)
-    end(self) # deleteme
+    self.conn.close()
+    end(self) # delete me
 
-  def get_info(self, cred):
-    conn = pymongo.MongoClient(cred['nodelist'][0][0], cred['nodelist'][0][1], serverSelectionTimeoutMS=1)
-    info = {}
+  def get_connection(self):
+    fqdn, port = self.cred['nodelist'][0]
+    return pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1)
+
+  def get_info(self):
     try:
-      info = conn.server_info()
+      info = self.conn.server_info()
+      return info
     except pymongo.errors.ConnectionFailure:
       return None
-    finally:
-      conn.close()
-    return info
+
+  def get_db(self):
+    if hasattr(self, 'db'):
+      return self.db
+    try:
+      # raise Exception("mine " + str(self.cred))
+      db = self.conn[self.cred['database']]
+      db.authenticate(self.cred['username'], self.cred['password'])
+      self.db = db
+      return self.db
+    except (pymongo.errors.OperationFailure, ValueError, TypeError):
+      return False
 
 
 class Test(object):
@@ -58,11 +72,6 @@ class Test(object):
 
     return self
 
-  def get_connection(self, cred):
-    if cred['username']:
-      return pymongo.MongoClient("mongodb://%s:%s@%s:%s/%s" % ( cred['username'], cred['password'], cred['nodelist'][0][0], cred['nodelist'][0][1], cred['database']), serverSelectionTimeoutMS=1)
-    return pymongo.MongoClient(cred['nodelist'][0][0], cred['nodelist'][0][1], serverSelectionTimeoutMS=1)
-
 
 import socket
 
@@ -84,18 +93,34 @@ def try_socket(test, forced_port=None):
   else:
     return False
 
-def test_credentials(test):
-  fqdn, port = test.tester.cred['nodelist'][0]
-  conn = pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1)
+def try_authorization(test):
   try:
-    conn.database_names()
-  except:
+    test.tester.conn.database_names()
+  except pymongo.errors.OperationFailure:
     return True
   else:
     return False
-  finally:
-    conn.close()
 
+def try_credentials(test):
+  return bool(test.tester.get_db())
+
+def try_javascript(test):
+  try:
+    db = test.tester.get_db()
+    db.test.find_one({"$where": "function() { return true;}"})
+  except pymongo.errors.OperationFailure:
+    return True
+  else:
+    return False
+
+def try_roles(test):
+  db = test.tester.get_db()
+  roles = db.command("usersInfo", test.tester.cred['username'])['users'][0]['roles']
+  for role in roles:
+    if role['role'] in ['userAdminAnyDatabase', 'dbAdminAnyDatabase' 'dbAdmin', 'dbOwner', 'userAdmin', 'clusterAdmin' ]:
+      test.message = role['role']
+      return False
+  return True
 
 tests = [
   Test(
@@ -103,7 +128,7 @@ tests = [
     0,
     'Domain exists',
     'The FQDN must exist in order to perform the test.',
-    'The provided domain is not a mongo .',
+    'The provided domain name does exist.',
     'The provided domain name does not exist.',
     breaks=False
   ),
@@ -140,16 +165,7 @@ tests = [
     'MongoDB version is newer than 2.4',
     'MongoDB versions prior to 2.4 allow usage of the “db” object inside “$where” clauses in your queries. This is a huge security flaw that allows attackers to inject and run arbitrary code in your database.',
     lambda test: 'You are running MongoDB version ' + str(test.tester.info['version']) + '. Well done.',
-    lambda test: 'You are running MongoDB version ' + str(test.tester.info['version']) + '. Please read this guide on how to upgrade to a newer version.',
-  ),
-  Test(
-    test_credentials,
-    0, #TODO update number
-    'Authentication is enabled',
-    'Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.',
-    'Authentication is enabled. Well done.',
-    'Authentication is disabled. Please read this guide to learn how to disable it.',
-
+    lambda test: 'You are running MongoDB version ' + str(test.tester.info['version']) + '.',
   ),
   Test(
     lambda test: test.tester.info['openssl']['running'] != 'disabled' ,
@@ -157,19 +173,47 @@ tests = [
     'Encryption is enabled',
     'Enable TLS/SSL to encrypt communications between your Mongo client and Mongo server to avoid eavesdropping, tampering and “man in the middle” attacks.',
     'TLS/SSL is enabled. Well done.',
-    'Encryption is disabled. Please read this guide to learn how to enable it.',
+    'Encryption is disabled.',
 
   ),
-  ###  ==== working above this line
-  # Test(
-  #   lambda test: bool(test.tester.info),
-  #   0,
-  #   '',
-  #   'The FQDN must exist in order to perform the test.',
-  #   'The provided domain is not a mongo .',
-  #   'The provided domain name does not exist.',
-  #   breaks=False
-  # ),
+  Test(
+    try_authorization,
+    0, #TODO update number
+    'Authentication is enabled',
+    'Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.',
+    'Authentication is enabled. Well done.',
+    'Authentication is disabled.',
+  ),
+
+  # next tests require credentials
+  Test(
+    lambda test: bool(test.tester.get_db()),
+    0, #TODO update number
+    'Valid credentials',
+    'To continue testing the provided credentials must be valid.',
+    'Credentials are valid',
+    'Invalid credentials',
+    breaks=False
+  ),
+
+  Test(
+    try_javascript,
+    0, #TODO update number
+    'Javascript is not allowed in queries',
+    'Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.',
+    'Usage of Javascript is not allowed inside queries. Well done.',
+    'Usage of Javascript is allowed inside queries.',
+  ),
+
+  Test(
+    try_roles ,
+    0, #TODO update number
+    'Role granted to the provided user only permits CRUD operations',
+    'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
+    'Your user’s only role is “readWrite”. Well done.',
+    lambda test: 'Your user’s roles set has a too high permissions profile ("' + str(test.message) + '"). Please read this guide to learn how to create a readWrite user in MongoDB.',
+  ),
+
   # Test(
   #   lambda test: ,
   #   0, #TODO update number
@@ -177,15 +221,6 @@ tests = [
   #   'Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.',
   #   'MongoDB is hiding its version number. Well done.',
   #   'MongoDB version number is exposed. This could be solved using a reverse proxy.',
-  #
-  # ),
-  # Test(
-  #   lambda test: ,
-  #   0, #TODO update number
-  #   'Javascript is not allowed in queries',
-  #   'Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.',
-  #   'Usage of Javascript is not allowed inside queries. Well done.',
-  #   'Usage of Javascript is allowed inside queries. Please read this guide on how to disable Javascript in MongoDB queries.',
   #
   # ),
   # Test(
@@ -206,15 +241,7 @@ tests = [
   #   'Please read this guide to learn how to disable it.',
   #
   # ),
-  # Test(
-  #   lambda test: ,
-  #   0, #TODO update number
-  #   'Role granted to the provided user only permits CRUD operations',
-  #   'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
-  #   'Your user’s only role is “readWrite”. Well done.',
-  #   'Your user’s roles set has a too high permissions profile ([“dbAdmin”/“dbOwner”/“userAdmin”). Please read this guide to learn how to create a readWrite user in MongoDB.',
-  #
-  # ),
+
   # Test(
   #   lambda test: ,
   #   0, #TODO update number
