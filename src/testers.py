@@ -12,13 +12,15 @@ class Tester(object):
     self.info = self.get_info()
 
   def run(self, each, end):
+    result = []
     for test in self.tests:
       each(test)
       res = test.run(self)
-      if test.breaks == bool(res.result):
+      result.append(res)
+      if test.breaks == bool(res['result']):
         break
     self.conn.close()
-    end(self.tests)
+    end(result)
 
   def get_connection(self):
     fqdn, port = self.cred['nodelist'][0]
@@ -60,7 +62,7 @@ class Test(object):
       if message is a function it should return an str[]
     """
     self.fn, self.severity, self.title, self.caption, self.message, self.breaks = fn, severity, title, caption, message, breaks
-    self.result = None
+
 
   def run(self, tester):
     """
@@ -70,11 +72,12 @@ class Test(object):
       tuple(int, str): test result value and message
     """
     self.tester = tester
-    self.result = self.fn(self)
-    if callable(self.message):
-      self.message = self.message(self)
-    self.message = self.message[self.result]
-    return self
+    result = self.fn(self)
+    message = self.message
+    if callable(message):
+      message = message(self)
+    message = message[result]
+    return {'severity': self.severity, 'title': self.title, 'caption': self.caption, 'message': message ,'result': result }
 
 
 import socket
@@ -190,7 +193,7 @@ def try_roles(test):
 
   if bool(validated['invalid']):
     test.message_data = decode_to_string(validated['invalid'])
-  elif bdecode_to_string(validated['custom']):
+  elif decode_to_string(validated['custom']):
     test.message_data = 'Your user permission roles ' + decode_to_string(validated['valid']) + ' seem to be ok, but we couldn\'t do an exhastive check.'
   else:
     test.message_data = decode_to_string(validated['valid'])
