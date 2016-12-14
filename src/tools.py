@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+def decode_to_string(data):
+  return str([x.encode('UTF8') for x in data])
+
 def validate_uri(uri, error_field, error_message, cb):
   """
   Args:

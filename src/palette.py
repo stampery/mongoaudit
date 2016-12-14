@@ -23,4 +23,5 @@ palette = [
     ('remaining', '', '', '', 'light gray', '#fff'),
     ('yellow_title','','','','black,bold','#fc0'),
     ('ok','','','','light green','#fff'),
+    ('warning','','','','light cyan','#fff'),
 ]
