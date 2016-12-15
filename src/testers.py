@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 import pymongo
 from tools import decode_to_string
+import time
 
 
 class Tester(object):
+  """
+  Tester
+  Args:
+    cred (dict(str: str)): credentials
+    tests (Test[]): tests to run
+  """
 
   def __init__(self, cred, tests):
     self.cred = cred
@@ -12,21 +19,39 @@ class Tester(object):
     self.info = self.get_info()
 
   def run(self, each, end):
+    """
+    Args:
+      each (): function to call before each test runs (used to update and redraw the screen)
+      end (function): function to call when all the tests have finished running
+    """
     result = []
     for test in self.tests:
       each(test)
       res = test.run(self)
       result.append(res)
+      time.sleep(0.5)
       if test.breaks == bool(res['result']):
         break
+
     self.conn.close()
     end(result)
 
   def get_connection(self):
+    """
+    Returns:
+      pymongo.MongoClient: a client that uses as arguments the fqdn and the port of the credentials
+
+    """
     fqdn, port = self.cred['nodelist'][0]
     return pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1)
 
   def get_info(self):
+    """
+    Returns:
+      dict() or None: Get information about the MongoDB server we’re connected to.
+    Note:
+      https://docs.mongodb.com/v3.2/reference/command/buildInfo/#dbcmd.buildInfo
+    """
     try:
       info = self.conn.server_info()
       return info
@@ -34,6 +59,11 @@ class Tester(object):
       return None
 
   def get_db(self):
+    """
+    Authenticates to database
+    Returns:
+      pymongo.database.Database or False: authenticates and returns the database(singleton) or false if authentication fails
+    """
     if hasattr(self, 'db'):
       return self.db
     try:
@@ -63,7 +93,6 @@ class Test(object):
     """
     self.fn, self.severity, self.title, self.caption, self.message, self.breaks = fn, severity, title, caption, message, breaks
 
-
   def run(self, tester):
     """
     Args:
@@ -77,7 +106,7 @@ class Test(object):
     if callable(message):
       message = message(self)
     message = message[result]
-    return {'severity': self.severity, 'title': self.title, 'caption': self.caption, 'message': message ,'result': result }
+    return {'severity': self.severity, 'title': self.title, 'caption': self.caption, 'message': message, 'result': result}
 
 
 import socket
@@ -113,10 +142,16 @@ def try_authorization(test):
 
 
 def try_credentials(test):
+  """
+  verify if the credentials are valid
+  """
   return bool(test.tester.get_db())
 
 
 def try_javascript(test):
+  """
+  Check if javascript is enabled in MongoDB
+  """
   try:
     db = test.tester.get_db()
     db.test.find_one({"$where": "function() { return true;}"})
@@ -125,21 +160,58 @@ def try_javascript(test):
   else:
     return 0
 
+
 def try_roles(test):
+  """
+  Verify that the user roles are not administrative
+  Returns:
+    int: 0 invalid role, 1 valid role, 2 custome role
+  """
+
   def valid_role(role):
+    """
+    Args:
+      role (str): name of a role
+    Returns:
+      Bool: True if the role is not administrative
+    """
     return not role in ['userAdminAnyDatabase', 'dbAdminAnyDatabase' 'dbAdmin', 'dbOwner', 'userAdmin', 'clusterAdmin']
 
-  def default_value():
-    return {'invalid':set([]), 'valid':set([]), 'custom':set([])}
+  def result_default_value():
+    """
+
+    Returns:
+      dict(set()): returns an empty dictionary that contains 3 empty sets where valid, invalid and custom roles are stored
+    """
+    return {'invalid': set([]), 'valid': set([]), 'custom': set([])}
 
   def combine_result(a, b):
-    return {'invalid': a['invalid'].union(b['invalid']),'valid': a['valid'].union(b['valid']), 'custom': a['custom'].union(b['custom'])}
+    """
+    Args:
+      a (dict(set())): result_default_value
+      b (dict(set())): result_default_value
+    Returns:
+      dict(set()): the union of 2 default values
+    """
+    return {'invalid': a['invalid'].union(b['invalid']), 'valid': a['valid'].union(b['valid']), 'custom': a['custom'].union(b['custom'])}
 
-  def reduce_roles(role):
-    return reduce(lambda x,y: combine_result(x,y), map(lambda r: validate_role(r), role))
+  def reduce_roles(roles):
+    """
+    Validate and combine a list of roles
+    Args:
+     roles (list(dict())): roles
+    Returns:
+      result_default_value: with the roles sorted by valid, invalid, custom
+    """
+    return reduce(lambda x, y: combine_result(x, y), map(lambda r: validate_role(r), roles))
 
   def basic_validation(role):
-    validated = default_value()
+    """
+    Basic validation in case validate role fails due to lack of permissions
+    Returns:
+      result_default_value
+    """
+    validated = result_default_value()
     for role in roles['roles']:
       if valid_role(role['role']):
         validated['valid'].add(role['role'])
@@ -148,21 +220,28 @@ def try_roles(test):
     return validated
 
   def validate_role(role):
+    """
+    Recursively process the different roles that a role implements or inherits
+    Args:
+      role (list or dict): value returned by db.command 'usersInfo' or 'rolesInfo'
+    """
     if type(role) is list and bool(role):
       return reduce_roles(role)
     elif type(role) is dict:
       if 'role' in role and 'isBuiltin' in role:
-        result = default_value()
+        result = result_default_value()
         is_valid_role = valid_role(role['role'])
         if is_valid_role and role['isBuiltin']:
           result['valid'].add(role['role'])
         elif is_valid_role:
           result['custom'].add(role['role'])
-        else :
+        else:
           result['invalid'].add(role['role'])
 
-        inherited = validate_role(role['inheritedRoles']) if 'inheritedRoles' in role else default_value()
-        other_roles = validate_role(role['roles']) if 'roles' in role else default_value()
+        inherited = validate_role(
+            role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
+        other_roles = validate_role(
+            role['roles']) if 'roles' in role else result_default_value()
 
         return combine_result(result, combine_result(inherited, other_roles))
 
@@ -175,10 +254,11 @@ def try_roles(test):
 
     elif type(role) is list:
       # empty list
-      return default_value()
+      return result_default_value()
     else:
       raise Exception('Non exhaustive type case')
 
+  # get the database
   db = test.tester.get_db()
   roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
 
@@ -186,21 +266,29 @@ def try_roles(test):
   try:
     validated = validate_role(roles)
   except pymongo.errors.OperationFailure:
-      validated = basic_validation(roles)
-      if bool(validated['valid']):
-        test.message_data = 'You user permissions '+ decode_to_string(validated['valid'])+' didn\'t allow us to do an exhaustive check'
-        return 2
+    # if the users doesn't have permission to run the command 'rolesInfo'
+    validated = basic_validation(roles)
+    if bool(validated['valid']):
+      test.message_data = 'You user permissions ' + \
+          decode_to_string(validated['valid']) + \
+          ' didn\'t allow us to do an exhaustive check'
+      return 2
 
   if bool(validated['invalid']):
     test.message_data = decode_to_string(validated['invalid'])
   elif decode_to_string(validated['custom']):
-    test.message_data = 'Your user permission roles ' + decode_to_string(validated['valid']) + ' seem to be ok, but we couldn\'t do an exhastive check.'
+    test.message_data = 'Your user permission roles ' + decode_to_string(
+        validated['valid']) + ' seem to be ok, but we couldn\'t do an exhastive check.'
   else:
     test.message_data = decode_to_string(validated['valid'])
 
   return 0 if bool(validated['invalid']) else [1, 2][bool(validated['custom'])]
 
+
 def try_dedicated_user(test):
+  """
+  Verify that the role only applies to one database
+  """
   db = test.tester.get_db()
   roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
   user_role_dbs = set()
@@ -211,7 +299,7 @@ def try_dedicated_user(test):
 
   return 1 if len(user_role_dbs) == 1 else 0
 
-tests = [
+basic_tests = [
     Test(
         try_address,
         0,
@@ -274,44 +362,7 @@ tests = [
          'Authentication is enabled. Well done.', ],
     ),
 
-    # next tests require credentials
-    Test(
-        lambda test: bool(test.tester.get_db()),
-        0,  # TODO update number
-        'Valid credentials',
-        'To continue testing the provided credentials must be valid.',
-        ['Invalid credentials',
-         'Credentials are valid', ],
-        breaks=False
-    ),
 
-    Test(
-        try_javascript,
-        0,  # TODO update number
-        'Javascript is not allowed in queries',
-        'Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.',
-        ['Usage of Javascript is allowed inside queries.',
-         'Usage of Javascript is not allowed inside queries. Well done.', ],
-    ),
-
-    Test(
-        try_roles,
-        0,  # TODO update number
-        'Role granted to the provided user only permits CRUD operations',
-        'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
-        lambda test: ['Your user’s roles set has a too high permissions profile ' + str(test.message_data) + '. Please read this guide to learn how to create a readWrite user in MongoDB.',
-                      'Your user’s roles set ' + str(test.message_data) + ' ???. Well done.',
-                      test.message_data],
-    ),
-
-    Test(
-      try_dedicated_user,
-      0, #TODO update number
-      'Run MongoDB with a dedicated user',
-      'Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.',
-      lambda test: ['No unnecessary permissions are given .Well done.',
-      'Your user account has permission for ' + str(test.message_data) + '.'],
-    ),
     # Test(
     #   lambda test: ,
     #   0, #TODO update number
@@ -330,16 +381,46 @@ tests = [
     #   'Please read this guide to learn how to disable it.',
     #
     # ),
+]
 
-    # Test(
-    #   lambda test: ,
-    #   0, #TODO update number
-    #   '',
-    #   '',
-    #   '',
-    #   '',
-    #
-    # ),
+advanced_tests = [
+  # these tests require credentials
+  Test(
+      lambda test: bool(test.tester.get_db()),
+      0,  # TODO update number
+      'Valid credentials',
+      'To continue testing the provided credentials must be valid.',
+      ['Invalid credentials',
+       'Credentials are valid', ],
+      breaks=False
+  ),
 
-    # implement below this line
+  Test(
+      try_javascript,
+      0,  # TODO update number
+      'Javascript is not allowed in queries',
+      'Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.',
+      ['Usage of Javascript is allowed inside queries.',
+       'Usage of Javascript is not allowed inside queries. Well done.', ],
+  ),
+
+  Test(
+      try_roles,
+      0,  # TODO update number
+      'Role granted to the provided user only permits CRUD operations',
+      'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
+      lambda test: ['Your user’s roles set has a too high permissions profile ' + str(test.message_data) + '. Please read this guide to learn how to create a readWrite user in MongoDB.',
+                    'Your user’s roles set ' + \
+                    str(test.message_data) + ' ???. Well done.',
+                    test.message_data],
+  ),
+
+  Test(
+      try_dedicated_user,
+      0,  # TODO update number
+      'Run MongoDB with a dedicated user',
+      'Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.',
+      lambda test: ['No unnecessary permissions are given .Well done.',
+                    'Your user account has permission for ' + str(test.message_data) + '.'],
+  ),
 ]

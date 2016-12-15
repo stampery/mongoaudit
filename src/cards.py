@@ -38,10 +38,10 @@ class Cards(object):
     content = urwid.Pile([txt, div, basic, advanced])
 
     basic_args = {'title': 'Basic', 'label': 'Please provide the URI of your MongoDB server', 'uri_example': 'domain.tld:port',
-                   'uri_error': "Invalid URI", 'tests': tests}
+                   'uri_error': "Invalid URI", 'tests': basic_tests}
     urwid.connect_signal(basic, 'click', lambda _: self.uri_prompt(**basic_args))
     advanced_args = {'title': 'Advanced', 'label': 'Please enter your MongoDB URI', 'uri_example': 'mongodb://user:password@domain.tld:port/database',
-                   'uri_error': "Invalid MongoDB URI", 'tests': tests}
+                   'uri_error': "Invalid MongoDB URI", 'tests': basic_tests + advanced_tests}
     urwid.connect_signal(advanced, 'click',lambda _: self.uri_prompt(**advanced_args))
     card = Card(content)
     self.app.render(card)
@@ -89,7 +89,7 @@ class Cards(object):
     """
     intro = urwid.Text(('text bold',title + ' test results'))
     footer = urwid.AttrMap(TextButton('Back', align='left', on_press=self.choose_test),'button')
-    boxAdapter = urwid.BoxAdapter(urwid.ListBox(list_walker), height=12)
-    pile = urwid.Pile([intro, div, boxAdapter, div, total])
+    lbox = urwid.BoxAdapter(urwid.ListBox(list_walker), height=12)
+    pile = urwid.Pile([intro, div, lbox, div, total])
     card = Card(pile, footer=footer)
     self.app.render(card)

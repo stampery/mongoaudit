@@ -3,6 +3,7 @@
 import urwid
 from testers import *
 
+
 div = urwid.Divider()
 hr = urwid.AttrMap(urwid.Divider('_'), 'hr')
 
@@ -163,6 +164,7 @@ class FormCard(urwid.WidgetWrap):
     self.error_field.set_text(('error', msg))
 
 
+
 class TestRunner(urwid.WidgetWrap):
   """
   Run the test while displaying the progress
@@ -190,9 +192,8 @@ class TestRunner(urwid.WidgetWrap):
     self.progress_bar = CustomProgressBar(
         'progress', 'remaining', 0, self.number_of_test)
     self.text_running = urwid.Text(('text', ''))
-
-    pile = urwid.Pile(
-        [div, running_display, self.progress_bar, div, self.text_running])
+    box = urwid.BoxAdapter(urwid.Filler(self.text_running, valign='top'), 3)
+    pile = urwid.Pile([div, running_display, self.progress_bar, div, box])
     urwid.WidgetWrap.__init__(self, pile)
 
   def each(self, test):
@@ -203,8 +204,9 @@ class TestRunner(urwid.WidgetWrap):
     self.progress_text.set_text(
         ('progress', str(current) + '/' + str(self.number_of_test)))
     self.progress_bar.set_completion(current)
-    self.text_running.set_text('Checking if ' + test.title + "...")
+    self.text_running.set_text('Checking if ' + test.title + '...')
     self.app.loop.draw_screen()
+
 
   def run(self):
     """
@@ -222,8 +224,6 @@ class TestRunner(urwid.WidgetWrap):
           [(['error', 'ok', 'warning'][test['result']],' ' + ['✘', '✔', '?'][test['result']]), (' ' + test['message'])]), 'text', "text focus")
       test_results.contents.extend([title, result])
       total += 1
-      # if test.breaks == test.result:
-      #   break
 
     total = urwid.Text('Finished running ' + str(total) + ' tests')
     self.cb(self.title, test_results, total)
