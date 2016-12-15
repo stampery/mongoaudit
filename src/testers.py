@@ -89,7 +89,7 @@ class Test(object):
 
     Notes:
       message should contain an array with the messages for the different results that the test can return
-      if message is a function it should return an str[]
+      if message is a function it should return a str[]
     """
     self.fn, self.severity, self.title, self.caption, self.message, self.breaks = fn, severity, title, caption, message, breaks
 
@@ -103,10 +103,15 @@ class Test(object):
     self.tester = tester
     result = self.fn(self)
     message = self.message
+    value = result[0] if type(result) is list else result
+    # if the message is a function then the test result must be of the type [int or bool, str]
+    # where result[0] must be a boolean or an int  with the value 0 for false, 1 true or 2 for custom
+    # result[1] must be a string with the data to display in the message
     if callable(message):
-      message = message(self)
-    message = message[result]
-    return {'severity': self.severity, 'title': self.title, 'caption': self.caption, 'message': message, 'result': result}
+      message = message(result[1])
+    message = message[value]
+
+    return {'severity': self.severity, 'title': self.title, 'caption': self.caption, 'message': message, 'result': value}
 
 
 import socket
@@ -117,9 +122,9 @@ def try_address(test):
   try:
     socket.gethostbyname_ex(fqdn)
   except socket.gaierror:
-    return 0
+    return False
   else:
-    return 1
+    return True
 
 
 def try_socket(test, forced_port=None):
@@ -127,18 +132,18 @@ def try_socket(test, forced_port=None):
   try:
     socket.create_connection((fqdn, forced_port or port), 5)
   except:
-    return 1
+    return True
   else:
-    return 0
+    return False
 
 
 def try_authorization(test):
   try:
     test.tester.conn.database_names()
   except pymongo.errors.OperationFailure:
-    return 1
+    return True
   else:
-    return 0
+    return False
 
 
 def try_credentials(test):
@@ -156,16 +161,16 @@ def try_javascript(test):
     db = test.tester.get_db()
     db.test.find_one({"$where": "function() { return true;}"})
   except pymongo.errors.OperationFailure:
-    return 1
+    return True
   else:
-    return 0
+    return False
 
 
 def try_roles(test):
   """
   Verify that the user roles are not administrative
   Returns:
-    int: 0 invalid role, 1 valid role, 2 custome role
+    [bool or 2 , str ]: True Valid role, False invalid role, 2 custome role ,
   """
 
   def valid_role(role):
@@ -263,26 +268,24 @@ def try_roles(test):
   roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
 
   validated = {}
+  message = ""
   try:
     validated = validate_role(roles)
   except pymongo.errors.OperationFailure:
     # if the users doesn't have permission to run the command 'rolesInfo'
     validated = basic_validation(roles)
     if bool(validated['valid']):
-      test.message_data = 'You user permissions ' + \
-          decode_to_string(validated['valid']) + \
-          ' didn\'t allow us to do an exhaustive check'
-      return 2
+      message = 'You user permissions ' + decode_to_string(validated['valid']) + ' didn\'t allow us to do an exhaustive check'
+      return [2 , message ]
 
   if bool(validated['invalid']):
-    test.message_data = decode_to_string(validated['invalid'])
+    message = decode_to_string(validated['invalid'])
   elif decode_to_string(validated['custom']):
-    test.message_data = 'Your user permission roles ' + decode_to_string(
-        validated['valid']) + ' seem to be ok, but we couldn\'t do an exhastive check.'
+    message = 'Your user’s roles set ' + decode_to_string(validated['valid']) + ' seem to be ok, but we couldn\'t do an exhaustive check.'
   else:
-    test.message_data = decode_to_string(validated['valid'])
+    message = decode_to_string(validated['valid'])
 
-  return 0 if bool(validated['invalid']) else [1, 2][bool(validated['custom'])]
+  return [False if bool(validated['invalid']) else [True, 2][bool(validated['custom'])] , message]
 
 
 def try_dedicated_user(test):
@@ -295,9 +298,7 @@ def try_dedicated_user(test):
   for role in roles['roles']:
     user_role_dbs.add(role['db'])
 
-  test.message_data = decode_to_string(user_role_dbs)
-
-  return 1 if len(user_role_dbs) == 1 else 0
+  return [bool(len(user_role_dbs)), decode_to_string(user_role_dbs)]
 
 basic_tests = [
     Test(
@@ -337,12 +338,12 @@ basic_tests = [
         # breaks=True # uncomment after debug
     ),
     Test(
-        lambda test: test.tester.info['version'] > "2.4",
+        lambda test: [test.tester.info['version'] > "2.4", str(test.tester.info['version'])],
         0,  # TODO update number
         'MongoDB version is newer than 2.4',
         'MongoDB versions prior to 2.4 allow usage of the “db” object inside “$where” clauses in your queries. This is a huge security flaw that allows attackers to inject and run arbitrary code in your database.',
-        lambda test: ['You are running MongoDB version ' + str(test.tester.info['version']) + '. Well done.',
-                      'You are running MongoDB version ' + str(test.tester.info['version']) + '.', ],
+        lambda message: ['You are running MongoDB version ' + message + '. Well done.',
+                      'You are running MongoDB version ' + message + '.', ],
     ),
     Test(
         lambda test: test.tester.info['openssl']['running'] != 'disabled',
@@ -358,8 +359,7 @@ basic_tests = [
         0,  # TODO update number
         'Authentication is enabled',
         'Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.',
-        ['Authentication is disabled.',
-         'Authentication is enabled. Well done.', ],
+        ['Authentication is disabled.', 'Authentication is enabled. Well done.', ],
     ),
 
 
@@ -409,10 +409,9 @@ advanced_tests = [
       0,  # TODO update number
       'Role granted to the provided user only permits CRUD operations',
       'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
-      lambda test: ['Your user’s roles set has a too high permissions profile ' + str(test.message_data) + '. Please read this guide to learn how to create a readWrite user in MongoDB.',
-                    'Your user’s roles set ' + \
-                    str(test.message_data) + ' ???. Well done.',
-                    test.message_data],
+      lambda message: ['Your user’s roles set has a too high permissions profile ' + message + '. Please read this guide to learn how to create a readWrite user in MongoDB.',
+                    'Your user’s roles set ' +  message +  ' ???. Well done.',
+                    message],
   ),
 
   Test(
@@ -420,7 +419,7 @@ advanced_tests = [
       0,  # TODO update number
       'Run MongoDB with a dedicated user',
       'Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.',
-      lambda test: ['No unnecessary permissions are given .Well done.',
-                    'Your user account has permission for ' + str(test.message_data) + '.'],
+      lambda message: ['Your user account has permissions for ' + message + ' databases.',
+                       'No unnecessary permissions are given, your user account only has permissions over ' + message + ' database. Well done.',],
   ),
 ]
