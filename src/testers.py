@@ -85,7 +85,7 @@ class Test(object):
       title (str):
       caption (str):
       message (str[] or function): messages to display when the test is completed
-      breaks ():
+      breaks (bool): True if the test suite should stop False otherwise
 
     Notes:
       message should contain an array with the messages for the different results that the test can return
@@ -242,21 +242,17 @@ def try_roles(test):
           result['custom'].add(role['role'])
         else:
           result['invalid'].add(role['role'])
-
         inherited = validate_role(
             role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
         other_roles = validate_role(
             role['roles']) if 'roles' in role else result_default_value()
-
         return combine_result(result, combine_result(inherited, other_roles))
-
       if 'role' in role:
         return validate_role(db.command('rolesInfo', role)['roles'])
       if 'roles' in role and bool(role['roles']):
         return validate_role(role['roles'])
       else:
         raise Exception('Non exhaustive type case')
-
     elif type(role) is list:
       # empty list
       return result_default_value()
@@ -266,7 +262,6 @@ def try_roles(test):
   # get the database
   db = test.tester.get_db()
   roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
-
   validated = {}
   message = ""
   try:
@@ -277,16 +272,13 @@ def try_roles(test):
     if bool(validated['valid']):
       message = 'You user permissions ' + decode_to_string(validated['valid']) + ' didn\'t allow us to do an exhaustive check'
       return [2 , message ]
-
   if bool(validated['invalid']):
     message = decode_to_string(validated['invalid'])
   elif decode_to_string(validated['custom']):
     message = 'Your user’s roles set ' + decode_to_string(validated['valid']) + ' seem to be ok, but we couldn\'t do an exhaustive check.'
   else:
     message = decode_to_string(validated['valid'])
-
   return [False if bool(validated['invalid']) else [True, 2][bool(validated['custom'])] , message]
-
 
 def try_dedicated_user(test):
   """
@@ -338,6 +330,14 @@ basic_tests = [
         # breaks=True # uncomment after debug
     ),
     Test(
+      lambda test: bool(hasattr(test.tester.info, 'version')),
+      0, #TODO update number
+      'MongoDB is not exposing its version number',
+      'Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.',
+      ['MongoDB version number is exposed. This could be solved using a reverse proxy.',
+      'MongoDB is hiding its version number. Well done.'],
+    ),
+    Test(
         lambda test: [test.tester.info['version'] > "2.4", str(test.tester.info['version'])],
         0,  # TODO update number
         'MongoDB version is newer than 2.4',
@@ -361,26 +361,6 @@ basic_tests = [
         'Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.',
         ['Authentication is disabled.', 'Authentication is enabled. Well done.', ],
     ),
-
-
-    # Test(
-    #   lambda test: ,
-    #   0, #TODO update number
-    #   'MongoDB is not exposing its version number',
-    #   'Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.',
-    #   'MongoDB is hiding its version number. Well done.',
-    #   'MongoDB version number is exposed. This could be solved using a reverse proxy.',
-    #
-    # ),
-    # Test(
-    #   lambda test: ,
-    #   0, #TODO update number
-    #   'Role based administration',
-    #   'Using roles helps simplify management of access control by defining a single set of rules that apply to specific classes of entities, rather than having to define them individually for each user.',
-    #   'Roles are ???.Well done.',
-    #   'Please read this guide to learn how to disable it.',
-    #
-    # ),
 ]
 
 advanced_tests = [
