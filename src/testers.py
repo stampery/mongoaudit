@@ -303,13 +303,12 @@ basic_tests = [
         breaks=False
     ),
     Test(
-        lambda test:  test.tester.cred['nodelist'][0][1] != 27017,
+        lambda test:  not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
         2,
         'MongoDB listens on a port different to default one',
         'Using the default MongoDB port makes it too easy for potential attackers to locate and target your server.',
         ['Your server is listening on default port 27017. Please read this guide on how to change the listening port.',
          'Your server is listening in a non-obvious port. Well done.', ],
-        breaks=False
     ),
 
     Test(
@@ -319,6 +318,7 @@ basic_tests = [
         'Best practice is to only listen to incoming connections whose originating IP belongs to the applications or systems that are intended to use the database. This protects your server from denial-of-service attacks and some other vulnerabilities that may be present on other services running on the same device. ',
         ['Your server allows connections from unauthorized hosts. Read this guide on how to block unauthorized hosts.',
          'Your server does not allow connection from unauthorized hosts. Well done.', ],
+        breaks=True
     ),
     Test(
         lambda test: try_socket(test, 28017),
@@ -327,7 +327,6 @@ basic_tests = [
         'HTTP status interface should be disabled in production environments to prevent potential data exposure and vulnerability to attackers.',
         ['HTTP interface is enabled. Please read this guide on how to disable MongoDB HTTP status interface.',
          'HTTP interface is disabled. Well done.', ],
-        # breaks=True # uncomment after debug
     ),
     Test(
       lambda test: bool(hasattr(test.tester.info, 'version')),
