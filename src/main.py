@@ -22,7 +22,8 @@ class App(object):
 
     def setup_view(self):
         placeholder = urwid.SolidFill()
-        self.loop = urwid.MainLoop(placeholder, palette, unhandled_input=self.key_handler)
+        self.loop = urwid.MainLoop(
+            placeholder, palette, unhandled_input=self.key_handler)
         self.loop.widget = urwid.AttrMap(placeholder, 'bg')
         self.loop.widget._command_map['tab'] = 'cursor down'
         self.loop.widget._command_map['shift tab'] = 'cursor up'
@@ -32,10 +33,12 @@ class App(object):
     def render(self, card):
         div = urwid.Divider()
         rdiv = urwid.AttrMap(div, 'header')
-        header = urwid.Filler(urwid.Pile([rdiv, rdiv, rdiv, rdiv, rdiv]), valign='top')
+        header = urwid.Filler(urwid.Pile(
+            [rdiv, rdiv, rdiv, rdiv, rdiv]), valign='top')
         h1 = urwid.Text(('h1', self.name))
-        h2 = urwid.Text(('h2', 'v'+self.version), align='right')
-        hg = urwid.AttrMap(urwid.Padding(urwid.Columns([h1, h2]), left=2, right=2, align='center'), 'header')
+        h2 = urwid.Text(('h2', 'v' + self.version), align='right')
+        hg = urwid.AttrMap(urwid.Padding(urwid.Columns(
+            [h1, h2]), left=2, right=2, align='center'), 'header')
         body = urwid.Pile([hg, rdiv, card, div])
         w = urwid.Overlay(body, header, 'center', 76, 'top', 'pack', top=1)
         self.loop.widget.original_widget = w
@@ -49,6 +52,7 @@ class App(object):
 
     def main(self):
         self.loop.run()
+
 
 def main():
     App().main()
