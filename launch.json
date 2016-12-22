@@ -1,0 +1,16 @@
+{
+    "name": "Python",
+    "type": "python",
+    "pythonPath":"${config.python.pythonPath}", 
+    "request": "launch",
+    "stopOnEntry": true,
+    "console": "integratedTerminal",
+    "program": "${workspaceRoot}/src/main.py",
+    "cwd": "${workspaceRoot}",
+    "debugOptions": [
+        "WaitOnAbnormalExit",
+        "WaitOnNormalExit",
+        "RedirectOutput"
+    ],
+    "env": {"name":"value"}
+}

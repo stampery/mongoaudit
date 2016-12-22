@@ -4,6 +4,7 @@ from picmagic import read as picRead
 from tools import validate_uri
 from widgets import *
 from testers import *
+from browser import DirectoryBrowser
 
 
 class Cards(object):
@@ -22,6 +23,12 @@ class Cards(object):
         button = urwid.AttrMap(
             TextButton(
                 'Start', on_press=self.choose_test), 'button')
+
+        #debug
+        debug = urwid.AttrMap(
+            TextButton(
+                'Debug', align='left', on_press=self.export_menu), 'button')
+        button = urwid.Columns([debug, button]) #debug
         card = Card(text, header=pic, footer=button)
         self.app.render(card)
 
@@ -84,7 +91,6 @@ class Cards(object):
             title, cred, tests, self.app, self.display_overview)
         # the name of the bmp is composed with the title
         pic = picRead('rsc/check_' + title.lower() + '.bmp', align='right')
-
         footer = urwid.AttrMap(TextButton(
             'Cancel', align='left', on_press=self.choose_test), 'button')
         card = Card(test_runner, header=pic, footer=footer)
@@ -118,15 +124,15 @@ class Cards(object):
                                ('info', str(overview[3])), ('text', ' ommited')])
         footer = urwid.AttrMap(TextButton(
             '< Back to main menu', align='left', on_press=self.choose_test), 'button')
-
-        results_button = LineButton([('text', 'View detailed results')])
-        email_button = LineButton([('text', 'Email')])
-
+        results_button = LineButton([('text', 'View detailed results')], vertical_padding=False)
+        email_button = LineButton([('text', 'Email')], vertical_padding=False)
+        export_button = LineButton([('text', 'Export')], vertical_padding=False)
         urwid.connect_signal(
             results_button, 'click', lambda _: self.display_test_result(result))
+        urwid.connect_signal(export_button, 'click', lambda _: self.export_menu(result)  )
 
         card = Card(urwid.Pile([header, div, subtitle, div, overview, div,
-                                results_button, email_button]), footer=footer)
+                                results_button, export_button, email_button]), footer=footer)
         self.app.render(card)
 
     def display_test_result(self, result):
@@ -136,17 +142,21 @@ class Cards(object):
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
-    def display_results(self, title, list_walker, total):
-        """
-        Args:
-          title (str): title used when displaying the results
-          list_walker (urwid.SimpleListWalker): content to display in a ListBox
-          total (int) : number of test finished
-        """
-        intro = urwid.Text(('text bold', title + ' test results'))
-        footer = urwid.AttrMap(TextButton(
-            'Back', align='left', on_press=self.choose_test), 'button')
-        lbox = urwid.BoxAdapter(urwid.ListBox(list_walker), height=12)
-        pile = urwid.Pile([intro, div, lbox, div, total, div])
-        card = Card(pile, footer=footer)
+    def export_menu(self, result):
+        def get_file_path(path):
+            input_field.set_edit_text(path)
+            input_field.focus_position(1)
+
+        footer = urwid.AttrMap(TextButton('< Back to result overview', align='left', on_press=(
+            lambda _: self.display_overview(result))), 'button')
+
+        title = urwid.Text(('text bold','Export result'))
+        input_field = InputField('Name:') # TODO by default should have the date + fqdn
+        browser = DirectoryBrowser(get_file_path)
+        card = Card(urwid.Pile([title, input_field, browser]), footer=footer)
         self.app.render(card)
+
+
+    def export_result(self, result):
+        import markdown
+

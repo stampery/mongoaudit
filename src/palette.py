@@ -27,4 +27,9 @@ palette = [
     ('warning', '', '', '', '#f40', '#fff'),
     ('info', '', '', '', 'light cyan', '#fff'),
     ('header red', '', '', '', 'light red,bold', '#fff'),
+    ('body','', '', '', '#333', 'g93'),
+    ('browser focus', '', '', 'standout', '#333', 'light gray'),
+    ('dirmark', '', '','','light red,bold','g93'),
+    
+    
 ]
