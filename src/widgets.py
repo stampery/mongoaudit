@@ -100,10 +100,11 @@ class InputField(urwid.WidgetWrap):
 
     def __init__(self, label="", label_width=15, next=False):
         self.label, self.next = label, next
-        self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
+        self.edit = urwid.Edit(wrap='clip')
+        edit = urwid.Padding(self.edit , left=1, right=1)
         label = urwid.LineBox(urwid.Text(label), tlcorner=' ', tline=' ', lline=' ',
                               trcorner=' ', blcorner=' ', rline=' ', brcorner=' ', bline=' ')
-        lbox = urwid.AttrMap(urwid.LineBox(self.edit, tlcorner=' ', tline=' ', lline=' ',
+        lbox = urwid.AttrMap(urwid.LineBox(edit, tlcorner=' ', tline=' ', lline=' ',
                                            trcorner=' ', blcorner=' ', rline=' ', brcorner=' '), 'input', 'input focus')
         cols = urwid.Columns([(label_width, label), lbox])
         urwid.WidgetWrap.__init__(self, cols)
@@ -113,7 +114,7 @@ class InputField(urwid.WidgetWrap):
         Returns:
           str: value of the input field
         """
-        return self.edit.original_widget.get_text()[0]
+        return self.edit.get_text()[0]
 
     def get_label(self):
         """
@@ -127,6 +128,17 @@ class InputField(urwid.WidgetWrap):
             self.next()
         else:
             return self.__super.keypress(size, key)
+
+    def set_edit_text(self, text):
+        self.edit.set_edit_text(text)
+
+    def focus_position(self, position):
+        self.edit.edit_pos = None
+        
+        # if len(text) > 53:
+        #     self.edit.set_align_mode('right')
+        # else:
+        #     self.edit.set_align_mode('left')
 
 
 class FormCard(urwid.WidgetWrap):

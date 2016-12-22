@@ -29,7 +29,7 @@ class Tester(object):
             each(test)
             res = test.run(self)
             result.append(res)
-            time.sleep(0.5)
+            # time.sleep(0.5) TODO uncomment after debug
             if test.breaks == bool(res['result']):
                 break
 
