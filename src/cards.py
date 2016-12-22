@@ -120,78 +120,20 @@ class Cards(object):
             '< Back to main menu', align='left', on_press=self.choose_test), 'button')
 
         results_button = LineButton([('text', 'View detailed results')])
-        export_button = LineButton([('text', 'Export results to filesystem')])
-        email_button = LineButton([('text', 'View detailed results')])
+        email_button = LineButton([('text', 'Email')])
 
         urwid.connect_signal(
             results_button, 'click', lambda _: self.display_test_result(result))
 
         card = Card(urwid.Pile([header, div, subtitle, div, overview, div,
-                                results_button, export_button, email_button]), footer=footer)
+                                results_button, email_button]), footer=footer)
         self.app.render(card)
 
     def display_test_result(self, result):
-        def test_display(test, options):
-            div_option = (div, options('weight', 1))
-            title = (urwid.Text(
-                ('text bold', test['title'])), options('weight', 1))
-            caption = (urwid.Text(
-                ('text', test['caption'])), options('weight', 1))
-            severity = (urwid.Text(
-                ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])), options('weight', 1))
-            result = (urwid.Text(
-                [('text', 'Result: '), (['error', 'ok', 'warning', 'info'][test['result']],
-                 ' ' + ['✘', '✔', '?', '*'][test['result']]),
-                 ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
-                options('weight', 1))
-            message = (urwid.Text(
-                ('text', test['message'])), options('weight', 1))
-            temp = (urwid.Text(str(test)), options('weight', 1))
-            return [div_option, title, div_option, caption, div_option, severity, result, div_option, message]
-
-        def get_top_text():
-            return 'header red', 'Test ' + str(self.currently_displayed) + '/' + str(total)
-
-        def get_top_row(current, options):
-            next_btn = urwid.AttrMap(TextButton('>', on_press=(
-                lambda _: update_view(self, 'next'))), 'button')
-            prev_btn = urwid.AttrMap(TextButton('<', on_press=(
-                lambda _: update_view(self, 'prev'))), 'button')
-            top_row = []
-            focus = None
-            if(current > 1):
-                top_row.append((prev_btn, options('weight', 0)))
-            top_row.append((urwid.Padding(urwid.Text(get_top_text()),
-                                          left=25), options('weight', 1)))
-            if(current < len(result) - 1):
-                top_row.append((next_btn, options('weight', 0.2)))
-            return top_row
-
-        def update_view(self, btn):
-            if(btn is 'prev'):
-                self.currently_displayed -= 1
-            elif(btn is 'next'):
-                self.currently_displayed += 1
-            self.top_columns.contents = get_top_row(
-                self.currently_displayed, self.top_columns.options)
-            if(self.currently_displayed > 1):
-                self.top_columns.focus_position = 2 if btn is 'next' and self.currently_displayed < len(
-                    result) - 1 else 0
-            else:
-                self.top_columns.focus_position = 1
-
-            self.test_result.contents = test_display(
-                result[self.currently_displayed - 1], self.test_result.options)
-
-        self.currently_displayed = 0
-        total = len(result)
-        self.top_columns = urwid.Columns([])
-        self.test_result = urwid.Pile([])
-        update_view(self, 'next')
-        top = urwid.Padding(self.top_columns, left=3, right=3)
+        display_test = DisplayTest(result)
         footer = urwid.AttrMap(TextButton('< Back to result overview', align='left', on_press=(
             lambda _: self.display_overview(result))), 'button')
-        card = Card(urwid.Pile([top, self.test_result]), footer=footer)
+        card = Card(display_test, footer=footer)
         self.app.render(card)
 
     def display_results(self, title, list_walker, total):

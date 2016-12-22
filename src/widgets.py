@@ -64,11 +64,14 @@ class LineButton(ObjectButton):
       text ((palette_class, str)[]): array of string tuples
     """
 
-    def __init__(self, text):
+    def __init__(self, text,vertical_padding=True):
         content = urwid.Pile([urwid.SelectableIcon(
             s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
-        lbox = urwid.LineBox(urwid.Pile([urwid.Padding(
-            content, left=3, right=3)]))
+        
+        content = [urwid.Padding(content, left=3, right=3)]
+        if vertical_padding:
+            content = [div] + content + [div]
+        lbox = urwid.LineBox(urwid.Pile(content))
         self.__super.__init__(urwid.AttrMap(urwid.Pile(
             [lbox]), 'image button', 'image button focus'))
 
@@ -272,3 +275,85 @@ class CustomProgressBar(urwid.ProgressBar):
         c = txt.render(size)
 
         return c
+
+class DisplayTest(urwid.WidgetWrap):
+    """
+    Display test result
+    """
+
+    currently_displayed = 0
+    top_columns = urwid.Columns([])
+    test_result = urwid.Pile([])
+
+    def __init__(self, result):
+        self.result = result
+        self.total = len(result)
+        self.update_view('next')
+        pile = urwid.Pile([urwid.Padding(self.top_columns, left=3, right=3), 
+                          self.test_result])
+        urwid.WidgetWrap.__init__(self, pile)
+
+    def test_display(self, test, options):
+        """
+        Compose the element that will display the test
+        Returns:
+            [urwid.Widget]: 
+        """
+        div_option = (div, options('weight', 1))
+        title = (urwid.Text(
+            ('text bold', test['title'])), options('weight', 1))
+        caption = (urwid.Text(
+            ('text', test['caption'])), options('weight', 1))
+        severity = (urwid.Text(
+            ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])), 
+            options('weight', 1))
+        result = (urwid.Text(
+            [('text', 'Result: '), (['error', 'ok', 'warning', 'info'][test['result']],
+                ' ' + ['✘', '✔', '?', '*'][test['result']]),
+                ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
+            options('weight', 1))
+        message = (urwid.Text(
+            ('text', test['message'])), options('weight', 1))
+        return [div_option, title, div_option, caption, div_option, severity, 
+            result, div_option, message]
+
+    def get_top_text(self):
+        """
+        Returns:
+            tuple(str,str): palette , Test n/total
+        """
+        return 'header red', 'Test ' + str(self.currently_displayed) + '/' + str(self.total)
+
+    def get_top_row(self, current, options):
+        """
+
+        """
+        next_btn = urwid.AttrMap(TextButton('>', on_press=(
+            lambda _: self.update_view('next'))), 'button')
+        prev_btn = urwid.AttrMap(TextButton('<', on_press=(
+            lambda _: self.update_view('prev'))), 'button')
+        top_row = []
+        focus = None
+        if(current > 1):
+            top_row.append((prev_btn, options('weight', 0)))
+        top_row.append((urwid.Padding(urwid.Text(self.get_top_text()),
+                                        left=25), options('weight', 1)))
+        if(current < len(self.result) - 1):
+            top_row.append((next_btn, options('weight', 0.2)))
+        return top_row
+
+    def update_view(self, btn):
+        if(btn is 'prev'):
+            self.currently_displayed -= 1
+        elif(btn is 'next'):
+            self.currently_displayed += 1
+        self.top_columns.contents = self.get_top_row(
+            self.currently_displayed, self.top_columns.options)
+        if(self.currently_displayed > 1):
+            self.top_columns.focus_position = 2 if btn is 'next' and self.currently_displayed < self.total - 1 else 0
+        else:
+            self.top_columns.focus_position = 1
+        self.test_result.contents = self.test_display(
+            self.result[self.currently_displayed - 1], self.test_result.options)
+
+        
