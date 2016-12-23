@@ -22,6 +22,12 @@ class Cards(object):
         button = urwid.AttrMap(
             TextButton(
                 'Start', on_press=self.choose_test), 'button')
+        
+        #debug
+        # debug = urwid.AttrMap(
+        #     TextButton(
+        #         'Debug', align='left', on_press=self.email_prompt), 'button')
+        # button = urwid.Columns([debug, button]) #debug
         card = Card(text, header=pic, footer=button)
         self.app.render(card)
 
@@ -124,6 +130,8 @@ class Cards(object):
 
         urwid.connect_signal(
             results_button, 'click', lambda _: self.display_test_result(result))
+        urwid.connect_signal(
+            email_button, 'click', lambda _: self.email_prompt(result))
 
         card = Card(urwid.Pile([header, div, subtitle, div, overview, div,
                                 results_button, email_button]), footer=footer)
@@ -136,17 +144,9 @@ class Cards(object):
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
-    def display_results(self, title, list_walker, total):
-        """
-        Args:
-          title (str): title used when displaying the results
-          list_walker (urwid.SimpleListWalker): content to display in a ListBox
-          total (int) : number of test finished
-        """
-        intro = urwid.Text(('text bold', title + ' test results'))
-        footer = urwid.AttrMap(TextButton(
-            'Back', align='left', on_press=self.choose_test), 'button')
-        lbox = urwid.BoxAdapter(urwid.ListBox(list_walker), height=12)
-        pile = urwid.Pile([intro, div, lbox, div, total, div])
-        card = Card(pile, footer=footer)
+    def email_prompt(self, result):
+        header = urwid.Text(('header red', 'Email result'))
+        subtitle = urwid.Text(('text','The quick brown fox jumps over the lazy dog'))
+        content = urwid.Pile([header, div, subtitle])
+        card = FormCard(content, ['Email'], 'Send', None, lambda _: self.display_overview(result))
         self.app.render(card)
