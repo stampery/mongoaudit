@@ -91,7 +91,6 @@ class ErrorWidget(urwid.TreeWidget):
 class DirectoryWidget(FlagFileWidget):
     """Widget for a directory."""
     def __init__(self, node):
-        # self.on_click = node.on_click
         self.__super.__init__(node)
         self.path = node.get_value()
         self.expanded = starts_expanded(self.path)
@@ -151,23 +150,19 @@ class DirectoryNode(urwid.ParentNode):
     def load_parent(self):
         parentname, myname = os.path.split(self.get_value())
         parent = DirectoryNode(parentname, on_click=self.on_click)
+
         parent.set_child_node(self.get_key(), self)
         return parent
 
     def load_child_keys(self):
         dirs = []
-        leafs = []
         try:
+
             path = self.get_value()
-            # separate dirs and leaf dirs
             for a in os.listdir(path):
-                key_path = os.path.join(path,a)
-                if os.path.isdir(key_path):
-                    temp = os.listdir(key_path)
-                    if(any(map(lambda key: os.path.isdir(os.path.join(key_path, key)), os.listdir(key_path)))):
-                        dirs.append(a)
-                    else:
-                        leafs.append(a)
+                if os.path.isdir(os.path.join(path,a)):
+                    dirs.append(a)
+
                 
         except OSError, e:
             depth = self.get_depth() + 1
@@ -175,19 +170,15 @@ class DirectoryNode(urwid.ParentNode):
                                              depth=depth)
             return [None]
 
-        # sort dirs and leaf dris
+        # sort dirs
         dirs.sort(key=alphabetize)
-        leafs.sort(key=alphabetize)
-        # store where the first file starts
-        self.dir_count = len(dirs)
-        # collect dirs and files together again
-        keys = dirs + leafs
-        if len(keys) == 0:
+ 
+        if len(dirs) == 0:
             depth=self.get_depth() + 1
             self._children[None] = EmptyNode(self, parent=self, key=None,
                                              depth=depth)
-            keys = [None]
-        return keys
+            dirs = [None]
+        return dirs
 
     def load_child_node(self, key):
         """Return either a FileNode or DirectoryNode"""
@@ -196,10 +187,14 @@ class DirectoryNode(urwid.ParentNode):
             return EmptyNode(None)
         else:
             path = os.path.join(self.get_value(), key)
-            if index < self.dir_count:
-                return DirectoryNode(path, parent=self, on_click=self.on_click)
-            else:
+            try:
+                if (any(map(lambda key: os.path.isdir(os.path.join(path, key)), os.listdir(path)))):
+                    return DirectoryNode(path, parent=self, on_click=self.on_click)
+                else:
+                    return FileNode(path, parent=self, on_click=self.on_click)
+            except OSError, e:
                 return FileNode(path, parent=self, on_click=self.on_click)
+
 
     def load_widget(self):
         return DirectoryWidget(self)
