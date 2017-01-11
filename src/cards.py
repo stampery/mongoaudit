@@ -4,6 +4,7 @@ from picmagic import read as picRead
 from tools import validate_uri
 from widgets import *
 from testers import *
+from functools import reduce
 
 
 class Cards(object):
@@ -14,16 +15,15 @@ class Cards(object):
 
     def welcome(self):
         pic = picRead('rsc/welcome.bmp', align='right')
-        text = urwid.Text((
-            'text',
-            '%s is a CLI tool for auditing MongoDB servers, detecting poor security \
-            settings and performing automated penetration testing.'
-            % self.app.name))
+        text = urwid.Text(
+            ('text',
+             '%s is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.' %
+             self.app.name))
         button = urwid.AttrMap(
             TextButton(
                 'Start', on_press=self.choose_test), 'button')
-        
-        #debug
+
+        # debug
         # debug = urwid.AttrMap(
         #     TextButton(
         #         'Debug', align='left', on_press=self.email_prompt), 'button')
@@ -32,10 +32,11 @@ class Cards(object):
         self.app.render(card)
 
     def choose_test(self, button=None):
-        txt = urwid.Text([('text bold', self.app.name),
-                          ' provides two distinct types of test suites covering  \
-                          security in different depth. Please choose which tests \
-                          you want to run:'])
+        txt = urwid.Text(
+            [
+                ('text bold',
+                 self.app.name),
+                ' provides two distinct types of test suites covering security in different depth. Please choose which tests you want to run:'])
 
         basic = ImageButton(
             picRead('rsc/%s' % 'bars_min.bmp'),
@@ -47,13 +48,20 @@ class Cards(object):
              ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
         content = urwid.Pile([txt, div, basic, advanced])
 
-        basic_args = {'title': 'Basic', 'label': 'Please provide the URI of your MongoDB server', 'uri_example': 'domain.tld:port',
-                      'uri_error': "Invalid URI", 'tests': basic_tests}
+        basic_args = {
+            'title': 'Basic',
+            'label': 'Please provide the URI of your MongoDB server',
+            'uri_example': 'domain.tld:port',
+            'uri_error': "Invalid URI",
+            'tests': basic_tests}
         urwid.connect_signal(
             basic, 'click', lambda _: self.uri_prompt(**basic_args))
-        advanced_args = {'title': 'Advanced', 'label': 'Please enter your MongoDB URI',
-                         'uri_example': 'mongodb://user:password@domain.tld:port/database',
-                         'uri_error': "Invalid MongoDB URI", 'tests': basic_tests + advanced_tests}
+        advanced_args = {
+            'title': 'Advanced',
+            'label': 'Please enter your MongoDB URI',
+            'uri_example': 'mongodb://user:password@domain.tld:port/database',
+            'uri_error': "Invalid MongoDB URI",
+            'tests': basic_tests + advanced_tests}
         urwid.connect_signal(
             advanced, 'click', lambda _: self.uri_prompt(**advanced_args))
         card = Card(content)
@@ -74,7 +82,8 @@ class Cards(object):
             urwid.Text([label + ' (', ('text italic', uri_example), ')'])
         ])
         validate = lambda form, uri: validate_uri(
-            uri, form, uri_error, lambda cred: self.run_test(cred, title, tests))
+            uri, form, uri_error, lambda cred: self.run_test(
+                cred, title, tests))
         form = FormCard(intro, ['URI'], 'Run ' + title.lower() +
                         ' test', validate, back=self.choose_test)
         self.app.render(form)
@@ -105,7 +114,8 @@ class Cards(object):
         def reduce_result(res, values):
             if not bool(values):
                 return []
-            return reduce_result(res % values[-1], values[:-1]) + [res / values[-1]]
+            return reduce_result(res %
+                                 values[-1], values[:-1]) + [res / values[-1]]
 
         base = len(result) + 1
         # range 4 because the possible values for result  are [False, True,
@@ -116,20 +126,27 @@ class Cards(object):
         subtitle = urwid.Text(
             ('text', 'Finished running ' + str(len(result)) + " tests."))
         overview = reduce_result(total, values)
-        overview = urwid.Text([('ok', str(overview[1])), ('text', ' passed   '),
-                               ('error', str(overview[0])
-                                ), ('text', ' failed   '),
-                               ('warning', str(overview[2])
-                                ), ('text', ' warning   '),
-                               ('info', str(overview[3])), ('text', ' ommited')])
-        footer = urwid.AttrMap(TextButton(
-            '< Back to main menu', align='left', on_press=self.choose_test), 'button')
+        overview = urwid.Text(
+            [
+                ('ok', str(
+                    overview[1])), ('text', ' passed   '), ('error', str(
+                        overview[0])), ('text', ' failed   '), ('warning', str(
+                            overview[2])), ('text', ' warning   '), ('info', str(
+                                overview[3])), ('text', ' ommited')])
+        footer = urwid.AttrMap(
+            TextButton(
+                '< Back to main menu',
+                align='left',
+                on_press=self.choose_test),
+            'button')
 
         results_button = LineButton([('text', 'View detailed results')])
         email_button = LineButton([('text', 'Email')])
 
         urwid.connect_signal(
-            results_button, 'click', lambda _: self.display_test_result(result))
+            results_button,
+            'click',
+            lambda _: self.display_test_result(result))
         urwid.connect_signal(
             email_button, 'click', lambda _: self.email_prompt(result))
 
@@ -139,14 +156,25 @@ class Cards(object):
 
     def display_test_result(self, result):
         display_test = DisplayTest(result)
-        footer = urwid.AttrMap(TextButton('< Back to result overview', align='left', on_press=(
-            lambda _: self.display_overview(result))), 'button')
+        footer = urwid.AttrMap(
+            TextButton(
+                '< Back to result overview',
+                align='left',
+                on_press=(
+                    lambda _: self.display_overview(result))),
+            'button')
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
     def email_prompt(self, result):
         header = urwid.Text(('header red', 'Email result'))
-        subtitle = urwid.Text(('text','The quick brown fox jumps over the lazy dog'))
+        subtitle = urwid.Text(
+            ('text', 'The quick brown fox jumps over the lazy dog'))
         content = urwid.Pile([header, div, subtitle])
-        card = FormCard(content, ['Email'], 'Send', None, lambda _: self.display_overview(result))
+        card = FormCard(
+            content,
+            ['Email'],
+            'Send',
+            None,
+            lambda _: self.display_overview(result))
         self.app.render(card)

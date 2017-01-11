@@ -338,7 +338,7 @@ class DisplayTest(urwid.WidgetWrap):
             top_row.append((prev_btn, options('weight', 0)))
         top_row.append((urwid.Padding(urwid.Text(self.get_top_text()),
                                         left=25), options('weight', 1)))
-        if(current < len(self.result) - 1):
+        if(current < len(self.result)):
             top_row.append((next_btn, options('weight', 0.2)))
         return top_row
 
@@ -350,7 +350,7 @@ class DisplayTest(urwid.WidgetWrap):
         self.top_columns.contents = self.get_top_row(
             self.currently_displayed, self.top_columns.options)
         if(self.currently_displayed > 1):
-            self.top_columns.focus_position = 2 if btn is 'next' and self.currently_displayed < self.total - 1 else 0
+            self.top_columns.focus_position = 2 if btn is 'next' and self.currently_displayed < self.total else 0
         else:
             self.top_columns.focus_position = 1
         self.test_result.contents = self.test_display(
