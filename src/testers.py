@@ -2,6 +2,7 @@
 import pymongo
 from tools import decode_to_string
 import time
+from functools import reduce
 
 
 class Tester(object):
@@ -34,10 +35,14 @@ class Tester(object):
                 break
 
         if len(result) < len(self.tests):
-            result = result + \
-                map(lambda x: {'severity': x.severity, 'title': x.title,
-                               'caption': x.caption, 'message': 'This test was omitted',
-                               'result': 3}, self.tests[:len(self.tests) - len(result)])
+            result = result + map(
+                lambda x: {
+                    'severity': x.severity,
+                    'title': x.title,
+                    'caption': x.caption,
+                    'message': 'This test was omitted',
+                    'result': 3},
+                self.tests[len(result) : len(self.tests)])
 
         self.conn.close()
         end(result)
@@ -109,7 +114,7 @@ class Test(object):
         self.tester = tester
         result = self.fn(self)
         message = self.message
-        value = result[0] if type(result) is list else result
+        value = result[0] if isinstance(result, list) else result
         # if the message is a function then the test result must be of the type [int or bool, str]
         # where result[0] must be a boolean or an int  with the value 0 for false, 1 true or 2 for custom
         # result[1] must be a string with the data to display in the message
@@ -187,7 +192,13 @@ def try_roles(test):
         Returns:
           Bool: True if the role is not administrative
         """
-        return not role in ['userAdminAnyDatabase', 'dbAdminAnyDatabase' 'dbAdmin', 'dbOwner', 'userAdmin', 'clusterAdmin']
+        return not role in [
+            'userAdminAnyDatabase',
+            'dbAdminAnyDatabase'
+            'dbAdmin',
+            'dbOwner',
+            'userAdmin',
+            'clusterAdmin']
 
     def result_default_value():
         """
@@ -205,7 +216,11 @@ def try_roles(test):
         Returns:
           dict(set()): the union of 2 default values
         """
-        return {'invalid': a['invalid'].union(b['invalid']), 'valid': a['valid'].union(b['valid']), 'custom': a['custom'].union(b['custom'])}
+        return {
+            'invalid': a['invalid'].union(
+                b['invalid']), 'valid': a['valid'].union(
+                b['valid']), 'custom': a['custom'].union(
+                b['custom'])}
 
     def reduce_roles(roles):
         """
@@ -215,7 +230,10 @@ def try_roles(test):
         Returns:
           result_default_value: with the roles sorted by valid, invalid, custom
         """
-        return reduce(lambda x, y: combine_result(x, y), map(lambda r: validate_role(r), roles))
+        return reduce(
+            lambda x, y: combine_result(
+                x, y), map(
+                lambda r: validate_role(r), roles))
 
     def basic_validation(role):
         """
@@ -237,9 +255,9 @@ def try_roles(test):
         Args:
           role (list or dict): value returned by db.command 'usersInfo' or 'rolesInfo'
         """
-        if type(role) is list and bool(role):
+        if isinstance(role, list) and bool(role):
             return reduce_roles(role)
-        elif type(role) is dict:
+        elif isinstance(role, dict):
             if 'role' in role and 'isBuiltin' in role:
                 result = result_default_value()
                 is_valid_role = valid_role(role['role'])
@@ -253,14 +271,16 @@ def try_roles(test):
                     role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
                 other_roles = validate_role(
                     role['roles']) if 'roles' in role else result_default_value()
-                return combine_result(result, combine_result(inherited, other_roles))
+                return combine_result(
+                    result, combine_result(
+                        inherited, other_roles))
             if 'role' in role:
                 return validate_role(db.command('rolesInfo', role)['roles'])
             if 'roles' in role and bool(role['roles']):
                 return validate_role(role['roles'])
             else:
                 raise Exception('Non exhaustive type case')
-        elif type(role) is list:
+        elif isinstance(role, list):
             # empty list
             return result_default_value()
         else:
@@ -288,7 +308,12 @@ def try_roles(test):
             validated['valid']) + ' seem to be ok, but we couldn\'t do an exhaustive check.'
     else:
         message = decode_to_string(validated['valid'])
-    return [False if bool(validated['invalid']) else [True, 2][bool(validated['custom'])], message]
+    return [
+        False if bool(
+            validated['invalid']) else [
+            True, 2][
+                bool(
+                    validated['custom'])], message]
 
 
 def try_dedicated_user(test):

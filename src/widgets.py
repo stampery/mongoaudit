@@ -64,10 +64,10 @@ class LineButton(ObjectButton):
       text ((palette_class, str)[]): array of string tuples
     """
 
-    def __init__(self, text,vertical_padding=True):
+    def __init__(self, text, vertical_padding=True):
         content = urwid.Pile([urwid.SelectableIcon(
             s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
-        
+
         content = [urwid.Padding(content, left=3, right=3)]
         if vertical_padding:
             content = [div] + content + [div]
@@ -104,10 +104,28 @@ class InputField(urwid.WidgetWrap):
     def __init__(self, label="", label_width=15, next=False):
         self.label, self.next = label, next
         self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
-        label = urwid.LineBox(urwid.Text(label), tlcorner=' ', tline=' ', lline=' ',
-                              trcorner=' ', blcorner=' ', rline=' ', brcorner=' ', bline=' ')
-        lbox = urwid.AttrMap(urwid.LineBox(self.edit, tlcorner=' ', tline=' ', lline=' ',
-                                           trcorner=' ', blcorner=' ', rline=' ', brcorner=' '), 'input', 'input focus')
+        label = urwid.LineBox(
+            urwid.Text(label),
+            tlcorner=' ',
+            tline=' ',
+            lline=' ',
+            trcorner=' ',
+            blcorner=' ',
+            rline=' ',
+            brcorner=' ',
+            bline=' ')
+        lbox = urwid.AttrMap(
+            urwid.LineBox(
+                self.edit,
+                tlcorner=' ',
+                tline=' ',
+                lline=' ',
+                trcorner=' ',
+                blcorner=' ',
+                rline=' ',
+                brcorner=' '),
+            'input',
+            'input focus')
         cols = urwid.Columns([(label_width, label), lbox])
         urwid.WidgetWrap.__init__(self, cols)
 
@@ -276,6 +294,7 @@ class CustomProgressBar(urwid.ProgressBar):
 
         return c
 
+
 class DisplayTest(urwid.WidgetWrap):
     """
     Display test result
@@ -289,15 +308,15 @@ class DisplayTest(urwid.WidgetWrap):
         self.result = result
         self.total = len(result)
         self.update_view('next')
-        pile = urwid.Pile([urwid.Padding(self.top_columns, left=3, right=3), 
-                          self.test_result])
+        pile = urwid.Pile([urwid.Padding(self.top_columns, left=3, right=3),
+                           self.test_result])
         urwid.WidgetWrap.__init__(self, pile)
 
     def test_display(self, test, options):
         """
         Compose the element that will display the test
         Returns:
-            [urwid.Widget]: 
+            [urwid.Widget]:
         """
         div_option = (div, options('weight', 1))
         title = (urwid.Text(
@@ -305,24 +324,25 @@ class DisplayTest(urwid.WidgetWrap):
         caption = (urwid.Text(
             ('text', test['caption'])), options('weight', 1))
         severity = (urwid.Text(
-            ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])), 
+            ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])),
             options('weight', 1))
         result = (urwid.Text(
             [('text', 'Result: '), (['error', 'ok', 'warning', 'info'][test['result']],
-                ' ' + ['✘', '✔', '?', '*'][test['result']]),
+                                    ' ' + ['✘', '✔', '?', '*'][test['result']]),
                 ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
             options('weight', 1))
         message = (urwid.Text(
             ('text', test['message'])), options('weight', 1))
-        return [div_option, title, div_option, caption, div_option, severity, 
-            result, div_option, message]
+        return [div_option, title, div_option, caption, div_option, severity,
+                result, div_option, message]
 
     def get_top_text(self):
         """
         Returns:
             tuple(str,str): palette , Test n/total
         """
-        return 'header red', 'Test ' + str(self.currently_displayed) + '/' + str(self.total)
+        return 'header red', 'Test ' + \
+            str(self.currently_displayed) + '/' + str(self.total)
 
     def get_top_row(self, current, options):
         """
@@ -337,7 +357,7 @@ class DisplayTest(urwid.WidgetWrap):
         if(current > 1):
             top_row.append((prev_btn, options('weight', 0)))
         top_row.append((urwid.Padding(urwid.Text(self.get_top_text()),
-                                        left=25), options('weight', 1)))
+                                      left=25), options('weight', 1)))
         if(current < len(self.result)):
             top_row.append((next_btn, options('weight', 0.2)))
         return top_row
@@ -355,5 +375,3 @@ class DisplayTest(urwid.WidgetWrap):
             self.top_columns.focus_position = 1
         self.test_result.contents = self.test_display(
             self.result[self.currently_displayed - 1], self.test_result.options)
-
-        
