@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import urwid
 from picmagic import read as picRead
-from tools import validate_uri
+from tools import validate_uri, send_result
 from widgets import *
 from testers import *
 from functools import reduce
@@ -175,6 +175,25 @@ class Cards(object):
             content,
             ['Email'],
             'Send',
-            None,
+            lambda form, email: self.send_email(email, result),
             lambda _: self.display_overview(result))
+
+        self.app.render(card)
+
+    def send_email(self, email, result):
+        response = send_result(email, result)
+        header = urwid.Text(('header red', 'Email sent'))
+        subtitle = urwid.Text(
+            ('text', response))
+
+        content = urwid.Pile([header, div, subtitle])
+        footer = urwid.AttrMap(
+            TextButton(
+                '< Back to result overview',
+                align='left',
+                on_press=(
+                    lambda _: self.display_overview(result))),
+            'button')
+        card = Card(content, footer=footer)
+        
         self.app.render(card)

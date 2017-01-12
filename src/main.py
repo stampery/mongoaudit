@@ -48,7 +48,7 @@ class App(object):
             raise urwid.ExitMainLoop()
         elif key == 'ctrl r':
             python = sys.executable
-            os.execl(python, python, * sys.argv)
+            os.execl(python, python, *sys.argv)
 
     def main(self):
         self.loop.run()

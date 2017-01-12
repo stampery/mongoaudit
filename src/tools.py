@@ -22,7 +22,7 @@ def validate_uri(uri, error_field, error_message, cb):
     if parsed:
         cb(parsed)
     else:
-        error_field.set_error("Invalid URI")
+        error_field.set_error(error_message)
 
 
 def parse_mongo_uri(conn):
@@ -50,3 +50,20 @@ def parse_mongo_uri(conn):
         return None
     else:
         return uri
+
+def send_result(email, result):
+    """
+    Args:
+        email (str): address to send the results
+        result (obj): results to send
+    Returns:
+        str: response from endpoint
+    """
+    import json
+    import urllib2
+    url = 'http://127.0.0.1:3000/results'
+    headers={'Content-type': 'application/json', 'Accept': 'application/json'}
+    values = {'email' : email, 'result' : result}
+    req = urllib2.Request(url, json.dumps(values), headers)
+    response = urllib2.urlopen(req)
+    return response.read()
