@@ -14,7 +14,7 @@ from palette import palette
 class App(object):
 
     def __init__(self):
-        self.name = 'mongo-audit'
+        self.name = 'mongoaudit'
         self.version = '0.0.1'
         self.cards = Cards(self)
         self.setup_view()

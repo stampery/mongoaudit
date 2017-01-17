@@ -14,7 +14,7 @@ class Cards(object):
         self.app = app
 
     def welcome(self):
-        pic = picRead('rsc/welcome.bmp', align='right')
+        pic = picRead('welcome.bmp', align='right')
         text = urwid.Text(
             ('text',
              '%s is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.' %
@@ -39,11 +39,11 @@ class Cards(object):
                 ' provides two distinct types of test suites covering security in different depth. Please choose which tests you want to run:'])
 
         basic = ImageButton(
-            picRead('rsc/%s' % 'bars_min.bmp'),
+            picRead('bars_min.bmp'),
             [('text bold', 'Basic'),
              ('text', 'Analize server perimeter security. (Does not require valid credentials)')])
         advanced = ImageButton(
-            picRead('rsc/%s' % 'bars_max.bmp'),
+            picRead('bars_max.bmp'),
             [('text bold', 'Advanced'),
              ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
         content = urwid.Pile([txt, div, basic, advanced])
@@ -98,7 +98,7 @@ class Cards(object):
         test_runner = TestRunner(
             title, cred, tests, self.app, self.display_overview)
         # the name of the bmp is composed with the title
-        pic = picRead('rsc/check_' + title.lower() + '.bmp', align='right')
+        pic = picRead('check_' + title.lower() + '.bmp', align='right')
 
         footer = urwid.AttrMap(TextButton(
             'Cancel', align='left', on_press=self.choose_test), 'button')

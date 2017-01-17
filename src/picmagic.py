@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
+import sys
 import os
 import urwid
-
 
 def read(path, align='left'):
 
@@ -17,7 +16,8 @@ def read(path, align='left'):
         dec = ord(compo)
         return hex(dec)[2]
 
-    with open(os.path.realpath(path), 'r') as f:
+    base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
+    with open(os.path.join(base_path, 'rsc/' + path), 'r') as f:
         bytes = f.read()
 
     width = ord(bytes[18])
