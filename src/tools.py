@@ -51,6 +51,7 @@ def parse_mongo_uri(conn):
     else:
         return uri
 
+
 def send_result(email, result):
     """
     Args:
@@ -62,9 +63,12 @@ def send_result(email, result):
     import json
     import urllib2
     url = 'http://127.0.0.1:3000/results'
-    headers={'Content-type': 'application/json', 'Accept': 'application/json'}
-    values = {'email' : email, 'result' : result}
-    req = urllib2.Request(url, json.dumps(values), headers)
-    response = urllib2.urlopen(req)
-    return response.read()
-
+    headers = {'Content-type': 'application/json',
+               'Accept': 'application/json'}
+    values = {'email': email, 'result': result}
+    try:
+        req = urllib2.Request(url, json.dumps(values), headers)
+        response = urllib2.urlopen(req)
+        return response.read()
+    except urllib2.HTTPError as e:
+        return e.msg
