@@ -254,7 +254,7 @@ class TestRunner(urwid.WidgetWrap):
 
     def end(self, res):
 
-        self.cb(res)
+        self.cb(res, self.title)
 
 
 class CustomProgressBar(urwid.ProgressBar):

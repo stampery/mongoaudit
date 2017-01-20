@@ -52,7 +52,7 @@ def parse_mongo_uri(conn):
         return uri
 
 
-def send_result(email, result):
+def send_result(email, result, title):
     """
     Args:
         email (str): address to send the results
@@ -65,7 +65,7 @@ def send_result(email, result):
     url = 'http://127.0.0.1:3000/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
-    values = {'email': email, 'result': result}
+    values = {'email': email, 'result': result, 'title': title}
     try:
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
