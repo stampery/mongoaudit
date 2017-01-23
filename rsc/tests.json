@@ -1,12 +1,5 @@
 {
-    "basic": [{
-            "test_name": "0",
-            "title": "Domain exists",
-            "caption": "The FQDN must exist in order to perform the test.",
-            "severity": 0,
-            "message": ["The provided domain name does not exist.", "The provided domain name does exist."],
-            "breaks": false
-        },
+    "basic": [
         {
             "test_name": "1",
             "title": "MongoDB listens on a port different to default one",

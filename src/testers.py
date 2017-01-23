@@ -133,14 +133,7 @@ class Test(object):
 import socket
 
 
-def try_address(test):
-    fqdn, _port = test.tester.cred['nodelist'][0]
-    try:
-        socket.gethostbyname_ex(fqdn)
-    except socket.gaierror:
-        return False
-    else:
-        return True
+
 
 
 def try_socket(test, forced_port=None):
@@ -334,7 +327,7 @@ def try_dedicated_user(test):
 
 
 test_functions = {
-    "0": try_address, 
+    # "0": try_address, 
     "1": lambda test: not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),

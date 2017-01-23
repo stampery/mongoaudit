@@ -9,6 +9,15 @@ def decode_to_string(data):
     """
     return str([x.encode('UTF8') for x in data])
 
+def try_address(address):
+    import socket
+    fqdn, _port = address
+    try:
+        socket.gethostbyname_ex(fqdn)
+    except socket.gaierror:
+        return False
+    else:
+        return True
 
 def validate_uri(uri, error_field, error_message, cb):
     """
@@ -19,10 +28,10 @@ def validate_uri(uri, error_field, error_message, cb):
       cb (function): callback to call on success
     """
     parsed = parse_mongo_uri(uri)
-    if parsed:
+    if parsed and try_address(parsed['nodelist'][0]):
         cb(parsed)
     else:
-        error_field.set_error(error_message)
+        error_field.set_error("Invalid domain")
 
 
 def parse_mongo_uri(conn):
