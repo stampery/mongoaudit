@@ -9,9 +9,13 @@ def decode_to_string(data):
     """
     return str([x.encode('UTF8') for x in data])
 
-def try_address(address):
+def try_address(fqdn):
+    """
+    Check if a fqdn is valid
+    Args:
+        fqdn (str): fully qualified domain name
+    """
     import socket
-    fqdn, _port = address
     try:
         socket.gethostbyname_ex(fqdn)
     except socket.gaierror:
@@ -28,7 +32,7 @@ def validate_uri(uri, error_field, error_message, cb):
       cb (function): callback to call on success
     """
     parsed = parse_mongo_uri(uri)
-    if parsed and try_address(parsed['nodelist'][0]):
+    if parsed and try_address(parsed['nodelist'][0][0]):
         cb(parsed)
     else:
         error_field.set_error("Invalid domain")
@@ -61,7 +65,7 @@ def parse_mongo_uri(conn):
         return uri
 
 
-def send_result(email, result, title):
+def send_result(email, result, title, urn):
     """
     Args:
         email (str): address to send the results
@@ -73,7 +77,7 @@ def send_result(email, result, title):
     url = 'http://127.0.0.1:3000/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
-    values = {'email': email, 'result': result, 'title': title}
+    values = {'email': email, 'result': result, 'title': title, 'urn': urn}
     try:
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)

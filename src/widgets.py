@@ -218,6 +218,7 @@ class TestRunner(urwid.WidgetWrap):
     def __init__(self, title, cred, tests, app, cb):
         self.title = title
         self.cb = cb
+        self.urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + ("/" + (cred["database"]) if bool(cred["database"]) else "")
         self.number_of_test = len(tests)
         self.app = app
 
@@ -253,8 +254,7 @@ class TestRunner(urwid.WidgetWrap):
         self.tester.run(self.each, self.end)
 
     def end(self, res):
-
-        self.cb(res, self.title)
+        self.cb(res, self.title, self.urn)
 
 
 class CustomProgressBar(urwid.ProgressBar):

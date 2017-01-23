@@ -108,7 +108,7 @@ class Cards(object):
         self.app.render(card)
         test_runner.run()
 
-    def display_overview(self, result, title):
+    def display_overview(self, result, title, urn):
         """
         Args:
             result (dict()): the result returned by test_runner
@@ -148,27 +148,27 @@ class Cards(object):
         urwid.connect_signal(
             results_button,
             'click',
-            lambda _: self.display_test_result(result, title))
+            lambda _: self.display_test_result(result, title, urn))
         urwid.connect_signal(
-            email_button, 'click', lambda _: self.email_prompt(result, title))
+            email_button, 'click', lambda _: self.email_prompt(result, title, urn))
 
         card = Card(urwid.Pile([header, div, subtitle, div, overview, div,
                                 results_button, email_button]), footer=footer)
         self.app.render(card)
 
-    def display_test_result(self, result, title):
+    def display_test_result(self, result, title, urn):
         display_test = DisplayTest(result)
         footer = urwid.AttrMap(
             TextButton(
                 '< Back to result overview',
                 align='left',
                 on_press=(
-                    lambda _: self.display_overview(result, title))),
+                    lambda _: self.display_overview(result, title, urn))),
             'button')
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
-    def email_prompt(self, result, title):
+    def email_prompt(self, result, title, urn):
         header = urwid.Text(('header red', 'Email result'))
         subtitle = urwid.Text(
             ('text', 'The quick brown fox jumps over the lazy dog'))
@@ -177,13 +177,13 @@ class Cards(object):
             content,
             ['Email'],
             'Send',
-            lambda form, email: self.send_email(email, result, title),
-            lambda _: self.display_overview(result, title))
+            lambda form, email: self.send_email(email, result, title, urn),
+            lambda _: self.display_overview(result, title, urn))
 
         self.app.render(card)
 
-    def send_email(self, email, result, title):
-        response = send_result(email, result, title)
+    def send_email(self, email, result, title, urn):
+        response = send_result(email, result, title, urn)
         header = urwid.Text(('header red', title))
         subtitle = urwid.Text(
             ('text', response))
@@ -194,7 +194,7 @@ class Cards(object):
                 '< Back to result overview',
                 align='left',
                 on_press=(
-                    lambda _: self.display_overview(result, title))),
+                    lambda _: self.display_overview(result, title, urn))),
             'button')
         card = Card(content, footer=footer)
         

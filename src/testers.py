@@ -327,13 +327,11 @@ def try_dedicated_user(test):
 
 
 test_functions = {
-    # "0": try_address, 
     "1": lambda test: not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: bool(hasattr(test.tester.info, "version")),
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-
     "6": lambda test: test.tester.info["openssl"]["running"] != "disabled",
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
