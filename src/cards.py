@@ -183,7 +183,8 @@ class Cards(object):
         self.app.render(card)
 
     def send_email(self, email, result, title, urn):
-        response = send_result(email, result, title, urn)
+        email_result = map(lambda r: {"name": r["name"], "value": r["result"], "data": r["extra_data"]},result)
+        response = send_result(email, email_result, title, urn)
         header = urwid.Text(('header red', title))
         subtitle = urwid.Text(
             ('text', response))

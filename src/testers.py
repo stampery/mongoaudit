@@ -126,7 +126,7 @@ class Test(object):
         # result[1] must be a string with the data to display in the message
         # if callable(message):
         #     message = message(result[1])
-        return {'severity': self.severity, 'title': self.title, 'caption':
+        return {'name': self.name,'severity': self.severity, 'title': self.title, 'caption':
                 self.caption, 'message': message[value], 'result': value, 'extra_data': extra_data}
 
 
