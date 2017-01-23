@@ -71,7 +71,7 @@
             "request": "launch",
             "stopOnEntry": false,
             "pythonPath": "${config.python.pythonPath}",
-            "program": "src/main.py",
+            "program": "${workspaceRoot}/src/main.py",
             "cwd": "${workspaceRoot}",
             "console": "externalTerminal",
             "debugOptions": [

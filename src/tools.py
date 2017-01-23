@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 
 def decode_to_string(data):
     """
@@ -60,7 +60,6 @@ def send_result(email, result, title):
     Returns:
         str: response from endpoint
     """
-    import json
     import urllib2
     url = 'http://127.0.0.1:3000/results'
     headers = {'Content-type': 'application/json',
@@ -72,3 +71,9 @@ def send_result(email, result, title):
         return response.read()
     except urllib2.HTTPError as e:
         return e.msg
+
+
+def load_test(path):
+    with open(path) as json_data:
+        return json.load(json_data)
+        # return  json.dumps(json.load(json_data)) # in case the u is not removed

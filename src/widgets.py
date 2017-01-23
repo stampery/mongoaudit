@@ -331,8 +331,15 @@ class DisplayTest(urwid.WidgetWrap):
                                     ' ' + ['✘', '✔', '?', '*'][test['result']]),
                 ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
             options('weight', 1))
+        message_string = ""
+
+
+        if(isinstance(test['message'], list)):
+            message_string = test['message'][0] + test['extra_data'] + test['message'][1]
+        else:
+            message_string = test['message']
         message = (urwid.Text(
-            ('text', test['message'])), options('weight', 1))
+            ('text', message_string)), options('weight', 1))
         return [div_option, title, div_option, caption, div_option, severity,
                 result, div_option, message]
 

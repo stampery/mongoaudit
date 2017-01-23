@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 import urwid
 from picmagic import read as picRead
-from tools import validate_uri, send_result
+from tools import validate_uri, send_result, load_test
 from widgets import *
 from testers import *
 from functools import reduce
 
 
 class Cards(object):
-    credentials = []
+    # credentials = []
+    
 
     def __init__(self, app):
         self.app = app
+        self.tests = load_test('rsc/tests.json')
 
     def welcome(self):
         pic = picRead('welcome.bmp', align='right')
@@ -53,7 +55,7 @@ class Cards(object):
             'label': 'Please provide the URI of your MongoDB server',
             'uri_example': 'domain.tld:port',
             'uri_error': "Invalid URI",
-            'tests': basic_tests}
+            'tests': self.tests['basic']}
         urwid.connect_signal(
             basic, 'click', lambda _: self.uri_prompt(**basic_args))
         advanced_args = {
@@ -61,7 +63,7 @@ class Cards(object):
             'label': 'Please enter your MongoDB URI',
             'uri_example': 'mongodb://user:password@domain.tld:port/database',
             'uri_error': "Invalid MongoDB URI",
-            'tests': basic_tests + advanced_tests}
+            'tests': self.tests['basic'] + self.tests['advanced']}
         urwid.connect_signal(
             advanced, 'click', lambda _: self.uri_prompt(**advanced_args))
         card = Card(content)

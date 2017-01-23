@@ -1,0 +1,118 @@
+{
+    "basic": [{
+            "test_name": "0",
+            "title": "Domain exists",
+            "caption": "The FQDN must exist in order to perform the test.",
+            "severity": 0,
+            "message": ["The provided domain name does not exist.", "The provided domain name does exist."],
+            "breaks": false
+        },
+        {
+            "test_name": "1",
+            "title": "MongoDB listens on a port different to default one",
+            "caption": "Using the default MongoDB port makes it too easy for potential attackers to locate and target your server.",
+            "severity": 2,
+            "message": ["Your server is listening on default port 27017. Please read this guide on how to change the listening port.",
+                "Your server is listening in a non-obvious port. Well done."
+            ]
+        },
+        {
+            "test_name": "2",
+            "title": "Server only allows connecting from intended hosts / networks",
+            "caption": "Best practice is to only listen to incoming connections whose originating IP belongs to the applications or systems that are intended to use the database. This protects your server from denial-of-service attacks and some other vulnerabilities that may be present on other services running on the same device.",
+            "severity": 1,
+            "message": ["Your server allows connections from unauthorized hosts. Read this guide on how to block unauthorized hosts.",
+                "Your server does not allow connection from unauthorized hosts. Well done."
+            ],
+            "breaks": true
+        },
+        {
+            "test_name": "3",
+            "title": "MongoDB HTTP status interface is not accessible on port 28017",
+            "caption": "HTTP status interface should be disabled in production environments to prevent potential data exposure and vulnerability to attackers.",
+            "severity": 0,
+            "message": ["HTTP interface is enabled. Please read this guide on how to disable MongoDB HTTP status interface.",
+                "HTTP interface is disabled. Well done."
+            ]
+        },
+        {
+            "test_name": "4",
+            "title": "MongoDB is not exposing its version number",
+            "caption": "Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.",
+            "severity": 0,
+            "message": ["MongoDB version number is exposed. This could be solved using a reverse proxy.",
+                "MongoDB is hiding its version number. Well done."
+            ]
+        },
+        {
+            "test_name": "5",
+            "title": "MongoDB version is newer than 2.4",
+            "caption": "MongoDB versions prior to 2.4 allow usage of the “db” object inside “$where” clauses in your queries. This is a huge security flaw that allows attackers to inject and run arbitrary code in your database.",
+            "severity": 0,
+
+            "message": [
+                ["You are running MongoDB version ", ". Well done."],
+                ["You are running MongoDB version ", "."]
+            ]
+        },
+        {
+            "test_name": "6",
+            "title": "Encryption is enabled",
+            "caption": "Enable TLS/SSL to encrypt communications between your Mongo client and Mongo server to avoid eavesdropping, tampering and “man in the middle” attacks.",
+            "severity": 0,
+            "message": ["Encryption is disabled.",
+                "TLS/SSL is enabled. Well done."
+            ]
+        },
+        {
+            "test_name": "7",
+            "title": "Authentication is enabled",
+            "caption": "Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.",
+            "severity": 0,
+            "message": ["Authentication is disabled.", "Authentication is enabled. Well done."]
+        }
+    ],
+
+
+    "advanced": [{
+            "test_name": "8",
+            "title": "Valid credentials",
+            "caption": "To continue testing the provided credentials must be valid.",
+            "severity": 0,
+            "message": ["Invalid credentials",
+                "Credentials are valid"
+            ],
+            "breaks": false
+        },
+        {
+            "test_name": "9",
+            "title": "Javascript is not allowed in queries",
+            "caption": "Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.",
+            "severity": 0,
+            "message": ["Usage of Javascript is allowed inside queries.",
+                "Usage of Javascript is not allowed inside queries. Well done."
+            ]
+        },
+        {
+            "test_name": "10",
+            "title": "Role granted to the provided user only permits CRUD operations",
+            "caption": "Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.",
+            "severity": 0,
+            "message": [
+                ["Your user's role ", " permission is too high."],
+                ["Your user's role ", " permissions ???. Well done."],
+                ["", ""]
+            ]
+        },
+        {
+            "test_name": "11",
+            "title": "Run MongoDB with a dedicated user",
+            "caption": "Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.",
+            "severity": 0,
+            "message": [
+                ["Your user account has permissions for ", " databases."],
+                ["No unnecessary permissions are given, your user account only has permissions over ", " database. Well done."]
+            ]
+        }
+    ]
+}
