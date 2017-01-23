@@ -37,10 +37,12 @@ class Tester(object):
         if len(result) < len(self.tests):
             result = result + map(
                 lambda x: {
+                    'name': x.name,
                     'severity': x.severity,
                     'title': x.title,
                     'caption': x.caption,
                     'message': 'This test was omitted',
+                    'extra_data': None,
                     'result': 3},
                 self.tests[len(result) : len(self.tests)])
 
