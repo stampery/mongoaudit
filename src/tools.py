@@ -77,7 +77,7 @@ def send_result(email, result, title, urn):
     url = 'http://127.0.0.1:3000/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
-    values = {'email': email, 'result': result, 'title': title, 'urn': urn}
+    values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': getDate()}
     try:
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
@@ -89,4 +89,9 @@ def send_result(email, result, title, urn):
 def load_test(path):
     with open(path) as json_data:
         return json.load(json_data)
-        # return  json.dumps(json.load(json_data)) # in case the u is not removed
+
+def getDate():
+    import time, calendar
+    local = time.localtime(time.time())
+    nth = ["st", "nd", "rd", None][min(3, local.tm_mday % 10 - 1)] or 'th'
+    return "%s %d%s %d @ %d:%d" % (calendar.month_abbr[local.tm_mon], local.tm_mday, nth, local.tm_year, local.tm_hour, local.tm_min)
