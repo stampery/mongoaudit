@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 import urwid
 from picmagic import read as picRead
-from tools import validate_uri, send_result, load_test
+from tools import validate_uri, send_result, load_test, validate_email
 from widgets import *
 from testers import *
 from functools import reduce
 
 
 class Cards(object):
-    # credentials = []
-    
-
     def __init__(self, app):
         self.app = app
         self.tests = load_test('rsc/tests.json')
@@ -54,7 +51,6 @@ class Cards(object):
             'title': 'Basic',
             'label': 'Please provide the URI of your MongoDB server',
             'uri_example': 'domain.tld:port',
-            'uri_error': "Invalid URI",
             'tests': self.tests['basic']}
         urwid.connect_signal(
             basic, 'click', lambda _: self.uri_prompt(**basic_args))
@@ -62,20 +58,18 @@ class Cards(object):
             'title': 'Advanced',
             'label': 'Please enter your MongoDB URI',
             'uri_example': 'mongodb://user:password@domain.tld:port/database',
-            'uri_error': "Invalid MongoDB URI",
             'tests': self.tests['basic'] + self.tests['advanced']}
         urwid.connect_signal(
             advanced, 'click', lambda _: self.uri_prompt(**advanced_args))
         card = Card(content)
         self.app.render(card)
 
-    def uri_prompt(self, title, label, uri_example, uri_error, tests):
+    def uri_prompt(self, title, label, uri_example, tests):
         """
         Args:
           title (str): Title for the test page
           label (str): label for the input field
           uri_example (str): example of a valid URI
-          uri_error (str): error to display if URI is not valid
           tests (Test[]): test to pass as argument to run_test
         """
         intro = urwid.Pile([
@@ -84,7 +78,7 @@ class Cards(object):
             urwid.Text([label + ' (', ('text italic', uri_example), ')'])
         ])
         validate = lambda form, uri: validate_uri(
-            uri, form, uri_error, lambda cred: self.run_test(
+            uri, form, lambda cred: self.run_test(
                 cred, title, tests))
         form = FormCard(intro, ['URI'], 'Run ' + title.lower() +
                         ' test', validate, back=self.choose_test)
@@ -177,7 +171,7 @@ class Cards(object):
             content,
             ['Email'],
             'Send',
-            lambda form, email: self.send_email(email, result, title, urn),
+            lambda form, email: self.send_email(email.strip(), result, title, urn) if validate_email(email) else form.set_error("Invalid email"),
             lambda _: self.display_overview(result, title, urn))
 
         self.app.render(card)

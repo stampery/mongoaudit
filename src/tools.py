@@ -23,7 +23,7 @@ def try_address(fqdn):
     else:
         return True
 
-def validate_uri(uri, error_field, error_message, cb):
+def validate_uri(uri, error_field, cb):
     """
     Args:
       uri (str): MongoDB URI
@@ -36,6 +36,11 @@ def validate_uri(uri, error_field, error_message, cb):
         cb(parsed)
     else:
         error_field.set_error("Invalid domain")
+
+def validate_email(email):
+    import re
+    valid = re.compile("^[^@]+@[^@]+\.[^@]+$")
+    return valid.match(email.strip())
 
 
 def parse_mongo_uri(conn):
@@ -84,6 +89,10 @@ def send_result(email, result, title, urn):
         return response.read()
     except urllib2.HTTPError as e:
         return e.msg
+    except urllib2.URLError:
+        return "Connection refused"
+    except Exception, e:
+        return repr(e)
 
 
 def load_test(path):
