@@ -44,7 +44,7 @@ class Tester(object):
                     'message': 'This test was omitted',
                     'extra_data': None,
                     'result': 3},
-                self.tests[len(result) : len(self.tests)])
+                self.tests[len(result): len(self.tests)])
 
         self.conn.close()
         end(result)
@@ -128,14 +128,11 @@ class Test(object):
         # result[1] must be a string with the data to display in the message
         # if callable(message):
         #     message = message(result[1])
-        return {'name': self.name,'severity': self.severity, 'title': self.title, 'caption':
+        return {'name': self.name, 'severity': self.severity, 'title': self.title, 'caption':
                 self.caption, 'message': message[value], 'result': value, 'extra_data': extra_data}
 
 
 import socket
-
-
-
 
 
 def try_socket(test, forced_port=None):
@@ -305,14 +302,14 @@ def try_roles(test):
     # when user has permission to run 'rolesInfo'
     if bool(validated['invalid']):
         # if the profile is invalid
-        return [False, decode_to_string(validated['invalid']) ]
+        return [False, decode_to_string(validated['invalid'])]
     elif bool(validated['custom']):
         # if the profile has custom permissions
         message = 'Your user\'s role set ' + decode_to_string(
             validated['valid']) + ' seem to be ok, but we couldn\'t do an exhaustive check.'
         return [2, message]
     # if everything seems to be ok
-    return [ True, decode_to_string(validated['valid'])]
+    return [True, decode_to_string(validated['valid'])]
 
 
 def try_dedicated_user(test):
@@ -328,134 +325,28 @@ def try_dedicated_user(test):
     return [bool(len(user_role_dbs)), decode_to_string(user_role_dbs)]
 
 
+def try_scram(test):
+    try:
+        conn = test.tester.get_connection()
+        cred = test.tester.cred
+        return conn[cred["database"]].authenticate(cred["username"], cred["password"], mechanism='SCRAM-SHA-1')
+    except (pymongo.errors.OperationFailure, ValueError, TypeError):
+        return False
+
+
 test_functions = {
     "1": lambda test: not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
-    "4": lambda test: bool(hasattr(test.tester.info, "version")),
+    "4": lambda test: not "version" in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: test.tester.info["openssl"]["running"] != "disabled",
+    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) if ("OpenSSLVersion" in test.tester.info) else test.tester.info["openssl"]["running"] != "disabled",
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
     "10": try_roles,
     "11": try_dedicated_user,
+    "12": try_scram,
 
 }
 
-
-
-# basic_tests = [
-    # Test(
-    #     try_address,
-    #     0,
-    #     'Domain exists',
-    #     'The FQDN must exist in order to perform the test.',
-    #     ['The provided domain name does not exist.',
-    #      'The provided domain name does exist.', ],
-    #     breaks=False
-    # ),
-    # Test(
-    #     lambda test: not(test.tester.cred['nodelist'][0][
-    #                      1] == 27017 and bool(test.tester.info)),
-    #     2,
-    #     'MongoDB listens on a port different to default one',
-    #     'Using the default MongoDB port makes it too easy for potential attackers to locate and target your server.',
-    #     ['Your server is listening on default port 27017. Please read this guide on how to change the listening port.',
-    #      'Your server is listening in a non-obvious port. Well done.', ],
-    # ),
-
-#     Test(
-#         try_socket,
-#         1,
-#         'Server only allows connecting from intended hosts / networks',
-#         'Best practice is to only listen to incoming connections whose originating IP belongs to the applications or systems that are intended to use the database. This protects your server from denial-of-service attacks and some other vulnerabilities that may be present on other services running on the same device. ',
-#         ['Your server allows connections from unauthorized hosts. Read this guide on how to block unauthorized hosts.',
-#          'Your server does not allow connection from unauthorized hosts. Well done.', ],
-#         breaks=True
-#     ),
-#     Test(
-#         lambda test: try_socket(test, 28017),
-#         0,
-#         'MongoDB HTTP status interface is not accessible on port 28017',
-#         'HTTP status interface should be disabled in production environments to prevent potential data exposure and vulnerability to attackers.',
-#         ['HTTP interface is enabled. Please read this guide on how to disable MongoDB HTTP status interface.',
-#          'HTTP interface is disabled. Well done.', ],
-#     ),
-#     Test(
-#         lambda test: bool(hasattr(test.tester.info, 'version')),
-#         0,  # TODO update number
-#         'MongoDB is not exposing its version number',
-#         'Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.',
-#         ['MongoDB version number is exposed. This could be solved using a reverse proxy.',
-#             'MongoDB is hiding its version number. Well done.'],
-#     ),
-#     Test(
-                # // for this kind of test we must send the message in the http email
-#         lambda test: [test.tester.info['version'] >
-#                       "2.4", str(test.tester.info['version'])],
-#         0,  # TODO update number
-#         'MongoDB version is newer than 2.4',
-#         'MongoDB versions prior to 2.4 allow usage of the “db” object inside “$where” clauses in your queries. This is a huge security flaw that allows attackers to inject and run arbitrary code in your database.',
-#         lambda message: ['You are running MongoDB version ' + message + '. Well done.',
-#                          'You are running MongoDB version ' + message + '.', ],
-#     ),
-#     Test(
-#         lambda test: test.tester.info['openssl']['running'] != 'disabled',
-#         0,  # TODO update number
-#         'Encryption is enabled',
-#         'Enable TLS/SSL to encrypt communications between your Mongo client and Mongo server to avoid eavesdropping, tampering and “man in the middle” attacks.',
-#         ['Encryption is disabled.',
-#          'TLS/SSL is enabled. Well done.', ],
-
-#     ),
-#     Test(
-#         try_authorization,
-#         0,  # TODO update number
-#         'Authentication is enabled',
-#         'Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.',
-#         ['Authentication is disabled.', 'Authentication is enabled. Well done.', ],
-#     ),
-# ]
-
-# advanced_tests = [
-#     # these tests require credentials
-#     Test(
-#         lambda test: bool(test.tester.get_db()),
-#         0,  # TODO update number
-#         'Valid credentials',
-#         'To continue testing the provided credentials must be valid.',
-#         ['Invalid credentials',
-#             'Credentials are valid', ],
-#         breaks=False
-#     ),
-
-#     Test(
-#         try_javascript,
-#         0,  # TODO update number
-#         'Javascript is not allowed in queries',
-#         'Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.',
-#         ['Usage of Javascript is allowed inside queries.',
-#          'Usage of Javascript is not allowed inside queries. Well done.', ],
-#     ),
-
-#     Test(
-#         try_roles,
-#         0,  # TODO update number
-#         'Role granted to the provided user only permits CRUD operations',
-#         'Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.',
-#         // TODO: this test had an extra result that was just the message from the lambda ?
-#          lambda message: ['Your user’s roles set has a too high permissions profile ' + message + '. Please read this guide to learn how to create a readWrite user in MongoDB.',
-#                          'Your user’s roles set ' + message + ' ???. Well done.',
-#                          message],
-#     ),
-
-#     Test(
-#         try_dedicated_user,
-#         0,  # TODO update number
-#         'Run MongoDB with a dedicated user',
-#         'Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.',
-#         lambda message: ['Your user account has permissions for ' + message + ' databases.',
-#                          'No unnecessary permissions are given, your user account only has permissions over ' + message + ' database. Well done.', ],
-#     ),
-# ]

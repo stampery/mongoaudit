@@ -78,6 +78,16 @@
             "breaks": false
         },
         {
+            "test_name": "12",
+            "title": "SCRAM-SHA-1",
+            "caption": "SCRAM-SHA-1",
+            "severity": 0,
+            "message": [
+                "SCRAM-SHA-1 is not enabled",
+                "SCRAM-SHA-1 is enabled"
+            ]
+        },
+        {
             "test_name": "9",
             "title": "Javascript is not allowed in queries",
             "caption": "Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.",

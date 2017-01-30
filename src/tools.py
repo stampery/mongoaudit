@@ -87,12 +87,8 @@ def send_result(email, result, title, urn):
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
         return response.read()
-    except urllib2.HTTPError as e:
-        return e.msg
-    except urllib2.URLError:
-        return "Connection refused"
     except Exception, e:
-        return repr(e)
+        return "We are having technical difficulties at the moment, please try again later.\n\n" +str(e)
 
 
 def load_test(path):
