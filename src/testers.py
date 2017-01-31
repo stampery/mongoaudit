@@ -333,6 +333,18 @@ def try_scram(test):
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
+# the following functions are for https://www.mongodb.com/alerts security related
+def version_in_range(version, min, max):
+    return version >= min and version <= max
+
+def alerts_d012015(test):
+    if "modules" in test.tester.info:
+        enterprise = "enterprise" in test.tester.info["modules"]
+        version = test.tester.info["version"]
+        return not(version_in_range(version, "3.0.6", "3.0.6"))
+    else:
+        return True
+
 
 test_functions = {
     "1": lambda test: not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
@@ -347,6 +359,7 @@ test_functions = {
     "10": try_roles,
     "11": try_dedicated_user,
     "12": try_scram,
+    "13": alerts_d012015,
 
 }
 

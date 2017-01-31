@@ -63,7 +63,15 @@
             "caption": "Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.",
             "severity": 0,
             "message": ["Authentication is disabled.", "Authentication is enabled. Well done."]
+        },
+        {
+            "test_name": "13",
+            "title": "Vulnerability Dec 01, 2015",
+            "caption": "Unauthorized access to a MongoDB instance or cluster when using LDAP authentication.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
         }
+
     ],
 
 

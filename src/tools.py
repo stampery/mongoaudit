@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
+import urllib2
+import os
+import sys
 
 def decode_to_string(data):
     """
@@ -78,7 +81,6 @@ def send_result(email, result, title, urn):
     Returns:
         str: response from endpoint
     """
-    import urllib2
     url = 'http://127.0.0.1:3000/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
@@ -92,7 +94,8 @@ def send_result(email, result, title, urn):
 
 
 def load_test(path):
-    with open(path) as json_data:
+    base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
+    with open(os.path.join(base_path, 'rsc/' + path)) as json_data:
         return json.load(json_data)
 
 def getDate():
@@ -100,3 +103,34 @@ def getDate():
     local = time.localtime(time.time())
     nth = ["st", "nd", "rd", None][min(3, local.tm_mday % 10 - 1)] or 'th'
     return "%s %d%s %d @ %d:%d" % (calendar.month_abbr[local.tm_mon], local.tm_mday, nth, local.tm_year, local.tm_hour, local.tm_min)
+
+def check_version(version):
+    import stat
+     # TODO: replace link with the one from the real release
+    try:
+        url = "https://api.github.com/repos/kronolynx/AngularApp/releases/latest"
+        req = urllib2.urlopen(url)
+        releases = json.loads(req.read())
+        latest = releases["tag_name"]
+
+        print "Current version " + version + " Latest " + latest
+        if(version < latest):
+            print "about to update to version " + latest
+            # save the permissions from the current binary
+            st = os.stat("mongoaudit")
+            # rename the current binary in order to download the latest
+            os.rename("mongoaudit", "temp")
+            req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
+            with open("mongoaudit", "wb+") as file:
+                file.write(req.read())
+                # set the same permissions that had the previous binary
+                os.chmod("mongoaudit", st.st_mode | stat.S_IEXEC)
+            # delete the old binary
+            os.remove("temp")
+            print "mongoaudit updated, restarting..."
+            python = sys.executable
+            os.execl(python, python, *sys.argv)    
+    
+    except Exception, e:
+        print "Client offline"
+        

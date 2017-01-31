@@ -10,7 +10,7 @@ from functools import reduce
 class Cards(object):
     def __init__(self, app):
         self.app = app
-        self.tests = load_test('rsc/tests.json')
+        self.tests = load_test('tests.json')
 
     def welcome(self):
         pic = picRead('welcome.bmp', align='right')
