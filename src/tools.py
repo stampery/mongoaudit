@@ -106,31 +106,34 @@ def getDate():
 
 def check_version(version):
     import stat
-     # TODO: replace link with the one from the real release
-    try:
-        url = "https://api.github.com/repos/kronolynx/AngularApp/releases/latest"
-        req = urllib2.urlopen(url)
-        releases = json.loads(req.read())
-        latest = releases["tag_name"]
+    # if application is binary then check for latest version
+    if getattr(sys, 'frozen', False):
+        try:
+            # TODO: replace link with the one from the real release
+            url = "https://api.github.com/repos/kronolynx/AngularApp/releases/latest"
+            req = urllib2.urlopen(url)
+            releases = json.loads(req.read())
+            latest = releases["tag_name"]
 
-        print "Current version " + version + " Latest " + latest
-        if(version < latest):
-            print "about to update to version " + latest
-            # save the permissions from the current binary
-            st = os.stat("mongoaudit")
-            # rename the current binary in order to download the latest
-            os.rename("mongoaudit", "temp")
-            req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
-            with open("mongoaudit", "wb+") as file:
-                file.write(req.read())
-                # set the same permissions that had the previous binary
-                os.chmod("mongoaudit", st.st_mode | stat.S_IEXEC)
-            # delete the old binary
-            os.remove("temp")
-            print "mongoaudit updated, restarting..."
-            python = sys.executable
-            os.execl(python, python, *sys.argv)    
-    
-    except Exception, e:
-        print "Client offline"
+            print "Current version " + version + " Latest " + latest
+            if(version < latest):
+                path = os.path.dirname(sys.executable)
+                print "about to update to version " + latest
+                # save the permissions from the current binary
+                st = os.stat(path + "/mongoaudit")
+                # rename the current binary in order to download the latest
+                os.rename(path + "/mongoaudit", path + "/temp")
+                req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
+                with open(path + "/mongoaudit", "wb+") as file:
+                    file.write(req.read())
+                    # set the same permissions that had the previous binary
+                    os.chmod(path + "/mongoaudit", st.st_mode | stat.S_IEXEC)
+                # delete the old binary
+                os.remove(path + "/temp")
+                print "mongoaudit updated, restarting..."
+                app_path = path + "/mongoaudit"
+                os.execl(app_path, app_path, *sys.argv)    
+        
+        except Exception, e:
+            print "Client offline"
         
