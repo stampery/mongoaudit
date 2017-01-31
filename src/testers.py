@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymongo
-from tools import decode_to_string
+from tools import decode_to_string, in_range
 import time
 from functools import reduce
 
@@ -86,6 +86,10 @@ class Tester(object):
             return self.db
         except (pymongo.errors.OperationFailure, ValueError, TypeError):
             return False
+
+    def get_roles(self):
+        db = self.get_db()
+        return db.command('usersInfo', self.cred['username'])['users'][0]
 
 
 class Test(object):
@@ -277,9 +281,8 @@ def try_roles(test):
         else:
             raise Exception('Non exhaustive type case')
 
-    # get the database
     db = test.tester.get_db()
-    roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
+    roles = test.tester.get_roles()
     validated = {}
 
     def get_message(state, text1, text2):
@@ -310,8 +313,7 @@ def try_dedicated_user(test):
     """
     Verify that the role only applies to one database
     """
-    db = test.tester.get_db()
-    roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
+    roles = test.tester.get_roles()
     user_role_dbs = set()
     for role in roles['roles']:
         user_role_dbs.add(role['db'])
@@ -327,15 +329,15 @@ def try_scram(test):
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
+
 # the following functions are for https://www.mongodb.com/alerts security related
-def version_in_range(version, min, max):
-    return version >= min and version <= max
+
 
 def alerts_d012015(test):
     if "modules" in test.tester.info:
         enterprise = "enterprise" in test.tester.info["modules"]
         version = test.tester.info["version"]
-        return not(version_in_range(version, "3.0.6", "3.0.6"))
+        return not(in_range(version, "3.0.6", "3.0.6"))
     else:
         return True
 

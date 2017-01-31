@@ -374,16 +374,22 @@ class DisplayTest(urwid.WidgetWrap):
             top_row.append((next_btn, options('weight', 0.2)))
         return top_row
 
+    def update_currently_displayed(self, btn):
+        self.currently_displayed += 1 if btn is 'next' else -1
+
+    def set_focus_position(self, current, btn):
+        focus = 0 # moving to the left
+        if(current <= 1):
+            focus = 1 # first element 
+        elif(btn is 'next' and current < self.total): 
+            focus = 2 # moving to the right
+        self.top_columns.focus_position = focus
+
     def update_view(self, btn):
-        if(btn is 'prev'):
-            self.currently_displayed -= 1
-        elif(btn is 'next'):
-            self.currently_displayed += 1
+        self.update_currently_displayed(btn)
         self.top_columns.contents = self.get_top_row(
             self.currently_displayed, self.top_columns.options)
-        if(self.currently_displayed > 1):
-            self.top_columns.focus_position = 2 if btn is 'next' and self.currently_displayed < self.total else 0
-        else:
-            self.top_columns.focus_position = 1
+        
+        self.set_focus_position(self.currently_displayed, btn)
         self.test_result.contents = self.test_display(
             self.result[self.currently_displayed - 1], self.test_result.options)

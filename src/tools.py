@@ -89,7 +89,7 @@ def send_result(email, result, title, urn):
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
         return response.read()
-    except Exception, e:
+    except Exception as e:
         return "We are having technical difficulties at the moment, please try again later.\n\n" +str(e)
 
 
@@ -109,16 +109,15 @@ def check_version(version):
     # if application is binary then check for latest version
     if getattr(sys, 'frozen', False):
         try:
-            # TODO: replace link with the one from the real release
             url = "https://api.github.com/repos/kronolynx/AngularApp/releases/latest"
             req = urllib2.urlopen(url)
             releases = json.loads(req.read())
             latest = releases["tag_name"]
 
-            print "Current version " + version + " Latest " + latest
+            print("Current version " + version + " Latest " + latest)
             if(version < latest):
                 path = os.path.dirname(sys.executable)
-                print "about to update to version " + latest
+                print("about to update to version " + latest)
                 # save the permissions from the current binary
                 st = os.stat(path + "/mongoaudit")
                 # rename the current binary in order to download the latest
@@ -130,10 +129,12 @@ def check_version(version):
                     os.chmod(path + "/mongoaudit", st.st_mode | stat.S_IEXEC)
                 # delete the old binary
                 os.remove(path + "/temp")
-                print "mongoaudit updated, restarting..."
+                print("mongoaudit updated, restarting...")
                 app_path = path + "/mongoaudit"
                 os.execl(app_path, app_path, *sys.argv)    
         
-        except Exception, e:
-            print "Client offline"
+        except Exception:
+            print ("Client offline")
         
+def in_range(n, min, max):
+    return n >= min and n <= max
