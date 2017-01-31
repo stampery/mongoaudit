@@ -123,11 +123,6 @@ class Test(object):
         else:
             value = result
             extra_data = None
-        # if the message is a function then the test result must be of the type [int or bool, str]
-        # where result[0] must be a boolean or an int  with the value 0 for false, 1 true or 2 for custom
-        # result[1] must be a string with the data to display in the message
-        # if callable(message):
-        #     message = message(result[1])
         return {'name': self.name, 'severity': self.severity, 'title': self.title, 'caption':
                 self.caption, 'message': message[value], 'result': value, 'extra_data': extra_data}
 
@@ -286,17 +281,17 @@ def try_roles(test):
     db = test.tester.get_db()
     roles = db.command('usersInfo', test.tester.cred['username'])['users'][0]
     validated = {}
-    # TODO pluralise the messages if necessary
-    message = ""
+
+    def get_message(state, text1, text2):
+        return text1 + decode_to_string(validated[state]) + text2
+
     try:
         validated = validate_role(roles)
     except pymongo.errors.OperationFailure:
         # if the users doesn't have permission to run the command 'rolesInfo'
         validated = basic_validation(roles)
         if bool(validated['valid']):
-            message = 'You user permission ' + \
-                decode_to_string(
-                    validated['valid']) + ' didn\'t allow us to do an exhaustive check'
+            message = get_message('valid', 'You user permission ', ' didn\'t allow us to do an exhaustive check')
             return [2, message]
 
     # when user has permission to run 'rolesInfo'
@@ -305,8 +300,7 @@ def try_roles(test):
         return [False, decode_to_string(validated['invalid'])]
     elif bool(validated['custom']):
         # if the profile has custom permissions
-        message = 'Your user\'s role set ' + decode_to_string(
-            validated['valid']) + ' seem to be ok, but we couldn\'t do an exhaustive check.'
+        message = get_message('valid', 'Your user\'s role set ', ' seem to be ok, but we couldn\'t do an exhaustive check.') 
         return [2, message]
     # if everything seems to be ok
     return [True, decode_to_string(validated['valid'])]

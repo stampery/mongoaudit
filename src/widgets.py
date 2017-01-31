@@ -56,6 +56,10 @@ class ObjectButton(urwid.Button):
 
         super(urwid.Button, self).__init__(content)
 
+    def get_content(self, text):
+        return urwid.Pile([urwid.SelectableIcon(
+            s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
+
 
 class LineButton(ObjectButton):
     """
@@ -65,8 +69,7 @@ class LineButton(ObjectButton):
     """
 
     def __init__(self, text, vertical_padding=True):
-        content = urwid.Pile([urwid.SelectableIcon(
-            s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
+        content = self.get_content(text)
 
         content = [urwid.Padding(content, left=3, right=3)]
         if vertical_padding:
@@ -85,8 +88,7 @@ class ImageButton(ObjectButton):
     """
 
     def __init__(self, pic, text):
-        content = urwid.Pile([urwid.SelectableIcon(
-            s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
+        content = self.get_content(text)
         lbox = urwid.LineBox(urwid.Pile([div, urwid.Padding(
             urwid.Columns([(8, pic), content], 4), left=3, right=3), div]))
         self.__super.__init__(urwid.AttrMap(urwid.Pile(
@@ -218,7 +220,8 @@ class TestRunner(urwid.WidgetWrap):
     def __init__(self, title, cred, tests, app, cb):
         self.title = title
         self.cb = cb
-        self.urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + ("/" + (cred["database"]) if bool(cred["database"]) else "")
+        self.urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
+            "/" + (cred["database"]) if bool(cred["database"]) else "")
         self.number_of_test = len(tests)
         self.app = app
 
@@ -333,9 +336,9 @@ class DisplayTest(urwid.WidgetWrap):
             options('weight', 1))
         message_string = ""
 
-
         if(isinstance(test['message'], list)):
-            message_string = test['message'][0] + test['extra_data'] + test['message'][1]
+            message_string = test['message'][0] + \
+                test['extra_data'] + test['message'][1]
         else:
             message_string = test['message']
         message = (urwid.Text(
@@ -355,10 +358,12 @@ class DisplayTest(urwid.WidgetWrap):
         """
 
         """
-        next_btn = urwid.AttrMap(TextButton('>', on_press=(
-            lambda _: self.update_view('next'))), 'button')
-        prev_btn = urwid.AttrMap(TextButton('<', on_press=(
-            lambda _: self.update_view('prev'))), 'button')
+        def get_button(sign, text):
+            return urwid.AttrMap(TextButton(sign, on_press=(
+                lambda _: self.update_view(text))), 'button')
+
+        next_btn = get_button('>','next')
+        prev_btn = get_button('<', 'prev')
         top_row = []
         focus = None
         if(current > 1):
