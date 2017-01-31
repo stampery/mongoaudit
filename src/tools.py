@@ -81,7 +81,7 @@ def send_result(email, result, title, urn):
     Returns:
         str: response from endpoint
     """
-    url = 'http://127.0.0.1:3000/results'
+    url = 'http://mongoaud.it/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
     values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': getDate()}

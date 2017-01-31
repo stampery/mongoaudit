@@ -22,11 +22,6 @@ class Cards(object):
             TextButton(
                 'Start', on_press=self.choose_test), 'button')
 
-        # debug
-        # debug = urwid.AttrMap(
-        #     TextButton(
-        #         'Debug', align='left', on_press=self.email_prompt), 'button')
-        # button = urwid.Columns([debug, button]) #debug
         card = Card(text, header=pic, footer=button)
         self.app.render(card)
 
@@ -96,8 +91,7 @@ class Cards(object):
         # the name of the bmp is composed with the title
         pic = picRead('check_' + title.lower() + '.bmp', align='right')
 
-        footer = urwid.AttrMap(TextButton(
-            'Cancel', align='left', on_press=self.choose_test), 'button')
+        footer = self.get_footer('Cancel', self.choose_test)
         card = Card(test_runner, header=pic, footer=footer)
         self.app.render(card)
         test_runner.run()
@@ -152,13 +146,8 @@ class Cards(object):
 
     def display_test_result(self, result, title, urn):
         display_test = DisplayTest(result)
-        footer = urwid.AttrMap(
-            TextButton(
-                '< Back to result overview',
-                align='left',
-                on_press=(
-                    lambda _: self.display_overview(result, title, urn))),
-            'button')
+        footer = self.get_footer('< Back to result overview',
+                    lambda _: self.display_overview(result, title, urn))
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
@@ -184,13 +173,16 @@ class Cards(object):
             ('text', response))
 
         content = urwid.Pile([header, div, subtitle])
-        footer = urwid.AttrMap(
-            TextButton(
-                '< Back to result overview',
-                align='left',
-                on_press=(
-                    lambda _: self.display_overview(result, title, urn))),
-            'button')
+        footer = self.get_footer('< Back to result overview',
+                    lambda _: self.display_overview(result, title, urn))
         card = Card(content, footer=footer)
         
         self.app.render(card)
+
+    def get_footer(self, text, cb):
+        return urwid.AttrMap(
+            TextButton(
+                text,
+                align='left',
+                on_press=(cb)),
+            'button')
