@@ -1,6 +1,5 @@
 {
-    "basic": [
-        {
+    "basic": [{
             "test_name": "1",
             "title": "MongoDB listens on a port different to default one",
             "caption": "Using the default MongoDB port makes it too easy for potential attackers to locate and target your server.",
@@ -66,8 +65,56 @@
         },
         {
             "test_name": "13",
-            "title": "Vulnerability Dec 01, 2015",
+            "title": "Vulnerability December 01, 2015",
             "caption": "Unauthorized access to a MongoDB instance or cluster when using LDAP authentication.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "14",
+            "title": "Vulnerability March 27, 2015",
+            "caption": "Remotely trigger a denial of service (crash) due to failure to check for missing value.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "15",
+            "title": "Vulnerability March 25, 2015",
+            "caption": "Remotely trigger a denial of service (crash) via a specially crafted regular expression.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "16",
+            "title": "Vulnerability February 25, 2015",
+            "caption": "A specially crafted, malformed BSON message may trigger an uncaught exception in the server, resulting in a loss of availability.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "17",
+            "title": "Vulnerability June 17, 2014",
+            "caption": "Remotely trigger a crash when X.509 authentication is enabled.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "18",
+            "title": "Vulnerability May 05, 2014",
+            "caption": "Information disclosure of user credentials.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        },
+        {
+            "test_name": "19",
+            "title": "Vulnerability June 20, 2013",
+            "caption": "Improperly grant user system privileges on databases other than local.",
+            "severity": 0,
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+        }, {
+            "test_name": "20",
+            "title": "Vulnerability June 05, 2013",
+            "caption": "Remotely triggered segmentation fault in Javascript engine.",
             "severity": 0,
             "message": ["Vulnerable.", "not Vulnerable. Well done."]
         }

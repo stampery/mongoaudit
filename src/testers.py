@@ -2,6 +2,7 @@
 import pymongo
 from tools import decode_to_string, in_range
 import time
+import socket
 from functools import reduce
 
 
@@ -65,9 +66,12 @@ class Tester(object):
         Note:
           https://docs.mongodb.com/v3.2/reference/command/buildInfo/#dbcmd.buildInfo
         """
+        if hasattr(self, 'info'):
+            return self.info
         try:
             info = self.conn.server_info()
-            return info
+            self.info = info
+            return self.info
         except pymongo.errors.ConnectionFailure:
             return None
 
@@ -90,6 +94,7 @@ class Tester(object):
     def get_roles(self):
         db = self.get_db()
         return db.command('usersInfo', self.cred['username'])['users'][0]
+
 
 
 class Test(object):
@@ -131,7 +136,7 @@ class Test(object):
                 self.caption, 'message': message[value], 'result': value, 'extra_data': extra_data}
 
 
-import socket
+
 
 
 def try_socket(test, forced_port=None):
@@ -333,13 +338,40 @@ def try_scram(test):
 # the following functions are for https://www.mongodb.com/alerts security related
 
 
-def alerts_d012015(test):
+def alerts_dec012015(test):
     if "modules" in test.tester.info:
         enterprise = "enterprise" in test.tester.info["modules"]
         version = test.tester.info["version"]
-        return not(in_range(version, "3.0.6", "3.0.6"))
+        return not(enterprise and in_range(version, "3.0.0", "3.0.6"))
     else:
         return True
+
+def alerts_mar272015(test):
+    return test.tester.info["version"] != "3.0.0"
+
+def alerts_mar252015(test):
+    version = test.tester.info["version"]
+    return version > "2.6.8" and version != "3.0.0" 
+
+def alerts_feb252015(test):
+    version = test.tester.info["version"]
+    return version > "2.6.7" or version == "2.4.13"
+
+def alerts_jun172014(test):
+    version = test.tester.info["version"]
+    return not version in ["2.6.0", "2.6.1"]
+
+def alerts_may052014(test):
+    version = test.tester.info["version"]
+    return version != "2.6.0"
+
+def alerts_jun202013(test):
+    version = test.tester.info["version"]
+    return not in_range(version, "2.4.0", "2.4.4") and version != "2.5.1"
+
+def alerts_jun052013(test):
+    version = test.tester.info["version"]
+    return not in_range(version, "2.4.0", "2.4.4")
 
 
 test_functions = {
@@ -355,7 +387,13 @@ test_functions = {
     "10": try_roles,
     "11": try_dedicated_user,
     "12": try_scram,
-    "13": alerts_d012015,
-
+    "13": alerts_dec012015,
+    "14": alerts_mar272015,
+    "15": alerts_mar252015,
+    "16": alerts_feb252015,
+    "17": alerts_jun172014,
+    "18": alerts_may052014,
+    "19": alerts_jun202013,
+    "20": alerts_jun052013
 }
 
