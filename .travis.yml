@@ -4,3 +4,6 @@ python:
   - "2.7"
 install: "pip install -r requirements.txt"
 script: pytest
+addons:
+    code_climate:
+        repo_token: c61e95317ff3d35b30f19cc01cc12d4deb6fabb40bec934649394cf96e093c91
