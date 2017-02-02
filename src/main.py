@@ -53,7 +53,12 @@ class App(object):
             os.execl(python, python, *sys.argv)
 
     def main(self):
-        self.loop.run()
+        try:
+            self.loop.run()
+        except KeyboardInterrupt:
+            return 0
+
+
 
 
 def main():
