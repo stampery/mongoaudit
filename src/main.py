@@ -9,7 +9,7 @@ import urwid
 from widgets import *
 from cards import *
 from palette import palette
-from tools import check_version
+from tools import check_version, check_terminal
 
 
 class App(object):
@@ -17,7 +17,7 @@ class App(object):
     def __init__(self):
         self.name = 'mongoaudit'
         self.version = '0.0.1'
-        get_latest = check_version(self.version)
+        check_version(self.version)
         self.cards = Cards(self)
         self.setup_view()
         self.main()
@@ -58,6 +58,7 @@ class App(object):
 
 def main():
     App().main()
+
 
 if __name__ == '__main__':
     main()

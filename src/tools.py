@@ -138,3 +138,9 @@ def check_version(version):
         
 def in_range(n, min, max):
     return n >= min and n <= max
+
+def check_terminal():
+    rows = int(os.popen('stty size', 'r').read().split()[0])
+    if rows < 24 :
+        print("Mongo audit requires a terminal with a minimum height of 24.")
+        sys.exit()

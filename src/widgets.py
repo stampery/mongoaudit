@@ -311,9 +311,13 @@ class DisplayTest(urwid.WidgetWrap):
         self.result = result
         self.total = len(result)
         self.update_view('next')
-        pile = urwid.Pile([urwid.Padding(self.top_columns, left=3, right=3),
-                           self.test_result])
-        urwid.WidgetWrap.__init__(self, pile)
+
+        walker = urwid.SimpleListWalker([urwid.Padding(self.top_columns, left=3, right=3),
+                                         self.test_result])
+
+        adapter = urwid.BoxAdapter(urwid.ListBox(walker), height=16)
+
+        urwid.WidgetWrap.__init__(self, adapter)
 
     def test_display(self, test, options):
         """
@@ -362,7 +366,7 @@ class DisplayTest(urwid.WidgetWrap):
             return urwid.AttrMap(TextButton(sign, on_press=(
                 lambda _: self.update_view(text))), 'button')
 
-        next_btn = get_button('>','next')
+        next_btn = get_button('>', 'next')
         prev_btn = get_button('<', 'prev')
         top_row = []
         focus = None
@@ -378,18 +382,18 @@ class DisplayTest(urwid.WidgetWrap):
         self.currently_displayed += 1 if btn is 'next' else -1
 
     def set_focus_position(self, current, btn):
-        focus = 0 # moving to the left
+        focus = 0  # moving to the left
         if(current <= 1):
-            focus = 1 # first element 
-        elif(btn is 'next' and current < self.total): 
-            focus = 2 # moving to the right
+            focus = 1  # first element
+        elif(btn is 'next' and current < self.total):
+            focus = 2  # moving to the right
         self.top_columns.focus_position = focus
 
     def update_view(self, btn):
         self.update_currently_displayed(btn)
         self.top_columns.contents = self.get_top_row(
             self.currently_displayed, self.top_columns.options)
-        
+
         self.set_focus_position(self.currently_displayed, btn)
         self.test_result.contents = self.test_display(
             self.result[self.currently_displayed - 1], self.test_result.options)
