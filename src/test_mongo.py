@@ -1,6 +1,5 @@
 import unittest
-import sys
-sys.path.insert(0, 'src')
+
 from tools import *
 from testers import *
 
