@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib2
 import os
 import sys
+import urllib2
+
 
 def decode_to_string(data):
     """
@@ -11,6 +12,7 @@ def decode_to_string(data):
       data (list(str) or set(str))
     """
     return str([x.encode('UTF8') for x in data])
+
 
 def try_address(fqdn):
     """
@@ -26,23 +28,25 @@ def try_address(fqdn):
     else:
         return True
 
-def validate_uri(uri, error_field, cb):
+
+def validate_uri(uri, error_field, callback):
     """
     Args:
       uri (str): MongoDB URI
       error_field (urwid.Text): field that displays the error
       error_message (str): message to display in case of error
-      cb (function): callback to call on success
+      callback (function): callback to call on success
     """
     parsed = parse_mongo_uri(uri)
     if parsed and try_address(parsed['nodelist'][0][0]):
-        cb(parsed)
+        callback(parsed)
     else:
         error_field.set_error("Invalid domain")
 
+
 def validate_email(email):
     import re
-    valid = re.compile("^[^@]+@[^@]+\.[^@]+$")
+    valid = re.compile(r"^[^@]+@[^@]+\.[^@]+$")
     return valid.match(email.strip())
 
 
@@ -62,12 +66,11 @@ def parse_mongo_uri(conn):
         'options': <dict of MongoDB URI options>
       }
     """
-    import re
     from pymongo import uri_parser
     conn = conn.split('://')[-1]
     try:
         uri = uri_parser.parse_uri("mongodb://" + conn)
-    except Exception:
+    except uri_parser.InvalidURI:
         return None
     else:
         return uri
@@ -84,25 +87,31 @@ def send_result(email, result, title, urn):
     url = 'http://mongoaud.it/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
-    values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': getDate()}
+    values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': get_date()}
     try:
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
         return response.read()
-    except Exception as e:
-        return "We are having technical difficulties at the moment, please try again later.\n\n" +str(e)
+    except (urllib2.HTTPError, urllib2.HTTPError) as exc:
+        return "We are having technical difficulties at the moment, " \
+               "please try again later.\n\n" + str(exc)
 
 
 def load_test(path):
-    base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
     with open(os.path.join(base_path, 'rsc/' + path)) as json_data:
         return json.load(json_data)
 
-def getDate():
-    import time, calendar
+
+def get_date():
+    import time
+    import calendar
     local = time.localtime(time.time())
     nth = ["st", "nd", "rd", None][min(3, local.tm_mday % 10 - 1)] or 'th'
-    return "%s %d%s %d @ %d:%d" % (calendar.month_abbr[local.tm_mon], local.tm_mday, nth, local.tm_year, local.tm_hour, local.tm_min)
+    return "%s %d%s %d @ %d:%d" % (
+        calendar.month_abbr[local.tm_mon], local.tm_mday,
+        nth, local.tm_year, local.tm_hour, local.tm_min)
+
 
 def check_version(version):
     import stat
@@ -115,32 +124,36 @@ def check_version(version):
             latest = releases["tag_name"]
 
             print("Current version " + version + " Latest " + latest)
-            if(version < latest):
+            if version < latest:
                 path = os.path.dirname(sys.executable)
                 print("about to update to version " + latest)
                 # save the permissions from the current binary
-                st = os.stat(path + "/mongoaudit")
+                old_stat = os.stat(path + "/mongoaudit")
                 # rename the current binary in order to download the latest
                 os.rename(path + "/mongoaudit", path + "/temp")
                 req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
-                with open(path + "/mongoaudit", "wb+") as file:
-                    file.write(req.read())
+                with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
+                    mongoaudit_bin.write(req.read())
                     # set the same permissions that had the previous binary
-                    os.chmod(path + "/mongoaudit", st.st_mode | stat.S_IEXEC)
+                    os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
                 # delete the old binary
                 os.remove(path + "/temp")
                 print("mongoaudit updated, restarting...")
                 app_path = path + "/mongoaudit"
-                os.execl(app_path, app_path, *sys.argv)    
-        
-        except Exception:
-            print ("Client offline")
-        
-def in_range(n, min, max):
-    return n >= min and n <= max
+                os.execl(app_path, app_path, *sys.argv)
+
+        except (urllib2.HTTPError, urllib2.URLError):
+            print("Client offline")
+        except os.error:
+            print("Couldn't write mongoaudit binary")
+
+
+def in_range(num, minimum, maximum):
+    return num >= minimum and num <= maximum
+
 
 def check_terminal():
     rows = int(os.popen('stty size', 'r').read().split()[0])
-    if rows < 24 :
+    if rows < 24:
         print("Mongo audit requires a terminal with a minimum height of 24.")
         sys.exit()

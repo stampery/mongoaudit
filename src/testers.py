@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-import pymongo
-from tools import decode_to_string, in_range
-import time
 import socket
+import time
 from functools import reduce
+
+import pymongo
+
+from tools import decode_to_string, in_range
 
 
 class Tester(object):
@@ -53,7 +55,7 @@ class Tester(object):
     def get_connection(self):
         """
         Returns:
-          pymongo.MongoClient: a client that uses as arguments the fqdn and the port of the credentials
+          pymongo.MongoClient: client that takes as arguments (fqdn, port)
 
         """
         fqdn, port = self.cred['nodelist'][0]
@@ -79,7 +81,7 @@ class Tester(object):
         """
         Authenticates to database
         Returns:
-          pymongo.database.Database or False: authenticates and returns the database(singleton) or false if authentication fails
+          pymongo.database.Database or False:  database(singleton) or false if authentication fails
         """
         if hasattr(self, 'db'):
             return self.db
@@ -96,9 +98,7 @@ class Tester(object):
         return db.command('usersInfo', self.cred['username'])['users'][0]
 
 
-
 class Test(object):
-
     def __init__(self, test_name, severity, title, caption, message, breaks=None):
         """
         Args:
@@ -110,10 +110,11 @@ class Test(object):
           breaks (bool): True if the test suite should stop False otherwise
 
         Notes:
-          message should contain an array with the messages for the different results that the test can return
-          if message is a function it should return a str[]
+          message should contain an array with the messages for the different results that
+          the test can return, if message is a function it should return a str[]
         """
-        self.name, self.severity, self.title, self.caption, self.message, self.breaks = test_name, severity, title, caption, message, breaks
+        self.name, self.severity, self.title, self.caption, self.message, self.breaks = \
+            test_name, severity, title, caption, message, breaks
 
     def run(self, tester):
         """
@@ -132,11 +133,10 @@ class Test(object):
         else:
             value = result
             extra_data = None
-        return {'name': self.name, 'severity': self.severity, 'title': self.title, 'caption':
-                self.caption, 'message': message[value], 'result': value, 'extra_data': extra_data}
 
-
-
+        return {'name': self.name, 'severity': self.severity, 'title': self.title,
+                'caption': self.caption, 'message': message[value], 'result': value,
+                'extra_data': extra_data}
 
 
 def try_socket(test, forced_port=None):
@@ -308,7 +308,8 @@ def try_roles(test):
         return [False, decode_to_string(validated['invalid'])]
     elif bool(validated['custom']):
         # if the profile has custom permissions
-        message = get_message('valid', 'Your user\'s role set ', ' seem to be ok, but we couldn\'t do an exhaustive check.') 
+        message = get_message('valid', 'Your user\'s role set ',
+                              ' seem to be ok, but we couldn\'t do an exhaustive check.')
         return [2, message]
     # if everything seems to be ok
     return [True, decode_to_string(validated['valid'])]
@@ -342,32 +343,39 @@ def alerts_dec012015(test):
     if "modules" in test.tester.info:
         enterprise = "enterprise" in test.tester.info["modules"]
         version = test.tester.info["version"]
-        return not(enterprise and in_range(version, "3.0.0", "3.0.6"))
+        return not (enterprise and in_range(version, "3.0.0", "3.0.6"))
     else:
         return True
+
 
 def alerts_mar272015(test):
     return test.tester.info["version"] != "3.0.0"
 
+
 def alerts_mar252015(test):
     version = test.tester.info["version"]
-    return version > "2.6.8" and version != "3.0.0" 
+    return version > "2.6.8" and version != "3.0.0"
+
 
 def alerts_feb252015(test):
     version = test.tester.info["version"]
     return version > "2.6.7" or version == "2.4.13"
 
+
 def alerts_jun172014(test):
     version = test.tester.info["version"]
     return not version in ["2.6.0", "2.6.1"]
+
 
 def alerts_may052014(test):
     version = test.tester.info["version"]
     return version != "2.6.0"
 
+
 def alerts_jun202013(test):
     version = test.tester.info["version"]
     return not in_range(version, "2.4.0", "2.4.4") and version != "2.5.1"
+
 
 def alerts_jun052013(test):
     version = test.tester.info["version"]
@@ -375,12 +383,13 @@ def alerts_jun052013(test):
 
 
 test_functions = {
-    "1": lambda test: not(test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
+    "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: not "version" in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) if ("OpenSSLVersion" in test.tester.info) else test.tester.info["openssl"]["running"] != "disabled",
+    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) if ("OpenSSLVersion" in test.tester.info) else
+    test.tester.info["openssl"]["running"] != "disabled",
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
@@ -396,4 +405,3 @@ test_functions = {
     "19": alerts_jun202013,
     "20": alerts_jun052013
 }
-

@@ -116,7 +116,7 @@
             "title": "Vulnerability June 05, 2013",
             "caption": "Remotely triggered segmentation fault in Javascript engine.",
             "severity": 0,
-            "message": ["not Vulnerable. Well done."]
+            "message": ["Vulnerable.", "not Vulnerable. Well done."]
         }
 
     ],

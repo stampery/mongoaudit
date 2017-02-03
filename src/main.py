@@ -5,15 +5,13 @@ Is my mongo exposed?
 """
 import os
 import sys
-import urwid
-from widgets import *
+
 from cards import *
 from palette import palette
-from tools import check_version, check_terminal
+from tools import check_version
 
 
 class App(object):
-
     def __init__(self):
         self.name = 'mongoaudit'
         self.version = '0.0.1'
@@ -57,8 +55,6 @@ class App(object):
             self.loop.run()
         except KeyboardInterrupt:
             return 0
-
-
 
 
 def main():

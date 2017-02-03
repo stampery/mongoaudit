@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import urwid
+from functools import reduce
+
 from picmagic import read as picRead
 from tools import validate_uri, send_result, load_test, validate_email
 from widgets import *
-from testers import *
-from functools import reduce
 
 
 class Cards(object):
@@ -40,7 +39,7 @@ class Cards(object):
             picRead('bars_max.bmp'),
             [('text bold', 'Advanced'),
              ('text', 'Connect to MongoDB server and analize security from inside. (Requires valid credentials)')])
-        content = urwid.Pile([txt, div, basic, advanced])
+        content = urwid.Pile([txt, DIV, basic, advanced])
 
         basic_args = {
             'title': 'Basic',
@@ -69,7 +68,7 @@ class Cards(object):
         """
         intro = urwid.Pile([
             urwid.Text(('text bold', title + ' test')),
-            div,
+            DIV,
             urwid.Text([label + ' (', ('text italic', uri_example), ')'])
         ])
         validate = lambda form, uri: validate_uri(
@@ -101,6 +100,7 @@ class Cards(object):
         Args:
             result (dict()): the result returned by test_runner
         """
+
         def reduce_result(res, values):
             if not bool(values):
                 return []
@@ -110,7 +110,7 @@ class Cards(object):
         base = len(result) + 1
         # range 4 because the possible values for result  are [False, True,
         # 'custom', 'ommited']
-        values = [base**x for x in range(4)]
+        values = [base ** x for x in range(4)]
         total = reduce(lambda x, y: x + values[y['result']], result, 0)
         header = urwid.Text(('header red', 'Result overview'))
         subtitle = urwid.Text(
@@ -120,9 +120,9 @@ class Cards(object):
             [
                 ('ok', str(
                     overview[1])), ('text', ' passed   '), ('error', str(
-                        overview[0])), ('text', ' failed   '), ('warning', str(
-                            overview[2])), ('text', ' warning   '), ('info', str(
-                                overview[3])), ('text', ' ommited')])
+                overview[0])), ('text', ' failed   '), ('warning', str(
+                overview[2])), ('text', ' warning   '), ('info', str(
+                overview[3])), ('text', ' ommited')])
         footer = urwid.AttrMap(
             TextButton(
                 '< Back to main menu',
@@ -140,14 +140,14 @@ class Cards(object):
         urwid.connect_signal(
             email_button, 'click', lambda _: self.email_prompt(result, title, urn))
 
-        card = Card(urwid.Pile([header, div, subtitle, div, overview, div,
+        card = Card(urwid.Pile([header, DIV, subtitle, DIV, overview, DIV,
                                 results_button, email_button]), footer=footer)
         self.app.render(card)
 
     def display_test_result(self, result, title, urn):
         display_test = DisplayTest(result)
         footer = self.get_footer('< Back to result overview',
-                    lambda _: self.display_overview(result, title, urn))
+                                 lambda _: self.display_overview(result, title, urn))
         card = Card(display_test, footer=footer)
         self.app.render(card)
 
@@ -155,28 +155,29 @@ class Cards(object):
         header = urwid.Text(('header red', 'Email result'))
         subtitle = urwid.Text(
             ('text', 'The quick brown fox jumps over the lazy dog'))
-        content = urwid.Pile([header, div, subtitle])
+        content = urwid.Pile([header, DIV, subtitle])
         card = FormCard(
             content,
             ['Email'],
             'Send',
-            lambda form, email: self.send_email(email.strip(), result, title, urn) if validate_email(email) else form.set_error("Invalid email"),
+            lambda form, email: self.send_email(email.strip(), result, title, urn) if validate_email(
+                email) else form.set_error("Invalid email"),
             lambda _: self.display_overview(result, title, urn))
 
         self.app.render(card)
 
     def send_email(self, email, result, title, urn):
-        email_result = map(lambda r: {"name": r["name"], "value": r["result"], "data": r["extra_data"]},result)
+        email_result = map(lambda r: {"name": r["name"], "value": r["result"], "data": r["extra_data"]}, result)
         response = send_result(email, email_result, title, urn)
         header = urwid.Text(('header red', title))
         subtitle = urwid.Text(
             ('text', response))
 
-        content = urwid.Pile([header, div, subtitle])
+        content = urwid.Pile([header, DIV, subtitle])
         footer = self.get_footer('< Back to result overview',
-                    lambda _: self.display_overview(result, title, urn))
+                                 lambda _: self.display_overview(result, title, urn))
         card = Card(content, footer=footer)
-        
+
         self.app.render(card)
 
     def get_footer(self, text, cb):

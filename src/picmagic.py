@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
 import os
+import sys
+
 import urwid
 
-def read(path, align='left'):
 
+def read(path, align='left'):
     def line_process(line):
         return urwid.AttrMap(urwid.Text(map(pixel_process, line), wrap='clip', align=align), 'pic')
 

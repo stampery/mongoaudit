@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import urwid
-from testers import *
+
+from testers import Tester
+
+DIV = urwid.Divider()
+HR = urwid.AttrMap(urwid.Divider('_'), 'hr')
 
 
-div = urwid.Divider()
-hr = urwid.AttrMap(urwid.Divider('_'), 'hr')
-
-
-def pad(w, left=2, right=2):
-    return urwid.Padding(w, left=left, right=right)
+def pad(widget, left=2, right=2):
+    return urwid.Padding(widget, left=left, right=right)
 
 
 class TextButton(urwid.Button):
@@ -41,16 +41,15 @@ class Card(urwid.WidgetWrap):
         wlist = []
         if header:
             wlist.append(header)
-        wlist.extend([div, pad(content)])
+        wlist.extend([DIV, pad(content)])
         if footer:
-            wlist.extend([hr, div, pad(footer)])
-        wlist.append(div)
+            wlist.extend([HR, DIV, pad(footer)])
+        wlist.append(DIV)
         card = urwid.AttrMap(urwid.Pile(wlist), 'card')
         urwid.WidgetWrap.__init__(self, card)
 
 
 class ObjectButton(urwid.Button):
-
     def __init__(self, content, on_press=None, user_data=None):
         self.__super.__init__('', on_press=on_press, user_data=user_data)
 
@@ -73,7 +72,7 @@ class LineButton(ObjectButton):
 
         content = [urwid.Padding(content, left=3, right=3)]
         if vertical_padding:
-            content = [div] + content + [div]
+            content = [DIV] + content + [DIV]
         lbox = urwid.LineBox(urwid.Pile(content))
         self.__super.__init__(urwid.AttrMap(urwid.Pile(
             [lbox]), 'image button', 'image button focus'))
@@ -89,8 +88,8 @@ class ImageButton(ObjectButton):
 
     def __init__(self, pic, text):
         content = self.get_content(text)
-        lbox = urwid.LineBox(urwid.Pile([div, urwid.Padding(
-            urwid.Columns([(8, pic), content], 4), left=3, right=3), div]))
+        lbox = urwid.LineBox(urwid.Pile([DIV, urwid.Padding(
+            urwid.Columns([(8, pic), content], 4), left=3, right=3), DIV]))
         self.__super.__init__(urwid.AttrMap(urwid.Pile(
             [lbox]), 'image button', 'image button focus'))
 
@@ -192,8 +191,7 @@ class FormCard(urwid.WidgetWrap):
         """
         values = dict()
         for field in self.fields:
-            values[field.get_label().lower().replace(" ", "_")
-                   ] = field.get_text()
+            values[field.get_label().lower().replace(" ", "_")] = field.get_text()
 
         return values
 
@@ -236,7 +234,7 @@ class TestRunner(urwid.WidgetWrap):
         self.text_running = urwid.Text(('text', ''))
         box = urwid.BoxAdapter(urwid.Filler(
             self.text_running, valign='top'), 3)
-        pile = urwid.Pile([div, running_display, self.progress_bar, div, box])
+        pile = urwid.Pile([DIV, running_display, self.progress_bar, DIV, box])
         urwid.WidgetWrap.__init__(self, pile)
 
     def each(self, test):
@@ -325,24 +323,24 @@ class DisplayTest(urwid.WidgetWrap):
         Returns:
             [urwid.Widget]:
         """
-        div_option = (div, options('weight', 1))
+        div_option = (DIV, options('weight', 1))
         title = (urwid.Text(
             ('text bold', test['title'])), options('weight', 1))
         caption = (urwid.Text(
             ('text', test['caption'])), options('weight', 1))
         severity = (urwid.Text(
             ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])),
-            options('weight', 1))
+                    options('weight', 1))
         result = (urwid.Text(
             [('text', 'Result: '), (['error', 'ok', 'warning', 'info'][test['result']],
                                     ' ' + ['✘', '✔', '!', '*'][test['result']]),
-                ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
-            options('weight', 1))
-        message_string = ""
+             ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
+                  options('weight', 1))
 
-        if(isinstance(test['message'], list)):
+
+        if isinstance(test['message'], list):
             message_string = test['message'][0] + \
-                test['extra_data'] + test['message'][1]
+                             test['extra_data'] + test['message'][1]
         else:
             message_string = test['message']
         message = (urwid.Text(
@@ -356,12 +354,10 @@ class DisplayTest(urwid.WidgetWrap):
             tuple(str,str): palette , Test n/total
         """
         return 'header red', 'Test ' + \
-            str(self.currently_displayed) + '/' + str(self.total)
+               str(self.currently_displayed) + '/' + str(self.total)
 
     def get_top_row(self, current, options):
-        """
 
-        """
         def get_button(sign, text):
             return urwid.AttrMap(TextButton(sign, on_press=(
                 lambda _: self.update_view(text))), 'button')
@@ -369,12 +365,11 @@ class DisplayTest(urwid.WidgetWrap):
         next_btn = get_button('>', 'next')
         prev_btn = get_button('<', 'prev')
         top_row = []
-        focus = None
-        if(current > 1):
+        if current > 1:
             top_row.append((prev_btn, options('weight', 0)))
         top_row.append((urwid.Padding(urwid.Text(self.get_top_text()),
                                       left=25), options('weight', 1)))
-        if(current < len(self.result)):
+        if current < len(self.result):
             top_row.append((next_btn, options('weight', 0.2)))
         return top_row
 
@@ -383,9 +378,9 @@ class DisplayTest(urwid.WidgetWrap):
 
     def set_focus_position(self, current, btn):
         focus = 0  # moving to the left
-        if(current <= 1):
+        if current <= 1:
             focus = 1  # first element
-        elif(btn is 'next' and current < self.total):
+        elif btn is 'next' and current < self.total:
             focus = 2  # moving to the right
         self.top_columns.focus_position = focus
 
