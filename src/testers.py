@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import socket
 import time
-from functools import reduce
 
 import pymongo
 
-from tools import decode_to_string, in_range
+from src.tools import decode_to_string, in_range
 
 
 class Tester(object):
@@ -83,19 +82,19 @@ class Tester(object):
         Returns:
           pymongo.database.Database or False:  database(singleton) or false if authentication fails
         """
-        if hasattr(self, 'db'):
-            return self.db
+        if hasattr(self, 'database'):
+            return self.database
         try:
-            db = self.conn[self.cred['database']]
-            db.authenticate(self.cred['username'], self.cred['password'])
-            self.db = db
-            return self.db
+            database = self.conn[self.cred['database']]
+            database.authenticate(self.cred['username'], self.cred['password'])
+            self.database = database
+            return self.database
         except (pymongo.errors.OperationFailure, ValueError, TypeError):
             return False
 
     def get_roles(self):
-        db = self.get_db()
-        return db.command('usersInfo', self.cred['username'])['users'][0]
+        data_base = self.get_db()
+        return data_base.command('usersInfo', self.cred['username'])['users'][0]
 
 
 class Test(object):
@@ -204,7 +203,8 @@ def try_roles(test):
         """
 
         Returns:
-          dict(set()): returns an empty dictionary that contains 3 empty sets where valid, invalid and custom roles are stored
+          dict(set()): returns an empty dictionary that contains 3 empty
+          sets where valid, invalid and custom roles are stored
         """
         return {'invalid': set([]), 'valid': set([]), 'custom': set([])}
 
@@ -216,11 +216,9 @@ def try_roles(test):
         Returns:
           dict(set()): the union of 2 default values
         """
-        return {
-            'invalid': a['invalid'].union(
-                b['invalid']), 'valid': a['valid'].union(
-                b['valid']), 'custom': a['custom'].union(
-                b['custom'])}
+        return {'invalid': a['invalid'].union(b['invalid']),
+                'valid': a['valid'].union(b['valid']),
+                'custom': a['custom'].union(b['custom'])}
 
     def reduce_roles(roles):
         """
@@ -228,12 +226,10 @@ def try_roles(test):
         Args:
          roles (list(dict())): roles
         Returns:
-          result_default_value: with the roles sorted by valid, invalid, custom
+          result_default_value: roles sorted by valid, invalid, custom
         """
-        return reduce(
-            lambda x, y: combine_result(
-                x, y), map(
-                lambda r: validate_role(r), roles))
+        return reduce(lambda x, y: combine_result(x, y),
+                      map(lambda r: validate_role(r), roles))
 
     def basic_validation(role):
         """
@@ -299,7 +295,8 @@ def try_roles(test):
         # if the users doesn't have permission to run the command 'rolesInfo'
         validated = basic_validation(roles)
         if bool(validated['valid']):
-            message = get_message('valid', 'You user permission ', ' didn\'t allow us to do an exhaustive check')
+            message = get_message('valid', 'You user permission ',
+                                  ' didn\'t allow us to do an exhaustive check')
             return [2, message]
 
     # when user has permission to run 'rolesInfo'
@@ -331,7 +328,8 @@ def try_scram(test):
     try:
         conn = test.tester.get_connection()
         cred = test.tester.cred
-        return conn[cred["database"]].authenticate(cred["username"], cred["password"], mechanism='SCRAM-SHA-1')
+        return conn[cred["database"]]\
+            .authenticate(cred["username"], cred["password"], mechanism='SCRAM-SHA-1')
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
@@ -388,8 +386,9 @@ test_functions = {
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: not "version" in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) if ("OpenSSLVersion" in test.tester.info) else
-    test.tester.info["openssl"]["running"] != "disabled",
+    "6": lambda test: bool(test.tester.info["OpenSSLVersion"])
+         if ("OpenSSLVersion" in test.tester.info)
+         else test.tester.info["openssl"]["running"] != "disabled",
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
