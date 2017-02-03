@@ -1,8 +1,14 @@
 default:
-	pyinstaller main.spec
+	pip install -r requirements.txt
 
 init:
-	pip install -r requirements.txt
+	./mongoaudit
 
 test:
 	pytest
+
+dist:
+	pyinstaller main.spec
+
+install:
+	/usr/bin/env python2 setup.py install

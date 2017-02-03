@@ -55,3 +55,9 @@ class App(object):
             self.loop.run()
         except KeyboardInterrupt:
             return 0
+
+def main(args=None):
+    App().main()
+
+if __name__ == "__main__":
+    main()

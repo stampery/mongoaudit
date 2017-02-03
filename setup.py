@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 
+
 with open('README.md') as f:
     readme = f.read()
 
@@ -17,5 +18,15 @@ setup(
     author_email='info@stampery.com',
     url='https://github.com/stampery/mongoaudit',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=[
+      'mongoaudit'
+    ],
+    package_dir={
+      'mongoaudit': 'src'
+    },
+    entry_points={
+      'console_scripts': [
+          'mongoaudit = mongoaudit.main:main'
+      ]
+    }
 )
