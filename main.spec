@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['src/main.py'],
-             pathex=['/home/stampery/Workspace/pythonworkspace/mongoaudit/src'],
+a = Analysis(['mongoaudit'],
+             pathex=['src'],
              binaries=[],
-             datas=[('/home/stampery/Workspace/pythonworkspace/mongoaudit/rsc/*.*', 'rsc')],
+             datas=[('rsc/*.*', 'rsc')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
