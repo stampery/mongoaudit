@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from functools import reduce
-
-from picmagic import read as picRead
-from tools import validate_uri, send_result, load_test, validate_email
-from widgets import *
+from src.picmagic import read as picRead
+from src.tools import validate_uri, send_result, load_test, validate_email
+from src.widgets import *
 
 
 class Cards(object):

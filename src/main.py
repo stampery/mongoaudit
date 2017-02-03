@@ -6,9 +6,9 @@ Is my mongo exposed?
 import os
 import sys
 
-from cards import *
-from palette import palette
-from tools import check_version
+from src.cards import *
+from src.palette import palette
+from src.tools import check_version
 
 
 class App(object):
