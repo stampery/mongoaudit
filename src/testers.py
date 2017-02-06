@@ -383,6 +383,10 @@ def alerts_mar062014(test):
     version = test.tester.info["version"]
     return version > "2.3.1"
 
+def alerts_oct012013(test):
+    version = test.tester.info["version"]
+    return version > "2.2.3"
+
 test_functions = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
@@ -406,5 +410,6 @@ test_functions = {
     "18": alerts_may052014,
     "19": alerts_jun202013,
     "20": alerts_jun052013,
-    "21": alerts_mar062014
+    "21": alerts_mar062014,
+    "22": alerts_oct012013
 }
