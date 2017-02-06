@@ -42,3 +42,12 @@ class MongoauditTest(unittest.TestCase):
 
     def test_alert8(self):
         self.assertFalse(alerts_jun052013(self.ver_obj("2.4.4")))
+
+    def test_alert9(self):
+        self.assertFalse(alerts_mar062014(self.ver_obj("2.3.1")))
+
+    def test_alert10(self):
+        self.assertFalse(alerts_oct012013(self.ver_obj("2.2.1")))
+
+    def test_alert11(self):
+        self.assertFalse(alerts_aug152013(self.ver_obj("2.5.1")))
