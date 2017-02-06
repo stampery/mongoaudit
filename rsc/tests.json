@@ -133,6 +133,15 @@
             "message": [
                 ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
             ]
+        },
+        {
+            "test_name": "21",
+            "title": "vulnerable to security bug CVE-2012-6619 (March 06, 2014)",
+            "caption": "This bug allows allows remote authenticated users to cause a denial of service (crash) or read system memory via a crafted BSON object in the column name in an insert command, which triggers a buffer over-read",
+            "severity": 0,
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         }
 
     ],
