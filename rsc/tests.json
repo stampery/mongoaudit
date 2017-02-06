@@ -143,7 +143,7 @@
                 ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
             ]
         },
-      {
+        {
             "test_name": "22",
             "title": "vulnerable to security bug CVE-2013-1892 (Oct 01, 2013)",
             "caption": "This bug allows remote authenticated users to cause a denial of service (invalid memory access and server crash) or execute arbitrary code via a crafted memory address in the first argument.	",
@@ -151,8 +151,16 @@
             "message": [
                 ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
             ]
+        },
+        {
+            "test_name": "23",
+            "title": "vulnerable to security bug CVE-2013-2132 (Aug 15, 2013)",
+            "caption": "This bug allows context-dependent attackers to cause a denial of service (NULL pointer dereference and crash) via vectors related to decoding of an \"invalid DBRef\".",
+            "severity": 0,
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         }
-
     ],
 
 
