@@ -10,11 +10,11 @@
         },
         {
             "test_name": "2",
-            "title": "Server only allows connecting from intended hosts / networks",
+            "title": "Server only accepts connections from whitelisted hosts / networks",
             "caption": "Best practice is to only listen to incoming connections whose originating IP belongs to the applications or systems that are intended to use the database. This protects your server from denial-of-service attacks and some other vulnerabilities that may be present on other services running on the same device.",
             "severity": 1,
-            "message": ["Your server allows connections from unauthorized hosts. Read this guide on how to block unauthorized hosts.",
-                "Your server does not allow connection from unauthorized hosts. Well done."
+            "message": ["Your server does accept connections from unauthorized hosts. Read this guide on how to create whitelists and block unauthorized hosts.",
+                "Your server does not accept connections from unauthorized hosts. Well done."
             ],
             "breaks": true
         },
@@ -23,15 +23,15 @@
             "title": "MongoDB HTTP status interface is not accessible on port 28017",
             "caption": "HTTP status interface should be disabled in production environments to prevent potential data exposure and vulnerability to attackers.",
             "severity": 0,
-            "message": ["HTTP interface is enabled. Please read this guide on how to disable MongoDB HTTP status interface.",
-                "HTTP interface is disabled. Well done."
+            "message": ["HTTP status interface is enabled. Please read this guide on how to disable MongoDB HTTP status interface.",
+                "HTTP status interface is disabled. Well done."
             ]
         },
         {
             "test_name": "4",
             "title": "MongoDB is not exposing its version number",
             "caption": "Publicly exposing the version number makes it too easy for potential attackers to immediately exploit known vulnerabilities.",
-            "severity": 0,
+            "severity": 2,
             "message": ["MongoDB version number is exposed. This could be solved using a reverse proxy.",
                 "MongoDB is hiding its version number. Well done."
             ]
@@ -39,84 +39,100 @@
         {
             "test_name": "5",
             "title": "MongoDB version is newer than 2.4",
-            "caption": "MongoDB versions prior to 2.4 allow usage of the “db” object inside “$where” clauses in your queries. This is a huge security flaw that allows attackers to inject and run arbitrary code in your database.",
+            "caption": "MongoDB versions equal and prior to 2.4 amass an alarming number of security issues that make them specially vulnerable to injection and denial of service attacks.",
             "severity": 0,
-
             "message": [
-                ["You are running MongoDB version ", ". Well done."],
-                ["You are running MongoDB version ", "."]
+                ["You are running MongoDB version ", ", which is highly vulnerable. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."],
+                ["You are running MongoDB version ", ". Well done."]
             ]
         },
         {
             "test_name": "6",
-            "title": "Encryption is enabled",
-            "caption": "Enable TLS/SSL to encrypt communications between your Mongo client and Mongo server to avoid eavesdropping, tampering and “man in the middle” attacks.",
+            "title": "TLS/SSL encryption is enabled",
+            "caption": "Enable TLS/SSL in-flight encryption to authenticate and encrypt connections between your MongoDB server and apps to avoid eavesdropping, tampering and “man in the middle” attacks.",
             "severity": 0,
-            "message": ["Encryption is disabled.",
-                "TLS/SSL is enabled. Well done."
+            "message": ["TLS/SSL encryption is NOT enabled and your connections are unprotected from eavesdropping. Please read this guide on how to enable TLS/SSL encryption on MongoDB.",
+                "TLS/SSL enryption is enabled and your connections are safe from eavesdropping. Well done."
             ]
         },
         {
             "test_name": "7",
-            "title": "Authentication is enabled",
-            "caption": "Enable access control and specify the authentication mechanism, Authentication requires that all clients and servers provide valid credentials before they can connect to the system. In clustered deployments, enable authentication for each MongoDB server.",
+            "title": "authentication is enabled",
+            "caption": "Authentication requires that all clients provide valid credentials before they can connect to the server. All production servers MUST use authentication.",
             "severity": 0,
-            "message": ["Authentication is disabled.", "Authentication is enabled. Well done."]
+            "message": ["Authentication is NOT enabled. You are inviting everyone out there to enter your databases, seize everything and potentially ransom you for your data. Please read this guide on how to enable authentication on MongoDB.",
+                "Authentication is enabled. Well done."]
         },
         {
             "test_name": "13",
-            "title": "Vulnerability December 01, 2015",
-            "caption": "Unauthorized access to a MongoDB instance or cluster when using LDAP authentication.",
+            "title": "vulnerable to security bug CVE-2015-7882 (December 01, 2015)",
+            "caption": "This bug allows unauthorized access to a MongoDB instance or cluster when using LDAP authentication.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         },
         {
             "test_name": "14",
-            "title": "Vulnerability March 27, 2015",
-            "caption": "Remotely trigger a denial of service (crash) due to failure to check for missing value.",
+            "title": "vulnerable to security bug CVE-2015-2705 (March 27, 2015)",
+            "caption": "This bug allows to remotely trigger a denial of service (crash) due to failure to check for a missing value.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         },
         {
             "test_name": "15",
-            "title": "Vulnerability March 25, 2015",
-            "caption": "Remotely trigger a denial of service (crash) via a specially crafted regular expression.",
+            "title": "vulnerable to security bug CVE-2014-8964 (March 25, 2015)",
+            "caption": "This bug allows to remotely trigger a denial of service (crash) via a specially crafted regular expression.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         },
         {
             "test_name": "16",
-            "title": "Vulnerability February 25, 2015",
-            "caption": "A specially crafted, malformed BSON message may trigger an uncaught exception in the server, resulting in a loss of availability.",
+            "title": "vulnerable to security bug CVE-2015-1609 (February 25, 2015)",
+            "caption": "This bug allows to a specially crafted, malformed BSON message to trigger an uncaught exception in the server, resulting in a loss of availability.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         },
         {
             "test_name": "17",
-            "title": "Vulnerability June 17, 2014",
-            "caption": "Remotely trigger a crash when X.509 authentication is enabled.",
+            "title": "vulnerable to security bug CVE-2014-3971 (June 17, 2014)",
+            "caption": "This bug allows to remotely trigger a crash when X.509 authentication is enabled.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         },
         {
             "test_name": "18",
-            "title": "Vulnerability May 05, 2014",
-            "caption": "Information disclosure of user credentials.",
+            "title": "vulnerable to security bug CVE-2014-2917 (May 05, 2014)",
+            "caption": "This bug causes accidental information disclosure of user credentials.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+           ]
         },
         {
             "test_name": "19",
-            "title": "Vulnerability June 20, 2013",
-            "caption": "Improperly grant user system privileges on databases other than local.",
+            "title": "vulnerable to security bug CVE-2013-4650 (June 20, 2013)",
+            "caption": "This bug allows to improperly grant user system privileges on databases other than local.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         }, {
             "test_name": "20",
-            "title": "Vulnerability June 05, 2013",
-            "caption": "Remotely triggered segmentation fault in Javascript engine.",
+            "title": "vulnerable to security bug CVE-2013-3969 (June 05, 2013)",
+            "caption": "This bug allows to remotely trigger a segmentation fault in the Javascript engine.",
             "severity": 0,
-            "message": ["Vulnerable.", "not Vulnerable. Well done."]
+            "message": [
+                ["Your specific MongoDB version (", ") IS vulnerable to this bug. Please read this guide on how to upgrade to MongoDB's latest stable version and consider upgrading as soon as possible."], "Your server is not vulnerable to this bug. Well done."
+            ]
         }
 
     ],
@@ -124,52 +140,52 @@
 
     "advanced": [{
             "test_name": "8",
-            "title": "Valid credentials",
-            "caption": "To continue testing the provided credentials must be valid.",
+            "title": "authentication credentials are valid",
+            "caption": "To continue running the tests, the provided credentials must be valid.",
             "severity": 0,
-            "message": ["Invalid credentials",
-                "Credentials are valid"
+            "message": ["Invalid authentication credentials. Can not continue with the tests. Please provide valid credentials.",
+                "Provided authentication credentials are valid. Testing will continue."
             ],
             "breaks": false
         },
         {
             "test_name": "12",
-            "title": "SCRAM-SHA-1",
-            "caption": "SCRAM-SHA-1",
+            "title": "SCRAM-SHA-1 authentication method is enabled",
+            "caption": "SCRAM-SHA-1 is more secure than the previously-used MONGODB-CR authentication method, given that it provides a tunable work factor, per-user random salts, stronger hashes (SHA-1 rather than MD5), and bidirectional authentication.",
             "severity": 0,
             "message": [
-                "SCRAM-SHA-1 is not enabled",
-                "SCRAM-SHA-1 is enabled"
+                "SCRAM-SHA-1 is NOT enabled. Please read this guide on how to use SCRAM-SHA1 as the default authentication method in MongoDB.",
+                "SCRAM-SHA-1 is enabled and being used. Well done."
             ]
         },
         {
             "test_name": "9",
-            "title": "Javascript is not allowed in queries",
+            "title": "server-side Javascript is forbidden",
             "caption": "Running Javascript inside queries makes MongoDB powerful but also vulnerable to injection and denial-of-service attacks. Javascript should be always disabled unless it is strictly needed by your application.",
             "severity": 0,
-            "message": ["Usage of Javascript is allowed inside queries.",
+            "message": ["Usage of Javascript IS allowed inside queries, which is potentially harmful. Please read this guide on how to disable server-side Javascript.",
                 "Usage of Javascript is not allowed inside queries. Well done."
             ]
         },
         {
             "test_name": "10",
-            "title": "Role granted to the provided user only permits CRUD operations",
-            "caption": "Your user should only be allowed to perform CRUD (create, replace, update and delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.",
+            "title": "roles granted to the provided user only permit CRUD operations",
+            "caption": "Your user should only be allowed to perform CRUD (Create, Replace, Update and Delete) operations. Granting database administration roles such as “dbAdmin”, “dbOwner” or “userAdmin” is a huge risk for data integrity.",
             "severity": 0,
             "message": [
-                ["Your user's role ", " permission is too high."],
-                ["Your user's role ", " permissions ???. Well done."],
+                ["The permissions contained in your user's role set ", " are way too high. Please read this guide on roles and permissions best practices."],
+                ["The permissions contained in your user's role set  ", " are sensible. Well done."],
                 ["", ""]
             ]
         },
         {
             "test_name": "11",
-            "title": "Run MongoDB with a dedicated user",
-            "caption": "Run MongoDB processes with a dedicated operating system user account. Ensure that the account has permissions to access data but no unnecessary permissions.",
+            "title": "the provided user has permissions over a single database",
+            "caption": "",
             "severity": 0,
             "message": [
-                ["Your user account has permissions for ", " databases."],
-                ["No unnecessary permissions are given, your user account only has permissions over ", " database. Well done."]
+                ["The provided user has permissions over ", " databases. Please read this guide on roles and permissions best practices."],
+                ["The provided user only has permissions over “", "“ database. Well done."]
             ]
         }
     ]
