@@ -16,7 +16,7 @@ def decode_to_string(data):
 
 def try_address(fqdn):
     """
-    Check if a fqdn is valid
+    Check if the fqdn is valid
     Args:
         fqdn (str): fully qualified domain name
     """
@@ -84,7 +84,7 @@ def send_result(email, result, title, urn):
     Returns:
         str: response from endpoint
     """
-    url = 'http://mongoaud.it/results'
+    url = 'https://mongoaud.it/results'
     headers = {'Content-type': 'application/json',
                'Accept': 'application/json'}
     values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': get_date()}
@@ -118,7 +118,7 @@ def check_version(version):
     # if application is binary then check for latest version
     if getattr(sys, 'frozen', False):
         try:
-            url = "https://api.github.com/repos/kronolynx/AngularApp/releases/latest"
+            url = "https://api.github.com/repos/stampery/mongoaudit/releases/latest"
             req = urllib2.urlopen(url)
             releases = json.loads(req.read())
             latest = releases["tag_name"]

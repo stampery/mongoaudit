@@ -29,6 +29,7 @@ class TextButton(urwid.Button):
         super(urwid.Button, self).__init__(cols)
 
 
+
 class Card(urwid.WidgetWrap):
     """
     Args:
@@ -51,11 +52,11 @@ class Card(urwid.WidgetWrap):
 
 class ObjectButton(urwid.Button):
     def __init__(self, content, on_press=None, user_data=None):
-        self.__super.__init__('', on_press=on_press, user_data=user_data)
-
+        # self.__super.__init__(content, on_press=on_press, user_data=user_data)
         super(urwid.Button, self).__init__(content)
 
-    def get_content(self, text):
+    @staticmethod
+    def get_content(text):
         return urwid.Pile([urwid.SelectableIcon(
             s, 0) if i == 0 else urwid.Text(s) for i, s in enumerate(text)])
 
@@ -102,8 +103,8 @@ class InputField(urwid.WidgetWrap):
       label_width (int): label width (default 15 characters)
     """
 
-    def __init__(self, label="", label_width=15, next=False):
-        self.label, self.next = label, next
+    def __init__(self, label="", label_width=15, next_callback=False):
+        self.label, self.next_callback = label, next_callback
         self.edit = urwid.Padding(urwid.Edit(), left=1, right=1)
         label = urwid.LineBox(
             urwid.Text(label),
@@ -145,10 +146,11 @@ class InputField(urwid.WidgetWrap):
         return self.label
 
     def keypress(self, size, key):
-        if key is 'enter' and self.next:
-            self.next()
+        if key is 'enter' and self.next_callback:
+            self.next_callback()
         else:
             return self.__super.keypress(size, key)
+
 
 
 class FormCard(urwid.WidgetWrap):
@@ -160,21 +162,21 @@ class FormCard(urwid.WidgetWrap):
       cb (function): callback to invoke when the form button is pressed
       back (function): card to render when going back
     Note:
-      cb must take the same amount of arguments as labels were passed and each parameter
+      callback must take the same amount of arguments as labels were passed and each parameter
       in the callback must be named as the label but in snake case and lower case e.g.
       'Field Name' =>  field_name
     """
 
-    def __init__(self, content, field_labels, btn_label, cb, back=None):
-        self.fields, self.cb = [], cb
+    def __init__(self, content, field_labels, btn_label, callbacks):
+        self.fields, self.callbacks = [], callbacks
         for label in field_labels:
-            self.fields.append(InputField(label, next=self.next))
+            self.fields.append(InputField(label, next_callback=self.next))
         input_fields = urwid.Pile(self.fields)
         self.error_field = urwid.Text('')
         error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
         buttons = [TextButton(btn_label, on_press=self.next)]
-        if back:
-            buttons.insert(0, TextButton('Back', align='left', on_press=back))
+        if callbacks['back']:
+            buttons.insert(0, TextButton('Back', align='left', on_press=callbacks['back']))
         footer = urwid.AttrMap(urwid.Columns(buttons), 'button')
 
         card = Card(urwid.Pile(
@@ -182,7 +184,7 @@ class FormCard(urwid.WidgetWrap):
         urwid.WidgetWrap.__init__(self, card)
 
     def next(self, _button=None):
-        self.cb(form=self, **(self.get_field_values()))
+        self.callbacks['next'](form=self, **(self.get_field_values()))
 
     def get_field_values(self):
         """
@@ -212,16 +214,16 @@ class TestRunner(urwid.WidgetWrap):
       cred (dict(str: str)): credentials
       tests (Test[]): tests to run
       app (App):
-      cb (function):  callback to call when the tests finish running
+      callback (function): to call when the tests finish running
     """
 
-    def __init__(self, title, cred, tests, app, cb):
+    def __init__(self, title, cred, tests, callback):
         self.title = title
-        self.cb = cb
+        self.callback = callback
         self.urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
             "/" + (cred["database"]) if bool(cred["database"]) else "")
         self.number_of_test = len(tests)
-        self.app = app
+        self.app = None
 
         self.tester = Tester(cred, tests)
 
@@ -248,14 +250,15 @@ class TestRunner(urwid.WidgetWrap):
         self.text_running.set_text('Checking if ' + test.title + '...')
         self.app.loop.draw_screen()
 
-    def run(self):
+    def run(self, app):
         """
         run tests
         """
+        self.app = app
         self.tester.run(self.each, self.end)
 
     def end(self, res):
-        self.cb(res, self.title, self.urn)
+        self.callback(res, self.title, self.urn)
 
 
 class CustomProgressBar(urwid.ProgressBar):
@@ -287,13 +290,11 @@ class CustomProgressBar(urwid.ProgressBar):
         Render the progress bar.
         """
         (maxcol,) = size
-        cf = float(self.current) * maxcol / self.done
-        ccol = int(cf)
+        ccol = int(self.current * maxcol / self.done)
         txt = urwid.Text([(self.normal, self.semi[1] * ccol),
                           (self.complete, self.semi[1] * (maxcol - ccol))])
-        c = txt.render(size)
 
-        return c
+        return txt.render(size)
 
 
 class DisplayTest(urwid.WidgetWrap):
@@ -308,7 +309,7 @@ class DisplayTest(urwid.WidgetWrap):
     def __init__(self, result):
         self.result = result
         self.total = len(result)
-        self.update_view('next')
+        self.update_view('next_callback')
 
         walker = urwid.SimpleListWalker([urwid.Padding(self.top_columns, left=3, right=3),
                                          self.test_result])
@@ -317,7 +318,8 @@ class DisplayTest(urwid.WidgetWrap):
 
         urwid.WidgetWrap.__init__(self, adapter)
 
-    def test_display(self, test, options):
+    @staticmethod
+    def test_display(test, options):
         """
         Compose the element that will display the test
         Returns:
@@ -336,7 +338,6 @@ class DisplayTest(urwid.WidgetWrap):
                                     ' ' + ['✘', '✔', '!', '*'][test['result']]),
              ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
                   options('weight', 1))
-
 
         if isinstance(test['message'], list):
             message_string = test['message'][0] + \
@@ -362,7 +363,7 @@ class DisplayTest(urwid.WidgetWrap):
             return urwid.AttrMap(TextButton(sign, on_press=(
                 lambda _: self.update_view(text))), 'button')
 
-        next_btn = get_button('>', 'next')
+        next_btn = get_button('>', 'next_callback')
         prev_btn = get_button('<', 'prev')
         top_row = []
         if current > 1:
@@ -374,13 +375,13 @@ class DisplayTest(urwid.WidgetWrap):
         return top_row
 
     def update_currently_displayed(self, btn):
-        self.currently_displayed += 1 if btn is 'next' else -1
+        self.currently_displayed += 1 if btn is 'next_callback' else -1
 
     def set_focus_position(self, current, btn):
         focus = 0  # moving to the left
         if current <= 1:
             focus = 1  # first element
-        elif btn is 'next' and current < self.total:
+        elif btn is 'next_callback' and current < self.total:
             focus = 2  # moving to the right
         self.top_columns.focus_position = focus
 

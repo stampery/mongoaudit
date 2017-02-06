@@ -17,9 +17,10 @@ class Tester(object):
 
     def __init__(self, cred, tests):
         self.cred = cred
-        self.tests = map(lambda t: Test(**t), tests)
+        self.tests = [Test(t, self) for t in tests]
         self.conn = self.get_connection()
         self.info = self.get_info()
+        self.database = None
 
     def run(self, each, end):
         """
@@ -30,23 +31,21 @@ class Tester(object):
         result = []
         for test in self.tests:
             each(test)
-            res = test.run(self)
+            res = test.run()
             result.append(res)
             time.sleep(0.5)
             if test.breaks == bool(res['result']):
                 break
 
         if len(result) < len(self.tests):
-            result = result + map(
-                lambda x: {
-                    'name': x.name,
-                    'severity': x.severity,
-                    'title': x.title,
-                    'caption': x.caption,
-                    'message': 'This test was omitted',
-                    'extra_data': None,
-                    'result': 3},
-                self.tests[len(result): len(self.tests)])
+            result = result + [{
+                'name': x.name,
+                'severity': x.severity,
+                'title': x.title,
+                'caption': x.caption,
+                'message': 'This test was omitted',
+                'extra_data': None,
+                'result': 3} for x in self.tests[len(result): len(self.tests)]]
 
         self.conn.close()
         end(result)
@@ -82,7 +81,7 @@ class Tester(object):
         Returns:
           pymongo.database.Database or False:  database(singleton) or false if authentication fails
         """
-        if hasattr(self, 'database'):
+        if bool(self.database):
             return self.database
         try:
             database = self.conn[self.cred['database']]
@@ -98,7 +97,7 @@ class Tester(object):
 
 
 class Test(object):
-    def __init__(self, test_name, severity, title, caption, message, breaks=None):
+    def __init__(self, test, tester):
         """
         Args:
           name (str): test name
@@ -112,18 +111,19 @@ class Test(object):
           message should contain an array with the messages for the different results that
           the test can return, if message is a function it should return a str[]
         """
-        self.name, self.severity, self.title, self.caption, self.message, self.breaks = \
-            test_name, severity, title, caption, message, breaks
+        self.name, self.severity, self.title, self.caption, self.message = \
+            test['test_name'], test['severity'], test['title'], test['caption'], test['message']
+        self.breaks = test['breaks'] if 'breaks' in test else None
+        self.tester = tester
 
-    def run(self, tester):
+    def run(self):
         """
         Args:
           cred (dict(str:str)): parsed MongoDB URI
         Returns:
           tuple(int, str): test result value and message
         """
-        self.tester = tester
-        result = test_functions[self.name](self)
+        result = TEST_FUNCTIONS[self.name](self)
         message = self.message
 
         if isinstance(result, list):
@@ -142,7 +142,7 @@ def try_socket(test, forced_port=None):
     fqdn, port = test.tester.cred['nodelist'][0]
     try:
         socket.create_connection((fqdn, forced_port or port), 5)
-    except:
+    except socket.error:
         return True
     else:
         return False
@@ -169,8 +169,8 @@ def try_javascript(test):
     Check if javascript is enabled in MongoDB
     """
     try:
-        db = test.tester.get_db()
-        db.test.find_one({"$where": "function() { return true;}"})
+        database = test.tester.get_db()
+        database.test.find_one({"$where": "function() { return true;}"})
     except pymongo.errors.OperationFailure:
         return True
     else:
@@ -208,17 +208,17 @@ def try_roles(test):
         """
         return {'invalid': set([]), 'valid': set([]), 'custom': set([])}
 
-    def combine_result(a, b):
+    def combine_result(value_1, value_2):
         """
         Args:
-          a (dict(set())): result_default_value
-          b (dict(set())): result_default_value
+          value_1 (dict(set())): result_default_value
+          value_2 (dict(set())): result_default_value
         Returns:
           dict(set()): the union of 2 default values
         """
-        return {'invalid': a['invalid'].union(b['invalid']),
-                'valid': a['valid'].union(b['valid']),
-                'custom': a['custom'].union(b['custom'])}
+        return {'invalid': value_1['invalid'].union(value_2['invalid']),
+                'valid': value_1['valid'].union(value_2['valid']),
+                'custom': value_1['custom'].union(value_2['custom'])}
 
     def reduce_roles(roles):
         """
@@ -228,8 +228,7 @@ def try_roles(test):
         Returns:
           result_default_value: roles sorted by valid, invalid, custom
         """
-        return reduce(lambda x, y: combine_result(x, y),
-                      map(lambda r: validate_role(r), roles))
+        return reduce(lambda x, y: combine_result(x, y), [validate_role(r) for r in roles])
 
     def basic_validation(role):
         """
@@ -249,7 +248,7 @@ def try_roles(test):
         """
         Recursively process the different roles that a role implements or inherits
         Args:
-          role (list or dict): value returned by db.command 'usersInfo' or 'rolesInfo'
+          role (list or dict): value returned by database.command 'usersInfo' or 'rolesInfo'
         """
         if isinstance(role, list) and bool(role):
             return reduce_roles(role)
@@ -271,7 +270,7 @@ def try_roles(test):
                     result, combine_result(
                         inherited, other_roles))
             if 'role' in role:
-                return validate_role(db.command('rolesInfo', role)['roles'])
+                return validate_role(database.command('rolesInfo', role)['roles'])
             if 'roles' in role and bool(role['roles']):
                 return validate_role(role['roles'])
             else:
@@ -282,7 +281,7 @@ def try_roles(test):
         else:
             raise Exception('Non exhaustive type case')
 
-    db = test.tester.get_db()
+    database = test.tester.get_db()
     roles = test.tester.get_roles()
     validated = {}
 
@@ -380,7 +379,7 @@ def alerts_jun052013(test):
     return not in_range(version, "2.4.0", "2.4.4")
 
 
-test_functions = {
+TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),

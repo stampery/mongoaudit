@@ -5,8 +5,8 @@ Is my mongo exposed?
 """
 import os
 import sys
-
-from src.cards import *
+import urwid
+from src.cards import Cards
 from src.palette import palette
 from src.tools import check_version
 
@@ -35,15 +35,16 @@ class App(object):
         rdiv = urwid.AttrMap(div, 'header')
         header = urwid.Filler(urwid.Pile(
             [rdiv, rdiv, rdiv, rdiv, rdiv]), valign='top')
-        h1 = urwid.Text(('h1', self.name))
-        h2 = urwid.Text(('h2', 'v' + self.version), align='right')
-        hg = urwid.AttrMap(urwid.Padding(urwid.Columns(
-            [h1, h2]), left=2, right=2, align='center'), 'header')
-        body = urwid.Pile([hg, rdiv, card, div])
-        w = urwid.Overlay(body, header, 'center', 76, 'top', 'pack', top=1)
-        self.loop.widget.original_widget = w
+        h1_text = urwid.Text(('h1', self.name))
+        h2_text = urwid.Text(('h2', 'v' + self.version), align='right')
+        hg_text = urwid.AttrMap(urwid.Padding(urwid.Columns(
+            [h1_text, h2_text]), left=2, right=2, align='center'), 'header')
+        body = urwid.Pile([hg_text, rdiv, card, div])
+        widget = urwid.Overlay(body, header, 'center', 76, 'top', 'pack', top=1)
+        self.loop.widget.original_widget = widget
 
-    def key_handler(self, key):
+    @staticmethod
+    def key_handler(key):
         if key in ('q', 'Q', 'esc'):
             raise urwid.ExitMainLoop()
         elif key == 'ctrl r':
