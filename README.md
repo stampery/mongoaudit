@@ -10,7 +10,7 @@
 <h2 align="center">Install</h2>
 
 ```bash
-$ curl https://mongoaud.it/install | sh
+curl https://mongoaud.it/install | sh
 ```
 
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
@@ -24,6 +24,30 @@ MongoDB’s original designers paid much more attention to performance, scalabil
 </figure>
 
 <h2 align="center">Supported tests</h2>
+
+* MongoDB listens on a port different to default one
+* Server only accepts connections from whitelisted hosts / networks
+* MongoDB HTTP status interface is not accessible on port 28017
+* MongoDB is not exposing its version number
+* MongoDB version is newer than 2.4
+* TLS/SSL encryption is enabled
+* Authentication is enabled
+* SCRAM-SHA-1 authentication method is enabled
+* Server-side Javascript is forbidden
+* Roles granted to the provided user only permit CRUD operations
+* The provided user has permissions over a single database
+* Security bug CVE-2015-7882
+* Security bug CVE-2015-2705
+* Security bug CVE-2014-8964
+* Security bug CVE-2015-1609
+* Security bug CVE-2014-3971
+* Security bug CVE-2014-2917
+* Security bug CVE-2013-4650
+* Security bug CVE-2013-3969
+* Security bug CVE-2012-6619
+* Security bug CVE-2013-1892
+* Security bug CVE-2013-2132
+
 
 <h2 align="center">Contributing</h2>
 
@@ -39,7 +63,7 @@ To submit a pull request, fork the mongoaudit repository and then clone your for
 git clone git@github.com:<your-name>/mongoaudit.git
 ```
 
-Make your suggested changes, git push and then submit a pull request.
+Make your suggested changes, `git push` and then submit a pull request.
 
 <h2 align="center">Legal</h2>
 
