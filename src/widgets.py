@@ -197,10 +197,22 @@ class FormCard(urwid.WidgetWrap):
 
     def set_error(self, msg):
         """
+        Shows an error message at the bottom of the form
+        
         Args:
           msg (str): error message
         """
         self.error_field.set_text(('error', msg))
+        
+    def unset_error(self):
+        """
+        Hides the error message
+        """
+        self.error_field.set_text('')
+        
+    def keypress(self, size, key):
+        self.unset_error()
+        return self.__super.keypress(size, key)
 
 
 class TestRunner(urwid.WidgetWrap):
