@@ -6,10 +6,13 @@
     <br />
     <p><strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.</p>
 </div>
+
 <h2 align="center">Install</h2>
+
 ```bash
-curl https://mongoaud.it/install | sh
+$ curl https://mongoaud.it/install | sh
 ```
+<i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
 
 <h2 align="center">Introduction</h2>
 MongoDB’s original designers paid much more attention to performance, scalability and ease of use than to security. It is widely known that there are quite a few holes in its default configuration settings. This fact, combined with abundant lazy system adiministrators and developers, has led to what the press has called the _[MongoDB apocalypse](http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/)_.
@@ -18,4 +21,20 @@ MongoDB’s original designers paid much more attention to performance, scalabil
 
 <h2 align="center">Contributing</h2>
 
-<h2 align="center">License</h2>
+<h2 align="center">Legal</h2>
+
+<h3>License</h3>
+<strong>mongoaudit</strong> is released under the  [MIT License](https://github.com/trailbot/client/blob/master/LICENSE).
+
+<h3>Disclaimer</h3>
+
+    "With great power comes great responsibility"
+
+* Never use this tool on servers you don't own. Unauthorized access to strangers' computer systems is a crime in many countries.
+* Please use this tool is at your own risk. We will accept no liability for any loss or damage which you may incur no matter how caused.
+* Don't be evil!
+
+<h3>Suport and trademarks</h3>
+<i>This software is not supported or endorsed in any way by MongoDB Inc., Compose Inc., ObjectsLab Corporation nor other products or services providers it interoperates with. It neither tries to mimic or replace any software originally conceived by the owners of those products and services. In the same manner, any third party's trademark or intellectual property that may appear in this software must be understood as a strictly illustrative reference to the service provider it represents, and is never used in any way that may lead to confusion, so no abuse is intended.</i>
+
+[<img style="width:100%;" src="https://raw.githubusercontent.com/trailbot/vault/master/dist/img/footer.png">](https://stampery.com)
