@@ -93,8 +93,7 @@ def send_result(email, result, title, urn):
         response = urllib2.urlopen(req)
         return response.read()
     except (urllib2.HTTPError, urllib2.HTTPError) as exc:
-        return "We are having technical difficulties at the moment, " \
-               "please try again later.\n\n" + str(exc)
+        return "Sadly enough, we are having technical difficulties at the moment, please try again later.\n\n%s" % str(exc)
 
 
 def load_test(path):

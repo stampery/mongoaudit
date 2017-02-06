@@ -88,4 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# Editors' stuff
 .idea
+.vscode

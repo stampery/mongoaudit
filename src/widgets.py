@@ -175,8 +175,9 @@ class FormCard(urwid.WidgetWrap):
         self.error_field = urwid.Text('')
         error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
         buttons = [TextButton(btn_label, on_press=self.next)]
+
         if callbacks['back']:
-            buttons.insert(0, TextButton('Back', align='left', on_press=callbacks['back']))
+            buttons.insert(0, TextButton('< Back', align='left', on_press=callbacks['back']))
         footer = urwid.AttrMap(urwid.Columns(buttons), 'button')
 
         card = Card(urwid.Pile(
@@ -199,10 +200,22 @@ class FormCard(urwid.WidgetWrap):
 
     def set_error(self, msg):
         """
+        Shows an error message at the bottom of the form
+
         Args:
           msg (str): error message
         """
         self.error_field.set_text(('error', msg))
+
+    def unset_error(self):
+        """
+        Hides the error message
+        """
+        self.error_field.set_text('')
+
+    def keypress(self, size, key):
+        self.unset_error()
+        return self.__super.keypress(size, key)
 
 
 class TestRunner(urwid.WidgetWrap):
@@ -230,13 +243,13 @@ class TestRunner(urwid.WidgetWrap):
         self.progress_text = urwid.Text(
             ('progress', '0/' + str(self.number_of_test)))
         running_display = urwid.Columns(
-            [(14, urwid.Text(('text', 'Running check'))), self.progress_text])
+            [(14, urwid.Text(('text', 'Running test'))), self.progress_text])
         self.progress_bar = CustomProgressBar(
             'progress', 'remaining', 0, self.number_of_test)
         self.text_running = urwid.Text(('text', ''))
         box = urwid.BoxAdapter(urwid.Filler(
-            self.text_running, valign='top'), 3)
-        pile = urwid.Pile([DIV, running_display, self.progress_bar, DIV, box])
+            self.text_running, valign='top'), 2)
+        pile = urwid.Pile([running_display, self.progress_bar, DIV, box])
         urwid.WidgetWrap.__init__(self, pile)
 
     def each(self, test):
@@ -245,9 +258,9 @@ class TestRunner(urwid.WidgetWrap):
         """
         current = self.progress_bar.get_current() + 1
         self.progress_text.set_text(
-            ('progress', str(current) + '/' + str(self.number_of_test)))
+            ('progress', '%s/%s' % (str(current), str(self.number_of_test))))
         self.progress_bar.set_completion(current)
-        self.text_running.set_text('Checking if ' + test.title + '...')
+        self.text_running.set_text('Checking if %s...' % test.title)
         self.app.loop.draw_screen()
 
     def run(self, app):
@@ -314,7 +327,7 @@ class DisplayTest(urwid.WidgetWrap):
         walker = urwid.SimpleListWalker([urwid.Padding(self.top_columns, left=3, right=3),
                                          self.test_result])
 
-        adapter = urwid.BoxAdapter(urwid.ListBox(walker), height=16)
+        adapter = urwid.BoxAdapter(urwid.ListBox(walker), height=14)
 
         urwid.WidgetWrap.__init__(self, adapter)
 
@@ -325,19 +338,23 @@ class DisplayTest(urwid.WidgetWrap):
         Returns:
             [urwid.Widget]:
         """
-        div_option = (DIV, options('weight', 1))
+        empty_line = (DIV, options('weight', 1))
         title = (urwid.Text(
             ('text bold', test['title'])), options('weight', 1))
         caption = (urwid.Text(
             ('text', test['caption'])), options('weight', 1))
-        severity = (urwid.Text(
-            ('text', 'Severity: ' + ['High', 'Medium', 'Low'][test['severity']])),
-                    options('weight', 1))
-        result = (urwid.Text(
-            [('text', 'Result: '), (['error', 'ok', 'warning', 'info'][test['result']],
-                                    ' ' + ['✘', '✔', '!', '*'][test['result']]),
-             ('text', [' failed', ' passed', ' warning', ' omitted'][test['result']])]),
-                  options('weight', 1))
+
+        severity = (urwid.Text([
+            ('input', 'Severity: '),
+            ('text', ['HIGH', 'Medium', 'Low'][test['severity']])
+        ]), options('weight', 1))
+        result = (urwid.Text([
+            ('input', 'Result: '),
+            (
+                ['failed', 'passed', 'warning', 'info'][test['result']],
+                ['✘ FAILED', '✔ PASSED', '! WARNING', '* OMITTED'][test['result']]
+            )
+        ]), options('weight', 1))
 
         if isinstance(test['message'], list):
             message_string = test['message'][0] + \
@@ -346,8 +363,7 @@ class DisplayTest(urwid.WidgetWrap):
             message_string = test['message']
         message = (urwid.Text(
             ('text', message_string)), options('weight', 1))
-        return [div_option, title, div_option, caption, div_option, severity,
-                result, div_option, message]
+        return [empty_line, title, empty_line, severity, caption, result, message]
 
     def get_top_text(self):
         """

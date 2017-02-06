@@ -378,6 +378,17 @@ def alerts_jun052013(test):
     version = test.tester.info["version"]
     return not in_range(version, "2.4.0", "2.4.4")
 
+def alerts_mar062014(test):
+    version = test.tester.info["version"]
+    return version > "2.3.1"
+
+def alerts_oct012013(test):
+    version = test.tester.info["version"]
+    return version > "2.2.3"
+
+def alerts_aug152013(test):
+    version = test.tester.info["version"]
+    return version > "2.5.1"
 
 TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
@@ -401,5 +412,8 @@ TEST_FUNCTIONS = {
     "17": alerts_jun172014,
     "18": alerts_may052014,
     "19": alerts_jun202013,
-    "20": alerts_jun052013
+    "20": alerts_jun052013,
+    "21": alerts_mar062014,
+    "22": alerts_oct012013,
+    "23": alerts_aug152013
 }
