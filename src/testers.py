@@ -38,7 +38,7 @@ class Tester(object):
                 break
 
         if len(result) < len(self.tests):
-            result = result + [{
+            result += [{
                 'name': x.name,
                 'severity': x.severity,
                 'title': x.title,
@@ -100,12 +100,8 @@ class Test(object):
     def __init__(self, test, tester):
         """
         Args:
-          name (str): test name
-          severity (str):
-          title (str):
-          caption (str):
-          message (str[] or function): messages to display when the test is completed
-          breaks (bool): True if the test suite should stop False otherwise
+          test dict():
+          tester Tester:
 
         Notes:
           message should contain an array with the messages for the different results that
@@ -118,8 +114,6 @@ class Test(object):
 
     def run(self):
         """
-        Args:
-          cred (dict(str:str)): parsed MongoDB URI
         Returns:
           tuple(int, str): test result value and message
         """
@@ -191,7 +185,7 @@ def try_roles(test):
         Returns:
           Bool: True if the role is not administrative
         """
-        return not role in [
+        return role not in [
             'userAdminAnyDatabase',
             'dbAdminAnyDatabase'
             'dbAdmin',
@@ -230,7 +224,7 @@ def try_roles(test):
         """
         return reduce(lambda x, y: combine_result(x, y), [validate_role(r) for r in roles])
 
-    def basic_validation(role):
+    def basic_validation(roles):
         """
         Basic validation in case validate role fails due to lack of permissions
         Returns:
@@ -361,7 +355,7 @@ def alerts_feb252015(test):
 
 def alerts_jun172014(test):
     version = test.tester.info["version"]
-    return not version in ["2.6.0", "2.6.1"]
+    return version not in ["2.6.0", "2.6.1"]
 
 
 def alerts_may052014(test):
@@ -378,23 +372,27 @@ def alerts_jun052013(test):
     version = test.tester.info["version"]
     return not in_range(version, "2.4.0", "2.4.4")
 
+
 def alerts_mar062014(test):
     version = test.tester.info["version"]
     return version > "2.3.1"
+
 
 def alerts_oct012013(test):
     version = test.tester.info["version"]
     return version > "2.2.3"
 
+
 def alerts_aug152013(test):
     version = test.tester.info["version"]
     return version > "2.5.1"
+
 
 TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
-    "4": lambda test: not "version" in test.tester.info,
+    "4": lambda test: "version" not in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
     "6": lambda test: bool(test.tester.info["OpenSSLVersion"])
          if ("OpenSSLVersion" in test.tester.info)

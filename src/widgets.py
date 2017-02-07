@@ -226,18 +226,19 @@ class TestRunner(urwid.WidgetWrap):
 
     def __init__(self, title, cred, tests, callback):
         self.app = None
+        self.tester = Tester(cred, tests)
         urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
             "/" + (cred["database"]) if bool(cred["database"]) else "")
 
         self.data = {"title": title, "callback": callback,
-                     "tester": Tester(cred, tests), "urn": urn, "num_tests": len(tests)}
+                     "urn": urn, "num_tests": len(tests)}
 
         self.progress_text = urwid.Text(
-            ('progress', '0/' + str(self.data["num_test"])))
+            ('progress', '0/' + str(self.data["num_tests"])))
         running_display = urwid.Columns(
             [(14, urwid.Text(('text', 'Running test'))), self.progress_text])
         self.progress_bar = CustomProgressBar(
-            'progress', 'remaining', 0, self.data["num_test"])
+            'progress', 'remaining', 0, self.data["num_tests"])
         self.text_running = urwid.Text(('text', ''))
         box = urwid.BoxAdapter(urwid.Filler(
             self.text_running, valign='top'), 2)
@@ -250,7 +251,7 @@ class TestRunner(urwid.WidgetWrap):
         """
         current = self.progress_bar.get_current() + 1
         self.progress_text.set_text(
-            ('progress', '%s/%s' % (str(current), str(self.data["num_test"]))))
+            ('progress', '%s/%s' % (str(current), str(self.data["num_tests"]))))
         self.progress_bar.set_completion(current)
         self.text_running.set_text('Checking if %s...' % test.title)
         self.app.loop.draw_screen()
