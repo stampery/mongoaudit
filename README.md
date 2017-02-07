@@ -3,15 +3,16 @@
     <a href="https://travis-ci.com/stampery/mongoaudit"></a><img alt="Build Status" src="https://travis-ci.com/stampery/mongoaudit.svg?token=2AN6hydyPmRtEsqiGUsG&branch=master" />
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Code Climate" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/gpa.svg" /></a>
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Issue Count" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/issue_count.svg" /></a>
-    <br />
+    <br/><br/>
     <p><strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.</p>
 </div>
 
 <h2 align="center">Install</h2>
 
 ```bash
-$ curl https://mongoaud.it/install | sh
+curl https://mongoaud.it/install | sh
 ```
+
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
 
 <h2 align="center">Introduction</h2>
@@ -19,12 +20,50 @@ MongoDB’s original designers paid much more attention to performance, scalabil
 
 <figure>
     <img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/screenshot.png" alt="mongoaudit screenshot"/>
-    <caption>Yes, that's material design on a console line interface.</caption>
+    <caption><i>Yes, that's material design on a console line interface.</i></caption>
 </figure>
 
 <h2 align="center">Supported tests</h2>
 
+* MongoDB listens on a port different to default one
+* Server only accepts connections from whitelisted hosts / networks
+* MongoDB HTTP status interface is not accessible on port 28017
+* MongoDB is not exposing its version number
+* MongoDB version is newer than 2.4
+* TLS/SSL encryption is enabled
+* Authentication is enabled
+* SCRAM-SHA-1 authentication method is enabled
+* Server-side Javascript is forbidden
+* Roles granted to the provided user only permit CRUD operations
+* The provided user has permissions over a single database
+* Security bug CVE-2015-7882
+* Security bug CVE-2015-2705
+* Security bug CVE-2014-8964
+* Security bug CVE-2015-1609
+* Security bug CVE-2014-3971
+* Security bug CVE-2014-2917
+* Security bug CVE-2013-4650
+* Security bug CVE-2013-3969
+* Security bug CVE-2012-6619
+* Security bug CVE-2013-1892
+* Security bug CVE-2013-2132
+
+
 <h2 align="center">Contributing</h2>
+
+We're happy you want to contribute! You can help us in different ways:
+
+* Open an issue with suggestions for improvements and errors you're facing
+* Fork this repository and submit a pull request
+* Improve the documentation.
+
+To submit a pull request, fork the mongoaudit repository and then clone your fork:
+
+```bash
+git clone git@github.com:<your-name>/mongoaudit.git
+```
+
+Make your suggested changes, `git push` and then submit a pull request.
 
 <h2 align="center">Legal</h2>
 
