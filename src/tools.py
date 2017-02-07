@@ -69,7 +69,7 @@ def parse_mongo_uri(conn):
     conn = conn.split('://')[-1]
     try:
         uri = uri_parser.parse_uri("mongodb://" + conn)
-    except uri_parser.InvalidURI:
+    except (uri_parser.InvalidURI, ValueError):
         return None
     else:
         return uri
