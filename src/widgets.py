@@ -29,7 +29,6 @@ class TextButton(urwid.Button):
         super(urwid.Button, self).__init__(cols)
 
 
-
 class Card(urwid.WidgetWrap):
     """
     Args:
@@ -52,7 +51,7 @@ class Card(urwid.WidgetWrap):
 
 class ObjectButton(urwid.Button):
     def __init__(self, content, on_press=None, user_data=None):
-        # self.__super.__init__(content, on_press=on_press, user_data=user_data)
+        self.__super.__init__('', on_press=on_press, user_data=user_data)
         super(urwid.Button, self).__init__(content)
 
     @staticmethod
@@ -69,9 +68,7 @@ class LineButton(ObjectButton):
     """
 
     def __init__(self, text, vertical_padding=True):
-        content = self.get_content(text)
-
-        content = [urwid.Padding(content, left=3, right=3)]
+        content = [urwid.Padding(self.get_content(text), left=3, right=3)]
         if vertical_padding:
             content = [DIV] + content + [DIV]
         lbox = urwid.LineBox(urwid.Pile(content))
@@ -152,19 +149,17 @@ class InputField(urwid.WidgetWrap):
             return self.__super.keypress(size, key)
 
 
-
 class FormCard(urwid.WidgetWrap):
     """
     Args:
       content (urwid.Widget): any widget that can be piled
       field_labels (str[]): labels for the input_fields
       btn_label (str): label for the button
-      cb (function): callback to invoke when the form button is pressed
-      back (function): card to render when going back
+      callbacks Dict(function, function): callbacks for next and back button
     Note:
-      callback must take the same amount of arguments as labels were passed and each parameter
-      in the callback must be named as the label but in snake case and lower case e.g.
-      'Field Name' =>  field_name
+      callbacks['next'] must take the same amount of arguments as labels were passed
+      and each parameter in the callback must be named as the label but in snake case
+      and lower case e.g. 'Field Name' =>  field_name
     """
 
     def __init__(self, content, field_labels, btn_label, callbacks):
@@ -226,26 +221,23 @@ class TestRunner(urwid.WidgetWrap):
       title (str): title to pass to the callback
       cred (dict(str: str)): credentials
       tests (Test[]): tests to run
-      app (App):
       callback (function): to call when the tests finish running
     """
 
     def __init__(self, title, cred, tests, callback):
-        self.title = title
-        self.callback = callback
-        self.urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
-            "/" + (cred["database"]) if bool(cred["database"]) else "")
-        self.number_of_test = len(tests)
         self.app = None
+        urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
+            "/" + (cred["database"]) if bool(cred["database"]) else "")
 
-        self.tester = Tester(cred, tests)
+        self.data = {"title": title, "callback": callback,
+                     "tester": Tester(cred, tests), "urn": urn, "num_tests": len(tests)}
 
         self.progress_text = urwid.Text(
-            ('progress', '0/' + str(self.number_of_test)))
+            ('progress', '0/' + str(self.data["num_test"])))
         running_display = urwid.Columns(
             [(14, urwid.Text(('text', 'Running test'))), self.progress_text])
         self.progress_bar = CustomProgressBar(
-            'progress', 'remaining', 0, self.number_of_test)
+            'progress', 'remaining', 0, self.data["num_test"])
         self.text_running = urwid.Text(('text', ''))
         box = urwid.BoxAdapter(urwid.Filler(
             self.text_running, valign='top'), 2)
@@ -258,7 +250,7 @@ class TestRunner(urwid.WidgetWrap):
         """
         current = self.progress_bar.get_current() + 1
         self.progress_text.set_text(
-            ('progress', '%s/%s' % (str(current), str(self.number_of_test))))
+            ('progress', '%s/%s' % (str(current), str(self.data["num_test"]))))
         self.progress_bar.set_completion(current)
         self.text_running.set_text('Checking if %s...' % test.title)
         self.app.loop.draw_screen()
@@ -271,7 +263,7 @@ class TestRunner(urwid.WidgetWrap):
         self.tester.run(self.each, self.end)
 
     def end(self, res):
-        self.callback(res, self.title, self.urn)
+        self.data["callback"](res, self.data["title"], self.data["urn"])
 
 
 class CustomProgressBar(urwid.ProgressBar):
