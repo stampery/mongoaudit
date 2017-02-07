@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-palette = [
+PALETTE = [
     ('bg', '', '', '', 'black', 'g93'),
     ('header', '', '', '', '#fff', '#d00'),
     ('h1', '', '', '', '#fff,bold', '#d00'),

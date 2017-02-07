@@ -7,7 +7,7 @@ import os
 import sys
 import urwid
 from src.cards import Cards
-from src.palette import palette
+from src.palette import PALETTE
 from src.tools import check_version
 
 
@@ -23,7 +23,7 @@ class App(object):
     def setup_view(self):
         placeholder = urwid.SolidFill()
         self.loop = urwid.MainLoop(
-            placeholder, palette, unhandled_input=self.key_handler)
+            placeholder, PALETTE, unhandled_input=self.key_handler)
         self.loop.widget = urwid.AttrMap(placeholder, 'bg')
         self.loop.widget._command_map['tab'] = 'cursor down'
         self.loop.widget._command_map['shift tab'] = 'cursor up'
@@ -57,7 +57,7 @@ class App(object):
         except KeyboardInterrupt:
             return 0
 
-def main(args=None):
+def main():
     App().main()
 
 if __name__ == "__main__":

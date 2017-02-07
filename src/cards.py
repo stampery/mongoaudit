@@ -32,9 +32,9 @@ class Cards(object):
     def choose_test(self, *_):
         txt = urwid.Text(
             [('text bold',
-                 self.app.name),
-                ' provides two distinct test suites covering security in different '
-                'depth. Please choose which one you want to run:'])
+              self.app.name),
+             ' provides two distinct test suites covering security in different '
+             'depth. Please choose which one you want to run:'])
 
         basic = ImageButton(
             picRead('bars_min.bmp'),

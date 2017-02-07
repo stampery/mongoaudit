@@ -1,12 +1,13 @@
 import unittest
 
-from tools import *
-from testers import *
+from src.testers import alerts_aug152013, alerts_dec012015, alerts_feb252015, alerts_jun052013, \
+    alerts_jun172014, alerts_jun202013, alerts_mar062014, alerts_mar252015, alerts_mar272015, \
+    alerts_may052014, alerts_oct012013
 
 
 class MongoauditTest(unittest.TestCase):
-
-    def create_type(self, **kwargs):
+    @staticmethod
+    def create_type(**kwargs):
         return type("mock", (object,), kwargs)
 
     def info_obj(self, info):
@@ -15,12 +16,12 @@ class MongoauditTest(unittest.TestCase):
     def ver_obj(self, ver):
         return self.info_obj({"version": ver})
 
-
     def test_alert1(self):
-        self.assertFalse(alerts_dec012015(self.info_obj({"version": "3.0.3", "modules":["enterprise"]})))
+        self.assertFalse(
+            alerts_dec012015(self.info_obj({"version": "3.0.3", "modules": ["enterprise"]})))
 
     def test_alert1_1(self):
-        self.assertTrue(alerts_dec012015(self.info_obj({"version": "3.0.2", "modules":["rock"]})))
+        self.assertTrue(alerts_dec012015(self.info_obj({"version": "3.0.2", "modules": ["rock"]})))
 
     def test_alert2(self):
         self.assertFalse(alerts_mar272015(self.ver_obj("3.0.0")))

@@ -361,7 +361,7 @@ class DisplayTest(urwid.WidgetWrap):
     def get_top_text(self):
         """
         Returns:
-            tuple(str,str): palette , Test n/total
+            tuple(str,str): PALETTE , Test n/total
         """
         return 'header red', 'Test ' + \
                str(self.currently_displayed) + '/' + str(self.total)
