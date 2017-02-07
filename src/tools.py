@@ -34,7 +34,6 @@ def validate_uri(uri, error_field, callback):
     Args:
       uri (str): MongoDB URI
       error_field (urwid.Text): field that displays the error
-      error_message (str): message to display in case of error
       callback (function): callback to call on success
     """
     parsed = parse_mongo_uri(uri)
@@ -81,6 +80,8 @@ def send_result(email, result, title, urn):
     Args:
         email (str): address to send the results
         result (obj): results to send
+        title (str):
+        urn (str): uniform resource name
     Returns:
         str: response from endpoint
     """
@@ -93,7 +94,8 @@ def send_result(email, result, title, urn):
         response = urllib2.urlopen(req)
         return response.read()
     except (urllib2.HTTPError, urllib2.HTTPError) as exc:
-        return "Sadly enough, we are having technical difficulties at the moment, please try again later.\n\n%s" % str(exc)
+        return "Sadly enough, we are having technical difficulties at the moment, " \
+               "please try again later.\n\n%s" % str(exc)
 
 
 def load_test(path):
@@ -148,7 +150,7 @@ def check_version(version):
 
 
 def in_range(num, minimum, maximum):
-    return num >= minimum and num <= maximum
+    return minimum <= num <= maximum
 
 
 def check_terminal():
