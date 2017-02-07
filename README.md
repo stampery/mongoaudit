@@ -43,17 +43,17 @@ Then run `mongoaudit` command and voilà! :boom:
 * Server-side Javascript is forbidden
 * Roles granted to the user only permit CRUD operations *
 * The user has permissions over a single database *
-* Security bug CVE-2015-7882
-* Security bug CVE-2015-2705
-* Security bug CVE-2014-8964
-* Security bug CVE-2015-1609
-* Security bug CVE-2014-3971
-* Security bug CVE-2014-2917
-* Security bug CVE-2013-4650
-* Security bug CVE-2013-3969
-* Security bug CVE-2012-6619
-* Security bug CVE-2013-1892
-* Security bug CVE-2013-2132
+* Security bug [CVE-2015-7882](https://jira.mongodb.org/browse/SERVER-20691)
+* Security bug [CVE-2015-2705](https://jira.mongodb.org/browse/SERVER-17521)
+* Security bug [CVE-2014-8964](https://jira.mongodb.org/browse/SERVER-17252)
+* Security bug [CVE-2015-1609](https://jira.mongodb.org/browse/SERVER-17264)
+* Security bug [CVE-2014-3971](https://jira.mongodb.org/browse/SERVER-13753)
+* Security bug [CVE-2014-2917](https://jira.mongodb.org/browse/SERVER-13644)
+* Security bug [CVE-2013-4650](https://jira.mongodb.org/browse/SERVER-9983)
+* Security bug [CVE-2013-3969](https://jira.mongodb.org/browse/SERVER-9878)
+* Security bug [CVE-2012-6619](https://www.cvedetails.com/cve/CVE-2012-6619/)
+* Security bug [CVE-2013-1892](https://www.cvedetails.com/cve/CVE-2013-1892/)
+* Security bug [CVE-2013-2132](https://www.cvedetails.com/cve/CVE-2013-2132/)
 
 
 _Tests marked with an asterisk (`*`) require valid authentication credentials._
