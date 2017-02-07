@@ -12,3 +12,6 @@ dist:
 
 install:
 	/usr/bin/env python2 setup.py install
+
+clean:
+	rm -R ./dist
