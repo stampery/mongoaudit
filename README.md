@@ -1,5 +1,5 @@
 <div align="center">
-    <h1><img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/github-header.png" alt="mongoaudit"/></h1>
+    <h1><a href="https://mongoaud.it"><img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/github-header.png" alt="mongoaudit"/></a></h1>
     <a href="https://travis-ci.com/stampery/mongoaudit"></a><img alt="Build Status" src="https://travis-ci.com/stampery/mongoaudit.svg?token=2AN6hydyPmRtEsqiGUsG&branch=master" />
     <a href="https://landscape.io/github/stampery/mongoaudit/master"><img alt="Code Health" src="https://landscape.io/github/stampery/mongoaudit/master/landscape.svg?style=flat"/></a>
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Code Climate" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/gpa.svg" /></a>
