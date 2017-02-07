@@ -18,7 +18,7 @@ def read(path, align='left'):
     def line_process(line):
         return urwid.AttrMap(urwid.Text(map(pixel_process, line), wrap='clip', align=align), 'pic')
 
-    base_path = sys._MEIPASS if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
     with open(os.path.join(base_path, 'rsc/' + path), 'r') as file_to_read:
         bytes_read = file_to_read.read()
 

@@ -1,13 +1,14 @@
 <div align="center">
-    <h1><img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/github-header.png" alt="mongoaudit"/></h1>
+    <h1><a href="https://mongoaud.it"><img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/github-header.png" alt="mongoaudit"/></a></h1>
     <a href="https://travis-ci.com/stampery/mongoaudit"></a><img alt="Build Status" src="https://travis-ci.com/stampery/mongoaudit.svg?token=2AN6hydyPmRtEsqiGUsG&branch=master" />
+    <a href="https://landscape.io/github/stampery/mongoaudit/master"><img alt="Code Health" src="https://landscape.io/github/stampery/mongoaudit/master/landscape.svg?style=flat"/></a>
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Code Climate" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/gpa.svg" /></a>
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Issue Count" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/issue_count.svg" /></a>
     <br/><br/>
-    <p><strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.</p>
+    <p>:sparkles: <strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing. :sparkles:</p>
 </div>
 
-<h2 align="center">Install</h2>
+<h2 align="center">1-line install</h2>
 
 ```bash
 curl https://mongoaud.it/install | sh
@@ -15,13 +16,19 @@ curl https://mongoaud.it/install | sh
 
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
 
-<h2 align="center">Introduction</h2>
-MongoDB’s original designers paid much more attention to performance, scalability and ease of use than to security. It is widely known that there are quite a few holes in its default configuration settings. This fact, combined with abundant lazy system adiministrators and developers, has led to what the press has called the _[MongoDB apocalypse](http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/)_.
+Then run `mongoaudit` command and voilà! :boom:
 
-<figure>
-    <img src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/screenshot.png" alt="mongoaudit screenshot"/>
-    <caption><i>Yes, that's material design on a console line interface.</i></caption>
-</figure>
+<h2 align="center">Introduction</h2>
+<p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system adiministrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
+
+<p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advise on how to fix them, recommends best practices and teaches you how to DevOp like a pro! :metal:</p>
+
+<p>This is how the actual app looks like:</p>
+
+<p align="center">
+    <img align="center" src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/screenshot.png" alt="mongoaudit screenshot"/>
+    <br /><i>Yep, that's material design on a console line interface. :smirk:</i>
+</p>
 
 <h2 align="center">Supported tests</h2>
 
@@ -34,8 +41,8 @@ MongoDB’s original designers paid much more attention to performance, scalabil
 * Authentication is enabled
 * SCRAM-SHA-1 authentication method is enabled
 * Server-side Javascript is forbidden
-* Roles granted to the provided user only permit CRUD operations
-* The provided user has permissions over a single database
+* Roles granted to the user only permit CRUD operations *
+* The user has permissions over a single database *
 * Security bug CVE-2015-7882
 * Security bug CVE-2015-2705
 * Security bug CVE-2014-8964
@@ -49,12 +56,21 @@ MongoDB’s original designers paid much more attention to performance, scalabil
 * Security bug CVE-2013-2132
 
 
+_Tests marked with an asterisk (`*`) require valid authentication credentials._
+
+
+<h2 align="center">How can I better secure my MongoDB?</h2>
+
+Once you run any of the test suites provided by __mongoaudit__, it will offer you to receive a fully detailed report via email. This personalized report links to a series of useful guides on how to fix every specific issue and how to harden your MongoDB deployments.
+
+For your convenience, we have also published the __mongoaudit__ guides in our [Medium publication](https://medium.com/mongoaudit) :newspaper:.
+
 <h2 align="center">Contributing</h2>
 
-We're happy you want to contribute! You can help us in different ways:
+We're happy you want to contribute! :tada: You can help us in different ways:
 
-* Open an issue with suggestions for improvements and errors you're facing
-* Fork this repository and submit a pull request
+* Open an issue with suggestions for improvements and errors you're facing.
+* Fork this repository and submit a pull request.
 * Improve the documentation.
 
 To submit a pull request, fork the mongoaudit repository and then clone your fork:
@@ -70,13 +86,13 @@ Make your suggested changes, `git push` and then submit a pull request.
 <h3>License</h3>
 <strong>mongoaudit</strong> is released under the  [MIT License](https://github.com/stampery/mongoaudit/blob/master/LICENSE).
 
-<h3>Disclaimer</h3>
+<h3>Disclaimer :warning:</h3>
 
     "With great power comes great responsibility"
 
 * Never use this tool on servers you don't own. Unauthorized access to strangers' computer systems is a crime in many countries.
 * Please use this tool is at your own risk. We will accept no liability for any loss or damage which you may incur no matter how caused.
-* Don't be evil!
+* Don't be evil! :trollface:
 
 <h3>Suport and trademarks</h3>
 <i>This software is not supported or endorsed in any way by MongoDB Inc., Compose Inc., ObjectsLab Corporation nor other products or services providers it interoperates with. It neither tries to mimic or replace any software originally conceived by the owners of those products and services. In the same manner, any third party's trademark or intellectual property that may appear in this software must be understood as a strictly illustrative reference to the service provider it represents, and is never used in any way that may lead to confusion, so no abuse is intended.</i>
