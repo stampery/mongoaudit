@@ -108,7 +108,7 @@ class Test(object):
           the test can return, if message is a function it should return a str[]
         """
         self.name, self.severity, self.title, self.caption, self.message = \
-            test['test_name'], test['severity'], test['title'], test['caption'], test['message']
+            test['test_name'], test['severity'], test['title'], test['caption'], test['messages']
         self.breaks = test['breaks'] if 'breaks' in test else None
         self.tester = tester
 
