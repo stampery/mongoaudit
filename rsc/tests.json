@@ -7,8 +7,8 @@
 		"messages": ["Your server is listening on default port 27017.",
 			"Your server is listening in a non-obvious port. Well done."
 		],
-        "call2action": "Please read [[this guide on how to change the listening port]].",
-        "url": "https://medium.com/mongoaudit/how-to-change-mongodb-default-listening-port-27017-92e35f65670e"
+		"call2action": "Please read [[this guide on how to change the listening port]].",
+		"url": "https://medium.com/mongoaudit/how-to-change-mongodb-default-listening-port-27017-92e35f65670e"
 	}, {
 		"test_name": "2",
 		"title": "Server only accepts connections from whitelisted hosts / networks",
@@ -18,8 +18,8 @@
 			"Your server does not accept connections from unauthorized hosts. Well done."
 		],
 		"breaks": true,
-        "call2action": "Please read [[this guide on how to create whitelists and block unauthorized hosts]].",
-        "url": "https://medium.com/mongoaudit/how-to-configure-allowed-hosts-firewall-whitelist-and-blacklist-in-mongodb-84434ed02d3a"
+		"call2action": "Please read [[this guide on how to create whitelists and block unauthorized hosts]].",
+		"url": "https://medium.com/mongoaudit/how-to-configure-allowed-hosts-firewall-whitelist-and-blacklist-in-mongodb-84434ed02d3a"
 	}, {
 		"test_name": "3",
 		"title": "MongoDB HTTP status interface is not accessible on port 28017",
@@ -28,8 +28,8 @@
 		"messages": ["HTTP status interface is enabled.",
 			"HTTP status interface is disabled. Well done."
 		],
-        "call2action": "Please [[read this guide on how to disable MongoDB HTTP status interface]].",
-        "url": "https://medium.com/mongoaudit/how-to-disable-mongodb-http-status-interface-and-rest-api-63e9686cb965"
+		"call2action": "Please [[read this guide on how to disable MongoDB HTTP status interface]].",
+		"url": "https://medium.com/mongoaudit/how-to-disable-mongodb-http-status-interface-and-rest-api-63e9686cb965"
 	}, {
 		"test_name": "4",
 		"title": "MongoDB is not exposing its version number",
@@ -47,8 +47,8 @@
 			["You are running MongoDB version ", ", which is highly vulnerable."],
 			["You are running MongoDB version ", ". Well done."]
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "6",
 		"title": "TLS/SSL encryption is enabled",
@@ -57,8 +57,8 @@
 		"messages": ["TLS/SSL encryption is NOT enabled and your connections are unprotected from eavesdropping.",
 			"TLS/SSL enryption is enabled and your connections are safe from eavesdropping. Well done."
 		],
-        "call2action": "Please read [[this guide on how to enable TLS/SSL encryption on MongoDB]].",
-        "url": "https://medium.com/mongoaudit/how-to-enable-tls-ssl-on-mongodb-d973a92cefa6"
+		"call2action": "Please read [[this guide on how to enable TLS/SSL encryption on MongoDB]].",
+		"url": "https://medium.com/mongoaudit/how-to-enable-tls-ssl-on-mongodb-d973a92cefa6"
 	}, {
 		"test_name": "7",
 		"title": "authentication is enabled",
@@ -67,8 +67,8 @@
 		"messages": ["Authentication is NOT enabled. You are inviting everyone out there to enter your databases, seize everything and potentially ransom you for your data.",
 			"Authentication is enabled. Well done."
 		],
-        "call2action": "Please read [[this guide on how to enable authentication on MongoDB]]."
-        "url": "https://medium.com/mongoaudit/how-to-enable-authentication-on-mongodb-b9e8a924efac"
+		"call2action": "Please read [[this guide on how to enable authentication on MongoDB]].",
+		"url": "https://medium.com/mongoaudit/how-to-enable-authentication-on-mongodb-b9e8a924efac"
 	}, {
 		"test_name": "13",
 		"title": "vulnerable to security bug CVE-2015-7882 (December 01, 2015)",
@@ -77,8 +77,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "14",
 		"title": "vulnerable to security bug CVE-2015-2705 (March 27, 2015)",
@@ -87,8 +87,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "15",
 		"title": "vulnerable to security bug CVE-2014-8964 (March 25, 2015)",
@@ -97,8 +97,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "16",
 		"title": "vulnerable to security bug CVE-2015-1609 (February 25, 2015)",
@@ -107,8 +107,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "17",
 		"title": "vulnerable to security bug CVE-2014-3971 (June 17, 2014)",
@@ -117,8 +117,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "18",
 		"title": "vulnerable to security bug CVE-2014-2917 (May 05, 2014)",
@@ -127,8 +127,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "19",
 		"title": "vulnerable to security bug CVE-2013-4650 (June 20, 2013)",
@@ -137,8 +137,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "20",
 		"title": "vulnerable to security bug CVE-2013-3969 (June 05, 2013)",
@@ -147,8 +147,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "21",
 		"title": "vulnerable to security bug CVE-2012-6619 (March 06, 2014)",
@@ -157,8 +157,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "22",
 		"title": "vulnerable to security bug CVE-2013-1892 (Oct 01, 2013)",
@@ -167,8 +167,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "23",
 		"title": "vulnerable to security bug CVE-2013-2132 (Aug 15, 2013)",
@@ -177,8 +177,8 @@
 		"messages": [
 			["Your specific MongoDB version (", ") IS vulnerable to this bug."], "Your server is not vulnerable to this bug. Well done."
 		],
-        "call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
-        "url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
+		"call2action": "Please read [[this guide on how to upgrade to MongoDB's latest stable version]] and consider upgrading as soon as possible.",
+		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}],
 
 
@@ -200,8 +200,8 @@
 			"SCRAM-SHA-1 is NOT enabled.",
 			"SCRAM-SHA-1 is enabled and being used. Well done."
 		],
-        "call2action": "Please read [[this guide on how to use SCRAM-SHA1 as the default authentication method in MongoDB]].",
-        "url": "https://medium.com/mongoaudit/how-to-use-scram-sha1-as-authentication-method-in-mongodb-580f7251168"
+		"call2action": "Please read [[this guide on how to use SCRAM-SHA1 as the default authentication method in MongoDB]].",
+		"url": "https://medium.com/mongoaudit/how-to-use-scram-sha1-as-authentication-method-in-mongodb-580f7251168"
 	}, {
 		"test_name": "9",
 		"title": "server-side Javascript is forbidden",
@@ -210,8 +210,8 @@
 		"messages": ["Usage of Javascript IS allowed inside queries, which is potentially harmful.",
 			"Usage of Javascript is not allowed inside queries. Well done."
 		],
-        "call2action": "Please read [[this guide on how to disable server-side Javascript]].",
-        "url": "https://medium.com/mongoaudit/how-to-disable-server-side-javascript-on-mongodb-a099fc0b8f75"
+		"call2action": "Please read [[this guide on how to disable server-side Javascript]].",
+		"url": "https://medium.com/mongoaudit/how-to-disable-server-side-javascript-on-mongodb-a099fc0b8f75"
 	}, {
 		"test_name": "10",
 		"title": "roles granted to the provided user only permit CRUD operations",
@@ -222,8 +222,8 @@
 			["The permissions contained in your user's role set  ", " are sensible. Well done."],
 			["", ""]
 		],
-        "call2action": "Please read [[this guide on roles and permissions best practices]].",
-        "url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
+		"call2action": "Please read [[this guide on roles and permissions best practices]].",
+		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
 	}, {
 		"test_name": "11",
 		"title": "the provided user has permissions over a single database",
@@ -233,7 +233,7 @@
 			["The provided user has permissions over ", " databases."],
 			["The provided user only has permissions over “", "“ database. Well done."]
 		],
-        "call2action": "Please read [[this guide on roles and permissions best practices]].",
-        "url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
+		"call2action": "Please read [[this guide on roles and permissions best practices]].",
+		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
 	}]
 }
