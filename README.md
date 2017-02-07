@@ -19,7 +19,7 @@ curl https://mongoaud.it/install | sh
 Then run `mongoaudit` command and voilà! :boom:
 
 <h2 align="center">Introduction</h2>
-<p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system adiministrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
+<p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
 
 <p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advise on how to fix them, recommends best practices and teaches you how to DevOp like a pro! :metal:</p>
 
@@ -59,7 +59,7 @@ Then run `mongoaudit` command and voilà! :boom:
 _Tests marked with an asterisk (`*`) require valid authentication credentials._
 
 
-<h2 align="center">How can I better secure my MongoDB?</h2>
+<h2 align="center">How can I best secure my MongoDB?</h2>
 
 Once you run any of the test suites provided by __mongoaudit__, it will offer you to receive a fully detailed report via email. This personalized report links to a series of useful guides on how to fix every specific issue and how to harden your MongoDB deployments.
 
