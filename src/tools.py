@@ -115,7 +115,6 @@ def get_date():
 
 
 def check_version(version):
-    import stat
     # if application is binary then check for latest version
     if getattr(sys, 'frozen', False):
         try:
@@ -126,29 +125,33 @@ def check_version(version):
 
             print("Current version " + version + " Latest " + latest)
             if version < latest:
-                path = os.path.dirname(sys.executable)
-                print("about to update to version " + latest)
-                # save the permissions from the current binary
-                old_stat = os.stat(path + "/mongoaudit")
-                # rename the current binary in order to download the latest
-                os.rename(path + "/mongoaudit", path + "/temp")
-                req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
-                with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
-                    mongoaudit_bin.write(req.read())
-                    # set the same permissions that had the previous binary
-                    os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
-                # delete the old binary
-                os.remove(path + "/temp")
-                print("mongoaudit updated, restarting...")
-                app_path = path + "/mongoaudit"
-                os.execl(app_path, app_path, *sys.argv)
-
+                print("About to upgrade to version " + latest)
+                _upgrade(releases)
+                
         except (urllib2.HTTPError, urllib2.URLError):
             print("Client offline")
         except os.error:
             print("Couldn't write mongoaudit binary")
+            
+def _upgrade(releases):
+    import stat
+    path = os.path.dirname(sys.executable)
+    # save the permissions from the current binary
+    old_stat = os.stat(path + "/mongoaudit")
+    # rename the current binary in order to download the latest
+    os.rename(path + "/mongoaudit", path + "/temp")
+    req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
+    with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
+        mongoaudit_bin.write(req.read())
+        # set the same permissions that had the previous binary
+        os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
+    # delete the old binary
+    os.remove(path + "/temp")
+    print("mongoaudit updated, restarting...")
+    app_path = path + "/mongoaudit"
+    os.execl(app_path, app_path, *sys.argv)
 
-
+    
 def in_range(num, minimum, maximum):
     return minimum <= num <= maximum
 
