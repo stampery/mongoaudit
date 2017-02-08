@@ -238,40 +238,49 @@ def try_roles(test):
                 validated['invalid'].add(role['role'])
         return validated
 
+    def validate_role_list(role):
+        return reduce_roles(role) if bool(role) else result_default_value()
+
+    def get_inherited_roles(role):
+        return validate_role(
+            role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
+
+    def get_other_roles(role):
+        return validate_role(
+            role['roles']) if 'roles' in role else result_default_value()
+
+    def get_builtin_role(role):
+        result = result_default_value()
+        is_valid_role = valid_role(role['role'])
+        if is_valid_role and role['isBuiltin']:
+            result['valid'].add(role['role'])
+        elif is_valid_role:
+            result['custom'].add(role['role'])
+        else:
+            result['invalid'].add(role['role'])
+        inherited = get_inherited_roles(role)
+        other_roles = get_other_roles(role)
+        return combine_result(result, combine_result(inherited, other_roles))
+
+    def validate_role_dict(role):
+        if 'role' in role:
+            return get_builtin_role(role) if 'isBuiltin' in role else  \
+                validate_role(database.command('rolesInfo', role)['roles'])
+        if 'roles' in role and bool(role['roles']):
+            return validate_role(role['roles'])
+        else:
+            raise Exception('Non exhaustive type case')
+
     def validate_role(role):
         """
         Recursively process the different roles that a role implements or inherits
         Args:
           role (list or dict): value returned by database.command 'usersInfo' or 'rolesInfo'
         """
-        if isinstance(role, list) and bool(role):
-            return reduce_roles(role)
+        if isinstance(role, list):
+            return validate_role_list(role)
         elif isinstance(role, dict):
-            if 'role' in role and 'isBuiltin' in role:
-                result = result_default_value()
-                is_valid_role = valid_role(role['role'])
-                if is_valid_role and role['isBuiltin']:
-                    result['valid'].add(role['role'])
-                elif is_valid_role:
-                    result['custom'].add(role['role'])
-                else:
-                    result['invalid'].add(role['role'])
-                inherited = validate_role(
-                    role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
-                other_roles = validate_role(
-                    role['roles']) if 'roles' in role else result_default_value()
-                return combine_result(
-                    result, combine_result(
-                        inherited, other_roles))
-            if 'role' in role:
-                return validate_role(database.command('rolesInfo', role)['roles'])
-            if 'roles' in role and bool(role['roles']):
-                return validate_role(role['roles'])
-            else:
-                raise Exception('Non exhaustive type case')
-        elif isinstance(role, list):
-            # empty list
-            return result_default_value()
+            return validate_role_dict(role)
         else:
             raise Exception('Non exhaustive type case')
 
