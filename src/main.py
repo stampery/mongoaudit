@@ -25,8 +25,8 @@ class App(object):
         self.loop = urwid.MainLoop(
             placeholder, PALETTE, unhandled_input=self.key_handler)
         self.loop.widget = urwid.AttrMap(placeholder, 'bg')
-        self.loop.widget._command_map['tab'] = 'cursor down'
-        self.loop.widget._command_map['shift tab'] = 'cursor up'
+        #self.loop.widget._command_map['tab'] = 'cursor down'
+        #self.loop.widget._command_map['shift tab'] = 'cursor up'
         self.loop.screen.set_terminal_properties(colors=256)
         self.cards.welcome()
 
