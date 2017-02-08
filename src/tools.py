@@ -93,7 +93,7 @@ def send_result(email, result, title, urn):
         req = urllib2.Request(url, json.dumps(values), headers)
         response = urllib2.urlopen(req)
         return response.read()
-    except (urllib2.HTTPError, urllib2.HTTPError) as exc:
+    except (urllib2.HTTPError, urllib2.URLError) as exc:
         return "Sadly enough, we are having technical difficulties at the moment, " \
                "please try again later.\n\n%s" % str(exc)
 
