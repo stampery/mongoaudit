@@ -223,17 +223,17 @@
 			["", ""]
 		],
 		"call2action": "Please read [[this guide on roles and permissions best practices]].",
-		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
+		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices-9fa6de06bcc1"
 	}, {
 		"test_name": "11",
 		"title": "the provided user has permissions over a single database",
-		"caption": "",
+		"caption": "Your user should only have roles and permissions over a single database.",
 		"severity": 0,
 		"messages": [
 			["The provided user has permissions over ", " databases."],
 			["The provided user only has permissions over “", "“ database. Well done."]
 		],
 		"call2action": "Please read [[this guide on roles and permissions best practices]].",
-		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices"
+		"url": "https://medium.com/mongoaudit/mongodb-user-credentials-best-practices-9fa6de06bcc1"
 	}]
 }
