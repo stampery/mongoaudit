@@ -179,7 +179,7 @@ class FormCard(urwid.WidgetWrap):
             [content, input_fields, error_row]), footer=footer)
         urwid.WidgetWrap.__init__(self, card)
 
-    def next(self):
+    def next(self, *_):
         self.callbacks['next'](form=self, **(self.get_field_values()))
 
     def get_field_values(self):
