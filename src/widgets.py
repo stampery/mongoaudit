@@ -291,7 +291,7 @@ class CustomProgressBar(urwid.ProgressBar):
         """
         return self.done
 
-    def render(self, size, focus=False):
+    def render(self, size, **_):
         """
         Render the progress bar.
         """
