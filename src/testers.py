@@ -238,16 +238,8 @@ def try_roles(test):
                 validated['invalid'].add(role['role'])
         return validated
 
-    def validate_role_list(role):
-        return reduce_roles(role) if bool(role) else result_default_value()
-
-    def get_inherited_roles(role):
-        return validate_role(
-            role['inheritedRoles']) if 'inheritedRoles' in role else result_default_value()
-
-    def get_other_roles(role):
-        return validate_role(
-            role['roles']) if 'roles' in role else result_default_value()
+    def get_roles(role, key):
+        return validate_role(role[key]) if key in role else result_default_value()
 
     def get_builtin_role(role):
         result = result_default_value()
@@ -258,8 +250,8 @@ def try_roles(test):
             result['custom'].add(role['role'])
         else:
             result['invalid'].add(role['role'])
-        inherited = get_inherited_roles(role)
-        other_roles = get_other_roles(role)
+        inherited = get_roles(role, 'inherited')
+        other_roles = get_roles(role, 'roles')
         return combine_result(result, combine_result(inherited, other_roles))
 
     def validate_role_dict(role):
@@ -278,7 +270,7 @@ def try_roles(test):
           role (list or dict): value returned by database.command 'usersInfo' or 'rolesInfo'
         """
         if isinstance(role, list):
-            return validate_role_list(role)
+            return reduce_roles(role) if bool(role) else result_default_value()
         elif isinstance(role, dict):
             return validate_role_dict(role)
         else:
