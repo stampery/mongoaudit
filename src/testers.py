@@ -195,7 +195,6 @@ def try_roles(test):
 
     def result_default_value():
         """
-
         Returns:
           dict(set()): returns an empty dictionary that contains 3 empty
           sets where valid, invalid and custom roles are stored
@@ -213,16 +212,6 @@ def try_roles(test):
         return {'invalid': value_1['invalid'].union(value_2['invalid']),
                 'valid': value_1['valid'].union(value_2['valid']),
                 'custom': value_1['custom'].union(value_2['custom'])}
-
-    def reduce_roles(roles):
-        """
-        Validate and combine a list of roles
-        Args:
-         roles (list(dict())): roles
-        Returns:
-          result_default_value: roles sorted by valid, invalid, custom
-        """
-        return reduce(lambda x, y: combine_result(x, y), [validate_role(r) for r in roles])
 
     def basic_validation(roles):
         """
@@ -270,18 +259,33 @@ def try_roles(test):
           role (list or dict): value returned by database.command 'usersInfo' or 'rolesInfo'
         """
         if isinstance(role, list):
-            return reduce_roles(role) if bool(role) else result_default_value()
+            return reduce(lambda x, y: combine_result(x, y), [validate_role(r) for r in role])\
+                if bool(role) else result_default_value()
         elif isinstance(role, dict):
             return validate_role_dict(role)
         else:
             raise Exception('Non exhaustive type case')
 
+    def get_message(state, text1, text2):
+        return text1 + decode_to_string(validated[state]) + text2
+
+    def validation_result(validated):
+        if bool(validated['invalid']):
+            # if the profile is invalid
+            return [False, decode_to_string(validated['invalid'])]
+        elif bool(validated['custom']):
+            # if the profile has custom permissions
+            message = get_message('valid', 'Your user\'s role set ',
+                                  ' seem to be ok, but we couldn\'t do an exhaustive check.')
+            return [2, message]
+        # if everything seems to be ok
+        return [True, decode_to_string(validated['valid'])]
+
+
+
     database = test.tester.get_db()
     roles = test.tester.get_roles()
     validated = {}
-
-    def get_message(state, text1, text2):
-        return text1 + decode_to_string(validated[state]) + text2
 
     try:
         validated = validate_role(roles)
@@ -293,17 +297,10 @@ def try_roles(test):
                                   ' didn\'t allow us to do an exhaustive check')
             return [2, message]
 
-    # when user has permission to run 'rolesInfo'
-    if bool(validated['invalid']):
-        # if the profile is invalid
-        return [False, decode_to_string(validated['invalid'])]
-    elif bool(validated['custom']):
-        # if the profile has custom permissions
-        message = get_message('valid', 'Your user\'s role set ',
-                              ' seem to be ok, but we couldn\'t do an exhaustive check.')
-        return [2, message]
-    # if everything seems to be ok
-    return [True, decode_to_string(validated['valid'])]
+    return validation_result(validated)
+
+
+
 
 
 def try_dedicated_user(test):
