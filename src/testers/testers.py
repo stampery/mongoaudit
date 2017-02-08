@@ -261,9 +261,9 @@ TEST_FUNCTIONS = {
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: "version" not in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: bool(test.tester.info["OpenSSLVersion"])
-         if ("OpenSSLVersion" in test.tester.info)
-         else test.tester.info["openssl"]["running"] != "disabled",
+    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) \
+    if ("OpenSSLVersion" in test.tester.info) \
+    else test.tester.info["openssl"]["running"] != "disabled",
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
