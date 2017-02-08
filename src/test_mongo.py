@@ -1,6 +1,6 @@
 import unittest
 
-from src.testers import alerts_aug152013, alerts_dec012015, alerts_feb252015, alerts_jun052013, \
+from src.testers.testers import alerts_aug152013, alerts_dec012015, alerts_feb252015, alerts_jun052013, \
     alerts_jun172014, alerts_jun202013, alerts_mar062014, alerts_mar252015, alerts_mar272015, \
     alerts_may052014, alerts_oct012013
 
