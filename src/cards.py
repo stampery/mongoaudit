@@ -140,8 +140,8 @@ class Cards(object):
                 on_press=self.choose_test),
             'button')
 
-        results_button = LineButton([('text', '→ View results one by one')])
-        email_button = LineButton([('text', '→ Email me the detailed results '
+        results_button = LineButton([('text', '> View abridged results')])
+        email_button = LineButton([('text', '> Email me the detailed results '
                                             'and how to fix the issues')])
 
         urwid.connect_signal(
@@ -167,9 +167,8 @@ class Cards(object):
         subtitle = urwid.Text([
             ('text', 'The email report contains detailed results of each of the runned tests, '
                      'as well as links to guides on how to fix the found issues.\n\n'),
-            ('text italic', 'This reporting service is runned by Stampery Inc. You will be '
-                            'included into a MongoDB critical security bugs newsletter. '
-                            'We will never SPAM you, we promise!')
+            ('text italic', 'You will be included into a MongoDB critical security bugs '
+                            'newsletter. We will never SPAM you, we promise!')
         ])
         content = urwid.Pile([header, DIV, subtitle])
         card = FormCard(
