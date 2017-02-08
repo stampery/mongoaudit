@@ -21,7 +21,7 @@ Then run `mongoaudit` command and voilà! :boom:
 <h2 align="center">Introduction</h2>
 <p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
 
-<p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advise on how to fix them, recommends best practices and teaches you how to DevOp like a pro! :metal:</p>
+<p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advice on how to fix them, recommends best practices and teaches you how to DevOp like a pro! :metal:</p>
 
 <p>This is how the actual app looks like:</p>
 
