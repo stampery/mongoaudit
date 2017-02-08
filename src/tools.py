@@ -109,7 +109,7 @@ def get_date():
     import calendar
     local = time.localtime(time.time())
     nth = ["st", "nd", "rd", None][min(3, local.tm_mday % 10 - 1)] or 'th'
-    return "%s %d%s %d @ %d:%d" % (
+    return "%s %d%s %d @ %02d:%02d" % (
         calendar.month_abbr[local.tm_mon], local.tm_mday,
         nth, local.tm_year, local.tm_hour, local.tm_min)
 
