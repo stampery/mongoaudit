@@ -271,7 +271,7 @@ class CustomProgressBar(urwid.ProgressBar):
     """
     ProgressBar that displays a semigraph instead of a percentage
     """
-    semi = u'▁▂▃▄▅▆▇█'
+    semi = u'\u2582'
 
     def get_text(self):
         """
@@ -297,8 +297,8 @@ class CustomProgressBar(urwid.ProgressBar):
         """
         (maxcol,) = size
         ccol = int(self.current * maxcol / self.done)
-        txt = urwid.Text([(self.normal, self.semi[1] * ccol),
-                          (self.complete, self.semi[1] * (maxcol - ccol))])
+        txt = urwid.Text([(self.normal, self.semi * ccol),
+                          (self.complete, self.semi * (maxcol - ccol))])
 
         return txt.render(size)
 
