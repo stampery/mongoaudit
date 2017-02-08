@@ -333,7 +333,7 @@ class DisplayTest(urwid.WidgetWrap):
         """
         empty_line = (DIV, options('weight', 1))
         title = (urwid.Text(
-            ('text bold', test['title'])), options('weight', 1))
+            ('text bold', test['title'][0].upper() + test['title'][1:])), options('weight', 1))
         caption = (urwid.Text(
             ('text', test['caption'])), options('weight', 1))
 
