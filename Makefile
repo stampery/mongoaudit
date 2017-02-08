@@ -1,5 +1,5 @@
 default:
-	pip install -r requirements.txt
+	pip install -I -r requirements.txt
 
 init:
 	./mongoaudit
