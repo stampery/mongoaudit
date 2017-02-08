@@ -1,3 +1,5 @@
+.PHONY: dist
+
 default:
 	pip install -I -r requirements.txt
 
