@@ -18,7 +18,7 @@ class Cards(object):
             ('text bold', self.app.name),
             ('text', ' is a CLI tool for auditing MongoDB servers, detecting poor security '
                      'settings and performing automated penetration testing.\n\n'),
-            ('text italic', "“With great power comes great responsibility”. Unauthorized "
+            ('text italic', "\"With great power comes great responsibility\". Unauthorized "
                             "access to strangers' computer systems is a crime "
                             "in many countries. Take care.")
         ])

@@ -84,7 +84,7 @@ Make your suggested changes, `git push` and then submit a pull request.
 <h2 align="center">Legal</h2>
 
 <h3>License</h3>
-<strong>mongoaudit</strong> is released under the  [MIT License](https://github.com/stampery/mongoaudit/blob/master/LICENSE).
+<strong>mongoaudit</strong> is released under the [MIT License](https://github.com/stampery/mongoaudit/blob/master/LICENSE).
 
 <h3>Disclaimer :warning:</h3>
 
