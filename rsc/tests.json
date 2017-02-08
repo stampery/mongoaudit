@@ -71,7 +71,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-enable-authentication-on-mongodb-b9e8a924efac"
 	}, {
 		"test_name": "13",
-		"title": "vulnerable to security bug CVE-2015-7882 (December 01, 2015)",
+		"title": "not vulnerable to security bug CVE-2015-7882 (December 01, 2015)",
 		"caption": "This bug allows unauthorized access to a MongoDB instance or cluster when using LDAP authentication.",
 		"severity": 0,
 		"messages": [
@@ -81,7 +81,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "14",
-		"title": "vulnerable to security bug CVE-2015-2705 (March 27, 2015)",
+		"title": "not vulnerable to security bug CVE-2015-2705 (March 27, 2015)",
 		"caption": "This bug allows to remotely trigger a denial of service (crash) due to failure to check for a missing value.",
 		"severity": 0,
 		"messages": [
@@ -91,7 +91,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "15",
-		"title": "vulnerable to security bug CVE-2014-8964 (March 25, 2015)",
+		"title": "not vulnerable to security bug CVE-2014-8964 (March 25, 2015)",
 		"caption": "This bug allows to remotely trigger a denial of service (crash) via a specially crafted regular expression.",
 		"severity": 0,
 		"messages": [
@@ -101,7 +101,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "16",
-		"title": "vulnerable to security bug CVE-2015-1609 (February 25, 2015)",
+		"title": "not vulnerable to security bug CVE-2015-1609 (February 25, 2015)",
 		"caption": "This bug allows to a specially crafted, malformed BSON message to trigger an uncaught exception in the server, resulting in a loss of availability.",
 		"severity": 0,
 		"messages": [
@@ -111,7 +111,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "17",
-		"title": "vulnerable to security bug CVE-2014-3971 (June 17, 2014)",
+		"title": "not vulnerable to security bug CVE-2014-3971 (June 17, 2014)",
 		"caption": "This bug allows to remotely trigger a crash when X.509 authentication is enabled.",
 		"severity": 0,
 		"messages": [
@@ -121,7 +121,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "18",
-		"title": "vulnerable to security bug CVE-2014-2917 (May 05, 2014)",
+		"title": "not vulnerable to security bug CVE-2014-2917 (May 05, 2014)",
 		"caption": "This bug causes accidental information disclosure of user credentials.",
 		"severity": 0,
 		"messages": [
@@ -131,7 +131,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "19",
-		"title": "vulnerable to security bug CVE-2013-4650 (June 20, 2013)",
+		"title": "not vulnerable to security bug CVE-2013-4650 (June 20, 2013)",
 		"caption": "This bug allows to improperly grant user system privileges on databases other than local.",
 		"severity": 0,
 		"messages": [
@@ -141,7 +141,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "20",
-		"title": "vulnerable to security bug CVE-2013-3969 (June 05, 2013)",
+		"title": "not vulnerable to security bug CVE-2013-3969 (June 05, 2013)",
 		"caption": "This bug allows to remotely trigger a segmentation fault in the Javascript engine.",
 		"severity": 0,
 		"messages": [
@@ -151,7 +151,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "21",
-		"title": "vulnerable to security bug CVE-2012-6619 (March 06, 2014)",
+		"title": "not vulnerable to security bug CVE-2012-6619 (March 06, 2014)",
 		"caption": "This bug allows remote authenticated users to cause a denial of service (crash) or read system memory via a crafted BSON object in the column name in an insert command, which triggers a buffer over-read.",
 		"severity": 0,
 		"messages": [
@@ -161,7 +161,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "22",
-		"title": "vulnerable to security bug CVE-2013-1892 (Oct 01, 2013)",
+		"title": "not vulnerable to security bug CVE-2013-1892 (Oct 01, 2013)",
 		"caption": "This bug allows remote authenticated users to cause a denial of service (invalid memory access and server crash) or execute arbitrary code via a crafted memory address in the first argument.",
 		"severity": 0,
 		"messages": [
@@ -171,7 +171,7 @@
 		"url": "https://medium.com/mongoaudit/how-to-upgrade-mongodb-to-latest-stable-version-9607266834cf"
 	}, {
 		"test_name": "23",
-		"title": "vulnerable to security bug CVE-2013-2132 (Aug 15, 2013)",
+		"title": "not vulnerable to security bug CVE-2013-2132 (Aug 15, 2013)",
 		"caption": "This bug allows context-dependent attackers to cause a denial of service (NULL pointer dereference and crash) via vectors related to decoding of an \"invalid DBRef\".",
 		"severity": 0,
 		"messages": [
