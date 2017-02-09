@@ -14,7 +14,7 @@
 		"title": "Server only accepts connections from whitelisted hosts / networks",
 		"caption": "Best practice is to only listen to incoming connections whose originating IP belongs to the applications or systems that are intended to use the database. This protects your server from denial-of-service attacks and some other vulnerabilities that may be present on other services running on the same device.",
 		"severity": 1,
-		"messages": ["Your server does accept connections from unauthorized hosts.",
+		"messages": ["Your server does accept connections from unauthorized hosts or it could not be found at all. No more tests will be run.",
 			"Your server does not accept connections from unauthorized hosts. Well done."
 		],
 		"breaks": true,

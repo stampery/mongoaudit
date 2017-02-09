@@ -44,7 +44,7 @@ class Tester(object):
                 'severity': x.severity,
                 'title': x.title,
                 'caption': x.caption,
-                'message': 'This test was omitted',
+                'message': 'This test was omitted because of a missing requirement (e.g.: it depends on a previous test that failed).',
                 'extra_data': None,
                 'result': 3} for x in self.tests[len(result): len(self.tests)]]
 

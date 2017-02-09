@@ -140,9 +140,8 @@ class Cards(object):
                 on_press=self.choose_test),
             'button')
 
-        results_button = LineButton([('text', '> View abridged results')])
-        email_button = LineButton([('text', '> Email me the detailed results '
-                                            'and how to fix the issues')])
+        results_button = LineButton([('text', '> View brief results summary')])
+        email_button = LineButton([('text', '> Email me the detailed results report')])
 
         urwid.connect_signal(
             results_button,
