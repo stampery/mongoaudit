@@ -123,10 +123,11 @@ def check_version(version):
             releases = json.loads(req.read())
             latest = releases["tag_name"]
 
-            print("Current version " + version + " Latest " + latest)
+            print("Current version " + version)
             if version < latest:
-                print("About to upgrade to version " + latest)
+                print("There's a new version " + latest)
                 _upgrade(releases)
+
                 
         except (urllib2.HTTPError, urllib2.URLError):
             print("Client offline")
@@ -135,22 +136,38 @@ def check_version(version):
             
 def _upgrade(releases):
     import stat
-    path = os.path.dirname(sys.executable)
-    # save the permissions from the current binary
-    old_stat = os.stat(path + "/mongoaudit")
-    # rename the current binary in order to download the latest
-    os.rename(path + "/mongoaudit", path + "/temp")
-    req = urllib2.urlopen(releases["assets"][0]["browser_download_url"])
-    with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
-        mongoaudit_bin.write(req.read())
-        # set the same permissions that had the previous binary
-        os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
-    # delete the old binary
-    os.remove(path + "/temp")
-    print("mongoaudit updated, restarting...")
-    app_path = path + "/mongoaudit"
-    os.execl(app_path, app_path, *sys.argv)
+    release = _get_release_link(releases["assets"])
+    if release:
+        print("Upgrading to latest version")
+        path = os.path.dirname(sys.executable)
+        # save the permissions from the current binary
+        old_stat = os.stat(path + "/mongoaudit")
+        # rename the current binary in order to download the latest
+        os.rename(path + "/mongoaudit", path + "/temp")
+        req = urllib2.urlopen(release)
+        with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
+            mongoaudit_bin.write(req.read())
+            # set the same permissions that had the previous binary
+            os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
+        # delete the old binary
+        os.remove(path + "/temp")
+        print("mongoaudit updated, restarting...")
+        app_path = path + "/mongoaudit"
+        os.execl(app_path, app_path, *sys.argv)
+    else:
+        print "There's no binary for this platform"
 
+def _get_release_link(assets):
+    import platform
+    platform_system = platform.system().lower()
+    uname = "macosx" if platform_system == "darwin" else platform_system
+
+    for asset in assets:
+        release = asset["browser_download_url"]
+        release_platform = release.rsplit('-', 1)[1]
+        if release_platform == uname:
+            return release
+    return None
     
 def in_range(num, minimum, maximum):
     return minimum <= num <= maximum
