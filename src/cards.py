@@ -176,8 +176,8 @@ class Cards(object):
             ['Email'],
             'Send report',
             {
-                'next': lambda form, email: self.send_email(email.strip(), result, title, urn)
-                        if validate_email(email) else form.set_error("Invalid email address"),
+                'next': lambda form, email: self.send_email(email.strip(), result, title, urn) \
+                if validate_email(email) else form.set_error("Invalid email address"),
                 'back': lambda _: self.display_overview(result, title, urn)
             })
 
