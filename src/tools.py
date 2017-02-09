@@ -155,7 +155,7 @@ def _upgrade(releases):
         app_path = path + "/mongoaudit"
         os.execl(app_path, app_path, *sys.argv)
     else:
-        print "There's no binary for this platform"
+        print("There's no binary for this platform")
 
 def _get_release_link(assets):
     import platform
