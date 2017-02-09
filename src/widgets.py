@@ -271,7 +271,8 @@ class CustomProgressBar(urwid.ProgressBar):
     """
     ProgressBar that displays a semigraph instead of a percentage
     """
-    semi = u'\u2582'
+    import platform
+    semi = u'\u2582' if platform.system() == 'Linux' else '_'
 
     def get_text(self):
         """
