@@ -11,7 +11,7 @@
 <h2 align="center">1-line install</h2>
 
 ```bash
-curl https://mongoaud.it/install | sh
+curl -s https://mongoaud.it/install | bash
 ```
 
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
