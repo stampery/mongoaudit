@@ -122,59 +122,96 @@ def check_version(version):
             req = urllib2.urlopen(url)
             releases = json.loads(req.read())
             latest = releases["tag_name"]
-
-            print("Current version " + version)
             if version < latest:
+                print("mongoaudit version " + version)
                 print("There's a new version " + latest)
                 _upgrade(releases)
 
-                
         except (urllib2.HTTPError, urllib2.URLError):
-            print("Client offline")
+            print("Couldn't check for upgrades")
         except os.error:
             print("Couldn't write mongoaudit binary")
-            
+
+
+def _check_md5(file_path, md5):
+    import hashlib
+    with open(file_path) as mongoaudit_bin:
+        binary_md5 = hashlib.md5(mongoaudit_bin.read()).hexdigest()
+    return binary_md5 == md5
+
+
+def _clean_upgrade(binary_ok, binary_path, path, temp_path):
+    if binary_ok:
+        import stat
+        # save the permissions from the current binary
+        old_stat = os.stat(binary_path)
+        # rename the current binary in order to replace it with the latest
+        os.rename(binary_path, path + "/old")
+        os.rename(temp_path, binary_path)
+        # set the same permissions that had the previous binary
+        os.chmod(binary_path, old_stat.st_mode | stat.S_IEXEC)
+        # delete the old binary
+        os.remove(path + "/old")
+        print("mongoaudit updated, restarting...")
+        os.execl(binary_path, binary_path, *sys.argv)
+    else:
+        os.remove(temp_path)
+        print("couldn't download the latest binary")
+
+
+def _download_binary(release, temp_path):
+    req = urllib2.urlopen(release["binary"])
+    binary_ok = False
+    attempts = 0
+    while not binary_ok and attempts < 3:
+        with open(temp_path, "wb+") as mongoaudit_bin:
+            mongoaudit_bin.write(req.read())
+        # verify integrity of downloaded file
+        print("Verifing mongoaudit integrity")
+        if _check_md5(temp_path, release["md5"]):
+            binary_ok = True
+            print("Integrity check passed")
+        attempts += 1
+    return binary_ok
+
+
 def _upgrade(releases):
-    import stat
     release = _get_release_link(releases["assets"])
     if release:
         print("Upgrading to latest version")
-        path = os.path.dirname(sys.executable)
-        # save the permissions from the current binary
-        old_stat = os.stat(path + "/mongoaudit")
-        # rename the current binary in order to download the latest
-        os.rename(path + "/mongoaudit", path + "/temp")
-        req = urllib2.urlopen(release)
-        with open(path + "/mongoaudit", "wb+") as mongoaudit_bin:
-            mongoaudit_bin.write(req.read())
-            # set the same permissions that had the previous binary
-            os.chmod(path + "/mongoaudit", old_stat.st_mode | stat.S_IEXEC)
-        # delete the old binary
-        os.remove(path + "/temp")
-        print("mongoaudit updated, restarting...")
-        app_path = path + "/mongoaudit"
-        os.execl(app_path, app_path, *sys.argv)
+        binary_path = sys.executable
+        path = os.path.dirname(binary_path)
+        temp_path = path + "/temp"
+        binary_ok = _download_binary(release, temp_path)
+        _clean_upgrade(binary_ok, binary_path, path, temp_path)
     else:
         print("There's no binary for this platform")
+
+
+def _get_md5(link, uname):
+    md5 = urllib2.urlopen(link).read().split("\n")
+    for line in md5:
+        if uname in line:
+            return line.split()[0]
+    return None
+
 
 def _get_release_link(assets):
     import platform
     platform_system = platform.system().lower()
     uname = "macosx" if platform_system == "darwin" else platform_system
-
+    release = {}
     for asset in assets:
-        release = asset["browser_download_url"]
-        release_platform = release.rsplit('-', 1)[1]
+        download_url = asset["browser_download_url"]
+        release_platform = download_url.rsplit('-', 1)[1]
         if release_platform == uname:
+            release["binary"] = download_url
+        elif release_platform == "checksums.txt":
+            release["md5"] = _get_md5(download_url, uname)
+        if len(release) == 2:
             return release
     return None
-    
+
+
 def in_range(num, minimum, maximum):
     return minimum <= num <= maximum
-
-
-def check_terminal():
-    rows = int(os.popen('stty size', 'r').read().split()[0])
-    if rows < 24:
-        print("Mongo audit requires a terminal with a minimum height of 24.")
-        sys.exit()
