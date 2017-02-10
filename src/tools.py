@@ -197,9 +197,7 @@ def _get_md5(link, uname):
 
 
 def _get_release_link(assets):
-    import platform
-    platform_system = platform.system().lower()
-    uname = "macosx" if platform_system == "darwin" else platform_system
+    uname = get_platform()
     release = {}
     for asset in assets:
         download_url = asset["browser_download_url"]
@@ -211,6 +209,12 @@ def _get_release_link(assets):
         if len(release) == 2:
             return release
     return None
+
+
+def get_platform():
+    import platform
+    platform_system = platform.system().lower()
+    return "macosx" if platform_system == "darwin" else platform_system
 
 
 def in_range(num, minimum, maximum):
