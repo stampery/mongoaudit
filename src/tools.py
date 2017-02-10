@@ -23,7 +23,7 @@ def try_address(fqdn):
     import socket
     try:
         socket.gethostbyname_ex(fqdn)
-    except socket.gaierror:
+    except (socket.gaierror, UnicodeEncodeError):
         return False
     else:
         return True
