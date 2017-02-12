@@ -18,6 +18,8 @@ curl -s https://mongoaud.it/install | bash
 
 Then run `mongoaudit` command and voilà! :boom:
 
+_:cop: Hey! If you are really serious about security, you should rather clone this repository, check that nothing fishy is in the source code and only then run `make` to get the dependencies and `./mongoaudit` to run the tool._
+
 <h2 align="center">Introduction</h2>
 <p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
 
