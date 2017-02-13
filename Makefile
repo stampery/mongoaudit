@@ -1,4 +1,4 @@
-.PHONY: dist
+.PHONY: dist, test
 
 default:
 	pip install -I -r requirements.txt
