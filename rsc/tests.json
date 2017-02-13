@@ -55,7 +55,7 @@
 		"caption": "Enable TLS/SSL in-flight encryption to authenticate and encrypt connections between your MongoDB server and apps to avoid eavesdropping, tampering and “man in the middle” attacks.",
 		"severity": 0,
 		"messages": ["TLS/SSL encryption is NOT enabled and your connections are unprotected from eavesdropping.",
-			"TLS/SSL enryption is enabled and your connections are safe from eavesdropping. Well done."
+			"TLS/SSL encryption is enabled and your connections are safe from eavesdropping. Well done."
 		],
 		"call2action": "Please read [[this guide on how to enable TLS/SSL encryption on MongoDB]].",
 		"url": "https://medium.com/mongoaudit/how-to-enable-tls-ssl-on-mongodb-d973a92cefa6"

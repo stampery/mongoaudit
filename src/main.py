@@ -16,7 +16,7 @@ class App(object):
         self.name = 'mongoaudit'
         self.version = '0.0.1'
         check_version(self.version)
-	urwid.set_encoding("UTF-8")
+        urwid.set_encoding("UTF-8")
         self.cards = Cards(self)
         self.setup_view()
         self.main()
