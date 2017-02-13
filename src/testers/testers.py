@@ -2,8 +2,6 @@
 import socket
 import time
 import ssl
-import sys
-
 import pymongo
 
 from src.testers.cve import alerts_dec012015, alerts_mar272015, alerts_mar252015, alerts_feb252015, \
@@ -68,10 +66,10 @@ class Tester(object):
         """
         fqdn, port = self.cred['nodelist'][0]
         if hasattr(self, 'conn'):
-          self.conn.close()
-          return self.get_plain_connection(fqdn, port)
+            self.conn.close()
+            return self.get_plain_connection(fqdn, port)
         else:
-          return self.get_tls_connection(fqdn, port)
+            return self.get_tls_connection(fqdn, port)
       
     def get_tls_connection(self, fqdn, port):
         """
