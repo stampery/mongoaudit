@@ -196,7 +196,14 @@ def try_scram(test):
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
-
+def check_ssl(test):
+    try:
+        if("OpenSSLVersion" in test.tester.info):
+            return bool(test.tester.info["OpenSSLVersion"])
+        else:
+            return test.tester.info["openssl"]["running"] != "disabled"
+    except KeyError:
+        return False
 
 
 
@@ -206,9 +213,7 @@ TEST_FUNCTIONS = {
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: "version" not in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) \
-    if ("OpenSSLVersion" in test.tester.info) \
-    else test.tester.info["openssl"]["running"] != "disabled",
+    "6": check_ssl,
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
