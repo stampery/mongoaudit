@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import socket
 import time
+import ssl
+import sys
 
 import pymongo
 
@@ -8,8 +10,10 @@ from src.testers.cve import alerts_dec012015, alerts_mar272015, alerts_mar252015
     alerts_jun172014, alerts_may052014, alerts_jun202013, alerts_jun052013, alerts_mar062014, \
     alerts_oct012013, alerts_aug152013
 from src.testers.roles import try_roles
+import src.testers.tls as tls_tests
 from src.tools import decode_to_string
 
+OMITTED_MESSAGE = 'This test was omitted because of a missing requirement (e.g.: it depends on a previous test that failed).'
 
 class Tester(object):
     """
@@ -20,6 +24,7 @@ class Tester(object):
     """
 
     def __init__(self, cred, tests):
+        self.retries = 0
         self.cred = cred
         self.tests = [Test(t, self) for t in tests]
         self.conn = self.get_connection()
@@ -47,7 +52,7 @@ class Tester(object):
                 'severity': x.severity,
                 'title': x.title,
                 'caption': x.caption,
-                'message': 'This test was omitted because of a missing requirement (e.g.: it depends on a previous test that failed).',
+                'message': OMITTED_MESSAGE,
                 'extra_data': None,
                 'result': 3} for x in self.tests[len(result): len(self.tests)]]
 
@@ -56,11 +61,34 @@ class Tester(object):
 
     def get_connection(self):
         """
+        Get the most secure kind of connection available.
         Returns:
-          pymongo.MongoClient: client that takes as arguments (fqdn, port)
+          pymongo.MongoClient instance
 
         """
         fqdn, port = self.cred['nodelist'][0]
+        if hasattr(self, 'conn'):
+          self.conn.close()
+          return self.get_plain_connection(fqdn, port)
+        else:
+          return self.get_tls_connection(fqdn, port)
+      
+    def get_tls_connection(self, fqdn, port):
+        """
+        Creates an encrypted TLS/SSL connection.
+        Returns:
+          pymongo.MongoClient instance
+        """
+        return pymongo.MongoClient(
+          fqdn, port, ssl=True, ssl_cert_reqs=ssl.CERT_NONE,
+          serverSelectionTimeoutMS=1000)
+      
+    def get_plain_connection(self, fqdn, port):
+        """
+        Creates a cleartext (unencrypted) connection.
+        Returns:
+          pymongo.MongoClient instance
+        """
         return pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1000)
 
     def get_info(self):
@@ -70,6 +98,8 @@ class Tester(object):
         Note:
           https://docs.mongodb.com/v3.2/reference/command/buildInfo/#dbcmd.buildInfo
         """
+        if self.retries > 2:
+            return None
         if hasattr(self, 'info'):
             return self.info
         try:
@@ -77,7 +107,10 @@ class Tester(object):
             self.info = info
             return self.info
         except pymongo.errors.ConnectionFailure:
-            return None
+            self.retries += 1
+            self.conn.close()
+            self.conn = self.get_connection()
+            return self.get_info()
 
     def get_db(self):
         """
@@ -108,10 +141,10 @@ class Test(object):
           tester Tester:
 
         Notes:
-          message should contain an array with the messages for the different results that
-          the test can return, if message is a function it should return a str[]
+          messages should contain an array with the messages for the different results that
+          the test can return, if messages is a function it should return a str[]
         """
-        self.name, self.severity, self.title, self.caption, self.message = \
+        self.name, self.severity, self.title, self.caption, self.messages = \
             test['test_name'], test['severity'], test['title'], test['caption'], test['messages']
         self.breaks = test['breaks'] if 'breaks' in test else None
         self.tester = tester
@@ -119,10 +152,9 @@ class Test(object):
     def run(self):
         """
         Returns:
-          tuple(int, str): test result value and message
+          tuple(int, str): test result value and messages
         """
         result = TEST_FUNCTIONS[self.name](self)
-        message = self.message
 
         if isinstance(result, list):
             value = result[0]
@@ -130,9 +162,11 @@ class Test(object):
         else:
             value = result
             extra_data = None
+            
+        message = self.messages[value] if value < 3 else OMITTED_MESSAGE
 
         return {'name': self.name, 'severity': self.severity, 'title': self.title,
-                'caption': self.caption, 'message': message[value], 'result': value,
+                'caption': self.caption, 'message': message, 'result': value,
                 'extra_data': extra_data}
 
 
@@ -197,18 +231,15 @@ def try_scram(test):
         return False
 
 
-
-
-
 TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
     "4": lambda test: "version" not in test.tester.info,
     "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
-    "6": lambda test: bool(test.tester.info["OpenSSLVersion"]) \
-    if ("OpenSSLVersion" in test.tester.info) \
-    else test.tester.info["openssl"]["running"] != "disabled",
+    "tls_available": tls_tests.available,
+    "tls_enabled": tls_tests.enabled,
+    "tls_valid": tls_tests.valid,
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,
