@@ -230,7 +230,6 @@ def try_scram(test):
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
-
 TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
