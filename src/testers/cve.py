@@ -1,14 +1,7 @@
+from src.testers.decorators import return_version_on_fail
 from src.tools import in_range
 
 # https://www.mongodb.com/alerts
-
-def return_version_on_fail(func):
-    """
-    If the result from alert is false we return also the mongo version
-    """
-    def get_data(test):
-        return func(test) or [False, test.tester.info["version"]]
-    return get_data
 
 @return_version_on_fail
 def alerts_dec012015(test):

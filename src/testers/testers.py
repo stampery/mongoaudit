@@ -2,7 +2,7 @@
 import socket
 import time
 import ssl
-import sys
+from decorators import requires_userinfo
 
 import pymongo
 
@@ -183,7 +183,7 @@ def try_socket(test, forced_port=None):
 def try_authorization(test):
     try:
         test.tester.conn.database_names()
-    except pymongo.errors.OperationFailure:
+    except (pymongo.errors.OperationFailure, pymongo.errors.ServerSelectionTimeoutError):
         return True
     else:
         return False
@@ -230,12 +230,21 @@ def try_scram(test):
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
+@requires_userinfo
+def version_newer_than(test):
+    return [test.tester.info["version"] > "2.4", str(test.tester.info["version"])]
+
+@requires_userinfo
+def version_exposed(test):
+    return "version" not in test.tester.info
+
+
 TEST_FUNCTIONS = {
     "1": lambda test: not (test.tester.cred['nodelist'][0][1] == 27017 and bool(test.tester.info)),
     "2": try_socket,
     "3": lambda test: try_socket(test, 28017),
-    "4": lambda test: "version" not in test.tester.info,
-    "5": lambda test: [test.tester.info["version"] > "2.4", str(test.tester.info["version"])],
+    "4": version_exposed,
+    "5": version_newer_than,
     "tls_available": tls_tests.available,
     "tls_enabled": tls_tests.enabled,
     "tls_valid": tls_tests.valid,

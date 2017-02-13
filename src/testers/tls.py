@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import pymongo
+from decorators import requires_userinfo
 
+@requires_userinfo
 def available(test):
     """
     Check if MongoDB is compiled with OpenSSL support
@@ -8,6 +10,7 @@ def available(test):
     return 'OpenSSLVersion' in test.tester.info \
         or 'openssl' in test.tester.info
 
+@requires_userinfo
 def enabled(test):
     """
     Check if TLS/SSL is enabled on the server side
