@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 import socket
-import time
 import ssl
-from decorators import requires_userinfo
+import time
 
 import pymongo
 
-from src.testers.cve import alerts_dec012015, alerts_mar272015, alerts_mar252015, alerts_feb252015, \
-    alerts_jun172014, alerts_may052014, alerts_jun202013, alerts_jun052013, alerts_mar062014, \
-    alerts_oct012013, alerts_aug152013
-from src.testers.roles import try_roles
 import src.testers.tls as tls_tests
+from src.testers.decorators import requires_userinfo
+from src.testers.cve import alerts_dec012015, alerts_mar272015, alerts_mar252015, \
+    alerts_feb252015, alerts_jun172014, alerts_may052014, alerts_jun202013, alerts_jun052013, \
+    alerts_mar062014, alerts_oct012013, alerts_aug152013
+from src.testers.roles import try_roles
 from src.tools import decode_to_string
 
-OMITTED_MESSAGE = 'This test was omitted because of a missing requirement (e.g.: it depends on a previous test that failed).'
+OMITTED_MESSAGE = 'This test was omitted because of a missing requirement (e.g.: it depends' \
+                  ' on a previous test that failed).'
+
 
 class Tester(object):
     """
@@ -68,11 +70,11 @@ class Tester(object):
         """
         fqdn, port = self.cred['nodelist'][0]
         if hasattr(self, 'conn'):
-          self.conn.close()
-          return self.get_plain_connection(fqdn, port)
+            self.conn.close()
+            return self.get_plain_connection(fqdn, port)
         else:
-          return self.get_tls_connection(fqdn, port)
-      
+            return self.get_tls_connection(fqdn, port)
+
     def get_tls_connection(self, fqdn, port):
         """
         Creates an encrypted TLS/SSL connection.
@@ -80,9 +82,9 @@ class Tester(object):
           pymongo.MongoClient instance
         """
         return pymongo.MongoClient(
-          fqdn, port, ssl=True, ssl_cert_reqs=ssl.CERT_NONE,
-          serverSelectionTimeoutMS=1000)
-      
+            fqdn, port, ssl=True, ssl_cert_reqs=ssl.CERT_NONE,
+            serverSelectionTimeoutMS=1000)
+
     def get_plain_connection(self, fqdn, port):
         """
         Creates a cleartext (unencrypted) connection.
@@ -162,7 +164,7 @@ class Test(object):
         else:
             value = result
             extra_data = None
-            
+
         message = self.messages[value] if value < 3 else OMITTED_MESSAGE
 
         return {'name': self.name, 'severity': self.severity, 'title': self.title,
@@ -225,14 +227,16 @@ def try_scram(test):
     try:
         conn = test.tester.get_connection()
         cred = test.tester.cred
-        return conn[cred["database"]]\
+        return conn[cred["database"]] \
             .authenticate(cred["username"], cred["password"], mechanism='SCRAM-SHA-1')
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return False
 
+
 @requires_userinfo
 def version_newer_than(test):
     return [test.tester.info["version"] > "2.4", str(test.tester.info["version"])]
+
 
 @requires_userinfo
 def version_exposed(test):

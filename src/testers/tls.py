@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import pymongo
-from decorators import requires_userinfo
+from src.testers.decorators import requires_userinfo
+
 
 @requires_userinfo
 def available(test):
@@ -8,7 +8,8 @@ def available(test):
     Check if MongoDB is compiled with OpenSSL support
     """
     return 'OpenSSLVersion' in test.tester.info \
-        or 'openssl' in test.tester.info
+           or 'openssl' in test.tester.info
+
 
 @requires_userinfo
 def enabled(test):
@@ -17,7 +18,7 @@ def enabled(test):
     """
     if not available(test):
         return 3
-    
+
     try:
         if 'OpenSSLVersion' in test.tester.info:
             return bool(test.tester.info['OpenSSLVersion'])
@@ -26,6 +27,7 @@ def enabled(test):
     except KeyError:
         return False
 
+
 def valid(test):
     """
     Verify if server certificate is valid
@@ -33,11 +35,9 @@ def valid(test):
     conn = test.tester.conn
     if not enabled(test):
         return 3
-    try:
-        with conn._socket_for_writes() as socket_info:
-            cert = socket_info.sock.getpeercert()
-            if not cert:
-                return [2,'Your server is presenting a self-signed certificate, which will not protect your connections from man-in-the-middle attacks.']
-            return True
-    except:
-        return False
+    with conn._socket_for_writes() as socket_info:
+        cert = socket_info.sock.getpeercert()
+        if not cert:
+            return [2, 'Your server is presenting a self-signed certificate, which will not '
+                       'protect your connections from man-in-the-middle attacks.']
+        return True
