@@ -2,7 +2,15 @@ from src.tools import in_range
 
 # https://www.mongodb.com/alerts
 
+def return_version_on_fail(func):
+    """
+    If the result from alert is false we return also the mongo version
+    """
+    def get_data(test):
+        return func(test) or [False, test.tester.info["version"]]
+    return get_data
 
+@return_version_on_fail
 def alerts_dec012015(test):
     if "modules" in test.tester.info:
         enterprise = "enterprise" in test.tester.info["modules"]
@@ -11,43 +19,51 @@ def alerts_dec012015(test):
     else:
         return True
 
+@return_version_on_fail
 def alerts_mar272015(test):
-    return test.tester.info["version"] != "3.0.0"
+    return  test.tester.info["version"] != "3.0.0"
 
+@return_version_on_fail
 def alerts_mar252015(test):
     version = test.tester.info["version"]
-    return version > "2.6.8" and version != "3.0.0"
+    return  version > "2.6.8" and version != "3.0.0"
 
+@return_version_on_fail
 def alerts_feb252015(test):
     version = test.tester.info["version"]
-    return version > "2.6.7" or version == "2.4.13"
+    return  version > "2.6.7" or version == "2.4.13"
 
+@return_version_on_fail
 def alerts_jun172014(test):
     version = test.tester.info["version"]
-    return version not in ["2.6.0", "2.6.1"]
+    return  version not in ["2.6.0", "2.6.1"]
 
+@return_version_on_fail
 def alerts_may052014(test):
     version = test.tester.info["version"]
-    return version != "2.6.0"
+    return  version != "2.6.0"
 
+@return_version_on_fail
 def alerts_jun202013(test):
     version = test.tester.info["version"]
-    return not in_range(version, "2.4.0", "2.4.4") and version != "2.5.1"
+    return  not in_range(version, "2.4.0", "2.4.4") and version != "2.5.1"
 
+@return_version_on_fail
 def alerts_jun052013(test):
     version = test.tester.info["version"]
-    return not in_range(version, "2.4.0", "2.4.4")
+    return  not in_range(version, "2.4.0", "2.4.4")
 
+@return_version_on_fail
 def alerts_mar062014(test):
     version = test.tester.info["version"]
-    return version > "2.3.1"
+    return  version > "2.3.1"
 
-
+@return_version_on_fail
 def alerts_oct012013(test):
     version = test.tester.info["version"]
-    return version > "2.2.3"
+    return  version > "2.2.3"
 
-
+@return_version_on_fail
 def alerts_aug152013(test):
     version = test.tester.info["version"]
-    return version > "2.5.1"
+    return  version > "2.5.1"
