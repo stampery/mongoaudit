@@ -5,7 +5,7 @@
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Code Climate" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/gpa.svg" /></a>
     <a href="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/feed"><img alt="Issue Count" src="https://codeclimate.com/repos/588f61f717e4fe24b80046f6/badges/ed691ca1655c0eb8a4a5/issue_count.svg" /></a>
     <br/><br/>
-    <p>:sparkles: <strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing. :sparkles:</p>
+    <p><strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.</p>
 </div>
 
 <h2 align="center">1-line install</h2>
@@ -16,20 +16,20 @@ curl -s https://mongoaud.it/install | bash
 
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
 
-Then run `mongoaudit` command and voilà! :boom:
+Then run `mongoaudit` command and voilà!
 
-_:cop: Hey! If you are really serious about security, you should rather clone this repository, check that nothing fishy is in the source code and only then run `make` to get the dependencies and `./mongoaudit` to run the tool._
+_If you are serious about security you should follow best security practices: clone this repository, check the source code and only then run `make` to get the dependencies and `./mongoaudit` to run the tool._
 
 <h2 align="center">Introduction</h2>
-<p>It is widely known that there are quite a few holes in MongoDB's default configuration settings :see_no_evil:. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a> :poop:.</p>
+<p>It is widely known that there are quite a few holes in MongoDB's default configuration settings. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a>.</p>
 
-<p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advice on how to fix them, recommends best practices and teaches you how to DevOp like a pro! :metal:</p>
+<p><strong>mongoaudit</strong> not only detects misconfigurations, known vulnerabilities and bugs but also gives you advice on how to fix them, recommends best practices and teaches you how to DevOp like a pro! </p>
 
 <p>This is how the actual app looks like:</p>
 
 <p align="center">
     <img align="center" src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/screenshot.png" alt="mongoaudit screenshot"/>
-    <br /><i>Yep, that's material design on a console line interface. :smirk:</i>
+    <br /><i>Yep, that's material design on a console line interface. </i>
 </p>
 
 <h2 align="center">Supported tests</h2>
@@ -65,11 +65,11 @@ _Tests marked with an asterisk (`*`) require valid authentication credentials._
 
 Once you run any of the test suites provided by __mongoaudit__, it will offer you to receive a fully detailed report via email. This personalized report links to a series of useful guides on how to fix every specific issue and how to harden your MongoDB deployments.
 
-For your convenience, we have also published the __mongoaudit__ guides in our [Medium publication](https://medium.com/mongoaudit) :newspaper:.
+For your convenience, we have also published the __mongoaudit__ guides in our [Medium publication](https://medium.com/mongoaudit).
 
 <h2 align="center">Contributing</h2>
 
-We're happy you want to contribute! :tada: You can help us in different ways:
+We're happy you want to contribute! You can help us in different ways:
 
 * Open an issue with suggestions for improvements and errors you're facing.
 * Fork this repository and submit a pull request.
@@ -88,7 +88,7 @@ Make your suggested changes, `git push` and then submit a pull request.
 <h3>License</h3>
 <strong>mongoaudit</strong> is released under the [MIT License](https://github.com/stampery/mongoaudit/blob/master/LICENSE).
 
-<h3>Disclaimer :warning:</h3>
+<h3>Disclaimer</h3>
 
     "With great power comes great responsibility"
 
