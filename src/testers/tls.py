@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import ssl
 
 def available(test):
     """
@@ -15,21 +16,20 @@ def enabled(test):
         return 3
     
     try:
-        if 'OpenSSLVersion' in test.tester.info:
-            return bool(test.tester.info['OpenSSLVersion'])
-        else:
-            return test.tester.info['openssl']['running'] != 'disabled'
-    except KeyError:
+        with test.tester.conn._socket_for_writes() as socket_info:
+            socket = socket_info.sock
+            return isinstance(socket, ssl.SSLSocket)
+    except KeyError, AttributeError:
         return False
 
 def valid(test):
     """
     Verify if server certificate is valid
     """
-    conn = test.tester.conn
     if not enabled(test):
         return 3
-    with conn._socket_for_writes() as socket_info:
+
+    with test.tester.conn._socket_for_writes() as socket_info:
         cert = socket_info.sock.getpeercert()
         if not cert:
             return [2,'Your server is presenting a self-signed certificate, which will not protect your connections from man-in-the-middle attacks.']
