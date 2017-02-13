@@ -61,7 +61,7 @@ class Tester(object):
 
         """
         fqdn, port = self.cred['nodelist'][0]
-        return pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1)
+        return pymongo.MongoClient(fqdn, port, serverSelectionTimeoutMS=1000)
 
     def get_info(self):
         """
