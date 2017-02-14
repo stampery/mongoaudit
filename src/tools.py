@@ -100,8 +100,11 @@ def send_result(email, result, title, urn):
 
 def load_test(path):
     base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
-    with open(os.path.join(base_path, 'rsc/' + path)) as json_data:
-        return json.load(json_data)
+    try:
+        with open(os.path.join(base_path, 'rsc/' + path)) as json_data:
+            return json.load(json_data)
+    except ValueError:
+        sys.exit("Failed to load tests.json")
 
 
 def get_date():
