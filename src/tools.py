@@ -45,7 +45,7 @@ def validate_uri(uri, error_field, callback):
 
 def validate_email(email):
     import re
-    valid = re.compile(r"^[^@]+@[^@]+\.[^@]+$")
+    valid = re.compile(r"^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$")
     return valid.match(email.strip())
 
 
