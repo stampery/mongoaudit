@@ -29,7 +29,7 @@ def enabled(test):
     except (KeyError, AttributeError):
         return False
 
-
+@requires_userinfo
 def valid(test):
     """
     Verify if server certificate is valid
