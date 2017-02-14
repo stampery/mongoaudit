@@ -2,11 +2,10 @@
 
 block_cipher = None
 
-
-a = Analysis(['mongoaudit'],
-             pathex=['src'],
+a = Analysis(['mongoaudit/__main__.py'],
+             pathex=['mongoaudit'],
              binaries=[],
-             datas=[('rsc/*.*', 'rsc')],
+             datas=[('mongoaudit/data/*.*', 'data')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

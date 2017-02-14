@@ -6,9 +6,9 @@ Is my mongo exposed?
 import os
 import sys
 import urwid
-from src.cards import Cards
-from src.palette import PALETTE
-from src.tools import check_version
+from cards import Cards
+from palette import PALETTE
+from tools import check_version
 
 
 class App(object):

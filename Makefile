@@ -2,18 +2,19 @@
 
 default:
 	pip install -I -r requirements.txt
+	pyinstaller main.spec
 
 init:
-	./mongoaudit
+	python mongoaudit
 
 test:
 	pytest
 
-dist:
-	pyinstaller main.spec
-
 install:
-	/usr/bin/env python2 setup.py install
+	pip install -I -r requirements.txt
+	/usr/bin/env python2 setup.py bdist_wheel
+	pip install dist/mongoaudit-*.whl
 
 clean:
-	rm -R ./dist
+	find . -name \*.pyc -delete
+	rm -rf ./dist ./build ./mongoaudit.egg-info

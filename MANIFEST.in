@@ -1,0 +1,4 @@
+include README
+include LICENSE
+include mongoaudit/data/*.bmp
+include mongoaudit/data/*.json

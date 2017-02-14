@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import pkg_resources
 import sys
 
 import urwid
@@ -14,12 +15,13 @@ def pixel_process(color):
 def round_compo(compo):
     return hex(ord(compo))[2]
 
-def read(path, align='left'):
+def read(filename, align='left'):
     def line_process(line):
         return urwid.AttrMap(urwid.Text(map(pixel_process, line), wrap='clip', align=align), 'pic')
 
-    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
-    with open(os.path.join(base_path, 'rsc/' + path), 'r') as file_to_read:
+    path = getattr(sys, '_MEIPASS', None) or pkg_resources.resource_filename(__name__, '.')
+    path = os.path.join(path, 'data/%s' % filename)
+    with open(path, 'r') as file_to_read:
         bytes_read = file_to_read.read()
 
     img_size = {"width":ord(bytes_read[18]), "height":ord(bytes_read[22])}

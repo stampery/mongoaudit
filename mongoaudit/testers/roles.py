@@ -1,6 +1,6 @@
 import pymongo
 
-from src.tools import decode_to_string
+from tools import decode_to_string
 
 
 

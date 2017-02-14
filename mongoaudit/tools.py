@@ -3,15 +3,7 @@ import json
 import os
 import sys
 import urllib2
-
-
-def decode_to_string(data):
-    """
-    Decode the strings in the list/set so we can call print the strings without the 'u' in front
-    Args:
-      data (list(str) or set(str))
-    """
-    return str([x.encode('UTF8') for x in data])
+import pkg_resources
 
 
 def try_address(fqdn):
@@ -98,13 +90,11 @@ def send_result(email, result, title, urn):
                "please try again later.\n\n%s" % str(exc)
 
 
-def load_test(path):
-    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
-    try:
-        with open(os.path.join(base_path, 'rsc/' + path)) as json_data:
-            return json.load(json_data)
-    except ValueError:
-        sys.exit("Failed to load tests.json")
+def load_test(filename):
+    path = getattr(sys, '_MEIPASS', None) or pkg_resources.resource_filename(__name__, '.')
+    path = os.path.join(path, 'data/%s' % filename)
+    with open(path) as json_data:
+        return json.load(json_data)
 
 
 def get_date():
@@ -217,8 +207,6 @@ def _get_release_link(assets):
 def get_platform():
     import platform
     platform_system = platform.system().lower()
-    return "macosx" if platform_system == "darwin" else platform_system + "_" + platform.machine()
+    return "macosx" if platform_system == "darwin" else platform_system
 
 
-def in_range(num, minimum, maximum):
-    return minimum <= num <= maximum

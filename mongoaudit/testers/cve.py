@@ -1,5 +1,5 @@
-from src.testers.decorators import return_version_on_fail
-from src.tools import in_range
+from decorators import return_version_on_fail
+from tools import in_range
 
 # https://www.mongodb.com/alerts
 

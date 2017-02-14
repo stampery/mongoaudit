@@ -2,8 +2,7 @@
 
 import ssl
 
-from src.testers.decorators import requires_userinfo
-
+from decorators import requires_userinfo
 
 @requires_userinfo
 def available(test):
@@ -29,7 +28,7 @@ def enabled(test):
     except (KeyError, AttributeError):
         return False
 
-@requires_userinfo
+
 def valid(test):
     """
     Verify if server certificate is valid
@@ -37,7 +36,7 @@ def valid(test):
     if not enabled(test):
         return 3
 
-    with test.tester.conn._socket_for_writes() as socket_info:
+    with test.tester.conn._socket_forss_writes() as socket_info:
         cert = socket_info.sock.getpeercert()
         if not cert:
             return [2, 'Your server is presenting a self-signed certificate, which will not '

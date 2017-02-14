@@ -5,13 +5,13 @@ import time
 
 import pymongo
 
-import src.testers.tls as tls_tests
-from src.testers.decorators import requires_userinfo
-from src.testers.cve import alerts_dec012015, alerts_mar272015, alerts_mar252015, \
+from tls import available as tls_available, enabled as tls_enabled, valid as tls_valid
+import decorators
+from cve import alerts_dec012015, alerts_mar272015, alerts_mar252015, \
     alerts_feb252015, alerts_jun172014, alerts_may052014, alerts_jun202013, alerts_jun052013, \
     alerts_mar062014, alerts_oct012013, alerts_aug152013
-from src.testers.roles import try_roles
-from src.tools import decode_to_string
+from roles import try_roles
+from tools import decode_to_string
 
 OMITTED_MESSAGE = 'This test was omitted because of a missing requirement (e.g.: it depends' \
                   ' on a previous test that failed).'
@@ -165,13 +165,7 @@ class Test(object):
             value = result
             extra_data = None
 
-        if value < len(self.messages):
-            message = self.messages[value]
-        elif extra_data:
-            message = extra_data
-        else:
-            message = OMITTED_MESSAGE
-
+        message = self.messages[value] if value < 3 else OMITTED_MESSAGE
 
         return {'name': self.name, 'severity': self.severity, 'title': self.title,
                 'caption': self.caption, 'message': message, 'result': value,
@@ -239,12 +233,12 @@ def try_scram(test):
         return False
 
 
-@requires_userinfo
+@decorators.requires_userinfo
 def version_newer_than(test):
     return [test.tester.info["version"] > "2.4", str(test.tester.info["version"])]
 
 
-@requires_userinfo
+@decorators.requires_userinfo
 def version_exposed(test):
     return "version" not in test.tester.info
 
@@ -255,9 +249,9 @@ TEST_FUNCTIONS = {
     "3": lambda test: try_socket(test, 28017),
     "4": version_exposed,
     "5": version_newer_than,
-    "tls_available": tls_tests.available,
-    "tls_enabled": tls_tests.enabled,
-    "tls_valid": tls_tests.valid,
+    "tls_available": tls_available,
+    "tls_enabled": tls_enabled,
+    "tls_valid": tls_valid,
     "7": try_authorization,
     "8": lambda test: bool(test.tester.get_db()),
     "9": try_javascript,

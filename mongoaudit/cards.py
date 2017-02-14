@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import urwid
-from src.picmagic import read as picRead
-from src.tools import validate_uri, send_result, load_test, validate_email
-from src.widgets import TestRunner, Card, TextButton, ImageButton, \
+from picmagic import read as picRead
+from tools import validate_uri, send_result, load_test, validate_email
+from widgets import TestRunner, Card, TextButton, ImageButton, \
     DIV, FormCard, LineButton, DisplayTest
 
 

@@ -2,7 +2,7 @@
 
 import urwid
 
-from src.testers.testers import Tester
+from testers.testers import Tester
 
 DIV = urwid.Divider()
 HR = urwid.AttrMap(urwid.Divider('_'), 'hr')
