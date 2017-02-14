@@ -217,7 +217,7 @@ def _get_release_link(assets):
 def get_platform():
     import platform
     platform_system = platform.system().lower()
-    return "macosx" if platform_system == "darwin" else platform_system
+    return "macosx" if platform_system == "darwin" else platform_system + platform.machine()
 
 
 def in_range(num, minimum, maximum):
