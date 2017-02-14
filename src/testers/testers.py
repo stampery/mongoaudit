@@ -165,7 +165,13 @@ class Test(object):
             value = result
             extra_data = None
 
-        message = self.messages[value] if value < 3 else OMITTED_MESSAGE
+        if value < len(self.messages):
+            message = self.messages[value]
+        elif extra_data:
+            message = extra_data
+        else:
+            message = OMITTED_MESSAGE
+
 
         return {'name': self.name, 'severity': self.severity, 'title': self.title,
                 'caption': self.caption, 'message': message, 'result': value,
