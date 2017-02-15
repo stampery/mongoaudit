@@ -21,18 +21,16 @@ def try_address(fqdn):
         return True
 
 
-def validate_uri(uri, error_field, callback):
+def validate_uri(uri):
     """
     Args:
       uri (str): MongoDB URI
-      error_field (urwid.Text): field that displays the error
-      callback (function): callback to call on success
     """
     parsed = parse_mongo_uri(uri)
     if parsed and try_address(parsed['nodelist'][0][0]):
-        callback(parsed)
+        return parsed
     else:
-        error_field.set_error("Invalid domain")
+        return None
 
 
 def validate_email(email):

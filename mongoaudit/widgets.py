@@ -2,8 +2,6 @@
 
 import urwid
 
-from testers.testers import Tester
-
 DIV = urwid.Divider()
 HR = urwid.AttrMap(urwid.Divider('_'), 'hr')
 
@@ -156,19 +154,22 @@ class FormCard(urwid.WidgetWrap):
       field_labels (str[]): labels for the input_fields
       btn_label (str): label for the button
       callbacks Dict(function, function): callbacks for next and back button
+      app (App): main app
     Note:
       callbacks['next'] must take the same amount of arguments as labels were passed
       and each parameter in the callback must be named as the label but in snake case
       and lower case e.g. 'Field Name' =>  field_name
     """
 
-    def __init__(self, content, field_labels, btn_label, callbacks):
+    def __init__(self, data, field_labels, btn_label, callbacks):
+        self.app = data["app"]
+        self.error = False
         self.fields, self.callbacks = [], callbacks
         for label in field_labels:
             self.fields.append(InputField(label, next_callback=self.next))
         input_fields = urwid.Pile(self.fields)
-        self.error_field = urwid.Text('')
-        error_row = urwid.Columns([(17, urwid.Text('')), self.error_field])
+        self.message_field = urwid.Text('')
+        error_row = urwid.Columns([(17, urwid.Text('')), self.message_field])
         buttons = [TextButton(btn_label, on_press=self.next)]
 
         if callbacks['back']:
@@ -176,7 +177,7 @@ class FormCard(urwid.WidgetWrap):
         footer = urwid.AttrMap(urwid.Columns(buttons), 'button')
 
         card = Card(urwid.Pile(
-            [content, input_fields, error_row]), footer=footer)
+            [data["content"], input_fields, error_row]), footer=footer)
         urwid.WidgetWrap.__init__(self, card)
 
     def next(self, *_):
@@ -193,23 +194,29 @@ class FormCard(urwid.WidgetWrap):
 
         return values
 
-    def set_error(self, msg):
+    def set_message(self, msg, error=False):
         """
-        Shows an error message at the bottom of the form
+        Shows a message message at the bottom of the form
 
         Args:
-          msg (str): error message
+          msg (str): message
+          error (bool): if message type is error
         """
-        self.error_field.set_text(('error', msg))
+        self.error = error
+        self.message_field.set_text(('error' if error else 'info', msg))
+        self.app.loop.draw_screen()
 
     def unset_error(self):
         """
-        Hides the error message
+        Removes the error message
         """
-        self.error_field.set_text('')
+        self.message_field.set_text('')
+        self.app.loop.draw_screen()
 
     def keypress(self, size, key):
-        self.unset_error()
+        if self.error:
+            self.unset_error()
+            self.error = False
         return self.__super.keypress(size, key)
 
 
@@ -224,13 +231,13 @@ class TestRunner(urwid.WidgetWrap):
       callback (function): to call when the tests finish running
     """
 
-    def __init__(self, title, cred, tests, callback):
+    def __init__(self, title, cred, tests, data):
         self.app = None
-        self.tester = Tester(cred, tests)
+        self.tester = data["tester"]
         urn = cred["nodelist"][0][0] + ":" + str(cred["nodelist"][0][1]) + (
             "/" + (cred["database"]) if bool(cred["database"]) else "")
 
-        self.data = {"title": title, "callback": callback,
+        self.data = {"title": title, "callback": data["callback"],
                      "urn": urn, "num_tests": len(tests)}
 
         self.progress_text = urwid.Text(
@@ -271,7 +278,6 @@ class CustomProgressBar(urwid.ProgressBar):
     """
     ProgressBar that displays a semigraph instead of a percentage
     """
-    import platform
     semi = u'\u2582'
 
     def get_text(self):

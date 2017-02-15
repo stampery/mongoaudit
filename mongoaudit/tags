@@ -67,7 +67,7 @@ run	widgets.py	/^  def run(self):$/;"	kind:member	line:181
 run_advanced	cards.py	/^  def run_advanced(self, cred):$/;"	kind:member	line:76
 run_basic	cards.py	/^  def run_basic(self, cred):$/;"	kind:member	line:65
 semi	widgets.py	/^  semi = u'▁▂▃▄▅▆▇█'$/;"	kind:variable	line:193
-set_error	widgets.py	/^  def set_error(self, msg):$/;"	kind:member	line:141
+set_message	widgets.py	/^  def set_message(self, msg):$/;"	kind:member	line:141
 setup_view	main.py	/^    def setup_view(self):$/;"	kind:member	line:23
 testers.py	testers.py	1;"	kind:file	line:1
 tests	testers.py	/^tests = [$/;"	kind:variable	line:63

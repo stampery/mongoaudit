@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import urwid
+
 from picmagic import read as picRead
+from testers.testers import Tester
 from tools import validate_uri, send_result, load_test, validate_email
 from widgets import TestRunner, Card, TextButton, ImageButton, \
     DIV, FormCard, LineButton, DisplayTest
@@ -86,21 +88,36 @@ class Cards(object):
             DIV,
             urwid.Text([label + ' (', ('text italic', uri_example), ')'])
         ])
-        validate = lambda form, uri: validate_uri(
-            uri, form, lambda cred: self.run_test(cred, title, tests))
+
+        def _next(form, uri):
+            form.set_message("validating URI")
+            cred = validate_uri(uri)
+            if cred:
+                form.set_message("Checking MongoDB connection...")
+                tester = Tester(cred, tests)
+                if tester.info:
+                    self.run_test(cred, title, tester, tests)
+                else:
+                    form.set_message("We couldn't find a MongoDB", True)
+            else:
+                form.set_message("Invalid domain", True)
+
+
         form = FormCard(
-            intro, ['URI'], 'Run ' + title.lower() + ' test suite',
-            {'next': validate, 'back': self.choose_test})
+            {"content": intro, "app": self.app}, ['URI'],
+            'Run ' + title.lower() + ' test suite',
+            {'next': _next, 'back': self.choose_test})
         self.app.render(form)
 
-    def run_test(self, cred, title, tests):
+    def run_test(self, cred, title, tester, tests):
         """
         Args:
           cred (dict(str: str)): credentials
           title (str): title for the TestRunner
           tests (Test[]): test to run
         """
-        test_runner = TestRunner(title, cred, tests, self.display_overview)
+        test_runner = TestRunner(title, cred, tests,
+                                 {"tester":tester, "callback": self.display_overview})
         # the name of the bmp is composed with the title
         pic = picRead('check_' + title.lower() + '.bmp', align='right')
 
@@ -171,12 +188,12 @@ class Cards(object):
         ])
         content = urwid.Pile([header, DIV, subtitle])
         card = FormCard(
-            content,
+            {"content": content, "app": self.app},
             ['Email'],
             'Send report',
             {
                 'next': lambda form, email: self.send_email(email.strip(), result, title, urn) \
-                if validate_email(email) else form.set_error("Invalid email address"),
+                if validate_email(email) else form.set_message("Invalid email address", True),
                 'back': lambda _: self.display_overview(result, title, urn)
             })
 
