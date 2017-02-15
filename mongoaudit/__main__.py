@@ -6,6 +6,7 @@ Is my mongo exposed?
 import os
 import sys
 import urwid
+from version import __version__
 from cards import Cards
 from palette import PALETTE
 from tools import check_version
@@ -14,7 +15,7 @@ from tools import check_version
 class App(object):
     def __init__(self):
         self.name = 'mongoaudit'
-        self.version = '0.0.1'
+	self.version = __version__
         check_version(self.version)
         urwid.set_encoding("UTF-8")
         self.cards = Cards(self)

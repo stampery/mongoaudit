@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
-
+from mongoaudit.version import __version__
 
 with open('README.md') as f:
     readme = f.read()
@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 
 setup(
     name='mongoaudit',
-    version='0.0.2',
+    version=__version__,
     description='An automated pentesting tool that lets you know if your MongoDB instances are properly secured',
     long_description=readme,
     author='Stampery Inc.',
