@@ -29,7 +29,7 @@ _If you are serious about security you should follow best security practices: cl
 
 <p align="center">
     <img align="center" src="https://raw.githubusercontent.com/stampery/mongoaudit/master/rsc/screenshot.png" alt="mongoaudit screenshot"/>
-    <br /><i>Yep, that's material design on a console line interface. </i>
+    <br /><i>Yep, that's material design on a console line interface. (Powered by <a href="https://github.com/urwid/urwid">urwid</a>)</i>
 </p>
 
 <h2 align="center">Supported tests</h2>
