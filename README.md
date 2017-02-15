@@ -8,7 +8,17 @@
     <p><strong>mongoaudit</strong> is a CLI tool for auditing MongoDB servers, detecting poor security settings and performing automated penetration testing.</p>
 </div>
 
-<h2 align="center">1-line install</h2>
+<h2 align="center">Installing with pip</h2>
+
+This is the recommended installation method in case you have `python` and `pip`.
+
+```bash
+pip install mongoaudit
+```
+
+<h2 align="center">Alternative installer</h2>
+
+Use this if and only if `python` and `pip` are not available on your platform.
 
 ```bash
 curl -s https://mongoaud.it/install | bash
@@ -16,9 +26,8 @@ curl -s https://mongoaud.it/install | bash
 
 <i><sup>works on Mac OS X, GNU/Linux and Bash for Windows 10</sup></i>
 
-Then run `mongoaudit` command and voilà!
+_If you are serious about security you should always use the PIP installer or, better yet, follow best security practices: clone this repository, check the source code and only then run it with `python mongoaudit`._
 
-_If you are serious about security you should follow best security practices: clone this repository, check the source code and only then run `make` to get the dependencies and `./mongoaudit` to run the tool._
 
 <h2 align="center">Introduction</h2>
 <p>It is widely known that there are quite a few holes in MongoDB's default configuration settings. This fact, combined with abundant lazy system administrators and developers, has led to what the press has called the <a href="http://thenextweb.com/insider/2017/01/08/mongodb-ransomware-exists-people-bad-security/"><i>MongoDB apocalypse</i></a>.</p>
