@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 
 setup(
     name='mongoaudit',
-    version='0.0.1',
+    version='0.0.2',
     description='An automated pentesting tool that lets you know if your MongoDB instances are properly secured',
     long_description=readme,
     author='Stampery Inc.',
