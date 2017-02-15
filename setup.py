@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 from mongoaudit.version import __version__
 
-with open('README.md') as f:
+with open('README.rsc') as f:
     readme = f.read()
 
 with open('LICENSE') as f:
@@ -31,5 +31,18 @@ setup(
     ],
     dependency_links=[
         'git+https://github.com/urwid/urwid.git#egg=urwid-1.3.1'
+    ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: System Administrators',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Database',
+        'Topic :: Database :: Front-Ends',
+        'Topic :: Security',
+        'Topic :: System :: Systems Administration'
     ]
 )
