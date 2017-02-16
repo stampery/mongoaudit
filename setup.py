@@ -29,9 +29,6 @@ setup(
         'pymongo>=3.3.1',
         'urwid>=1.3.1'
     ],
-    dependency_links=[
-        'git+https://github.com/urwid/urwid.git#egg=urwid-1.3.1'
-    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',

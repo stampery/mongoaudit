@@ -12,7 +12,7 @@ PALETTE = [
     ('button', '', '', '', '#d00', '#fff'),
     ('copy', '', '', '', 'g70', 'g93'),
     ('text bold', '', '', '', '#333,bold', '#fff'),
-    ('text italic', 'dark gray', 'white', '', '#333,italics', '#fff'),
+    ('text italic', 'dark gray', 'white', '', '#777', '#fff'),
     ('image button', '', '', '', 'g70', '#fff'),
     ('image button focus', '', '', '', '#f00', '#fff'),
     ('input', '', '', '', 'g70', '#fff'),

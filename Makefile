@@ -11,9 +11,7 @@ test:
 	pytest
 
 install:
-	pip install -I -r requirements.txt
-	/usr/bin/env python2 setup.py bdist_wheel
-	pip install dist/mongoaudit-*.whl
+	/usr/bin/env python2 setup.py install
 
 clean:
 	find . -name \*.pyc -delete
