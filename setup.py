@@ -6,9 +6,6 @@ from mongoaudit.version import __version__
 with open('README.rsc') as f:
     readme = f.read()
 
-with open('LICENSE') as f:
-    license = f.read()
-
 setup(
     name='mongoaudit',
     version=__version__,
@@ -17,7 +14,7 @@ setup(
     author='Stampery Inc.',
     author_email='info@stampery.com',
     url='https://github.com/stampery/mongoaudit',
-    license=license,
+    license='MIT',
     packages=find_packages(),
     include_package_data=True,
     entry_points={

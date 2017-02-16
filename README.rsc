@@ -58,7 +58,7 @@ We're happy you want to contribute! You can help us in different ways:
 
 To submit a pull request, fork the mongoaudit repository and then clone your fork.
 
-```git clone git@github.com:<your-name>/mongoaudit.git```
+``git clone git@github.com:<your-name>/mongoaudit.git``
 
 Make your suggested changes, git push and then submit a pull request.
 
