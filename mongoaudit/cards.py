@@ -98,7 +98,7 @@ class Cards(object):
                 if tester.info:
                     self.run_test(cred, title, tester, tests)
                 else:
-                    form.set_message("We couldn't find a MongoDB", True)
+                    form.set_message("Couldn't find a MongoDB server", True)
             else:
                 form.set_message("Invalid domain", True)
 
