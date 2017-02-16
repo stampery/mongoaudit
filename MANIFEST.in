@@ -1,4 +1,4 @@
-include README.md
+include README.rsc
 include LICENSE
 include mongoaudit/data/*.bmp
 include mongoaudit/data/*.json

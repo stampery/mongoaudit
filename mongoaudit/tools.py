@@ -89,8 +89,11 @@ def send_result(email, result, title, urn):
 
 
 def load_test(filename):
-    path = getattr(sys, '_MEIPASS', None) or pkg_resources.resource_filename(__name__, '.')
-    path = os.path.join(path, 'data/%s' % filename)
+    path = getattr(sys, '_MEIPASS', None)
+    if path:
+        path = os.path.join(path, 'data/%s' % filename)
+    else:
+        path = pkg_resources.resource_filename(__name__, 'data/%s' % filename)
     with open(path) as json_data:
         return json.load(json_data)
 

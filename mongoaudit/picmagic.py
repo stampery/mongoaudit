@@ -19,8 +19,11 @@ def read(filename, align='left'):
     def line_process(line):
         return urwid.AttrMap(urwid.Text(map(pixel_process, line), wrap='clip', align=align), 'pic')
 
-    path = getattr(sys, '_MEIPASS', None) or pkg_resources.resource_filename(__name__, '.')
-    path = os.path.join(path, 'data/%s' % filename)
+    path = getattr(sys, '_MEIPASS', None)
+    if path:
+        path = os.path.join(path, 'data/%s' % filename)
+    else:
+        path = pkg_resources.resource_filename(__name__, 'data/%s' % filename)
     with open(path, 'r') as file_to_read:
         bytes_read = file_to_read.read()
 
