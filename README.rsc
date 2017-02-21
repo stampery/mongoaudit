@@ -20,7 +20,7 @@ Supported tests
 - TLS/SSL certificate is valid (not self-signed)
 - Authentication is enabled
 - SCRAM-SHA-1 authentication method is enabled
-- Server-side Javascript is forbidden
+- Server-side Javascript is forbidden *
 - Roles granted to the user only permit CRUD operations *
 - The user has permissions over a single database *
 - Security bug CVE-2015-7882

@@ -51,7 +51,7 @@ _If you are serious about security you should always use the PIP installer or, b
 * TLS/SSL encryption is enabled
 * Authentication is enabled
 * SCRAM-SHA-1 authentication method is enabled
-* Server-side Javascript is forbidden
+* Server-side Javascript is forbidden *
 * Roles granted to the user only permit CRUD operations *
 * The user has permissions over a single database *
 * Security bug [CVE-2015-7882](https://jira.mongodb.org/browse/SERVER-20691)
