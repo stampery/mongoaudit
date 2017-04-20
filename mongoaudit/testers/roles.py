@@ -17,7 +17,8 @@ def valid_role(role):
         'dbAdmin',
         'dbOwner',
         'userAdmin',
-        'clusterAdmin']
+        'clusterAdmin',
+        'root']
 
 
 def result_default_value():
