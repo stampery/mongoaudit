@@ -33,7 +33,7 @@ def valid(test):
     """
     Verify if server certificate is valid
     """
-    if not enabled(test):
+    if not enabled(test) is True:
         return 3
 
     with test.tester.conn._socket_for_writes() as socket_info:
