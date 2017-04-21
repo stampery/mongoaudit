@@ -1,7 +1,7 @@
 import pymongo
 
 from tools import decode_to_string
-
+from . import TestResult, WARNING
 
 
 def valid_role(role):
@@ -117,6 +117,7 @@ def validation_result(validated):
     # if everything seems to be ok
     return [True, decode_to_string(validated['valid'])]
 
+
 def try_roles(test):
     """
     Verify that the user roles are not administrative
@@ -135,6 +136,6 @@ def try_roles(test):
         if bool(validated['valid']):
             message = get_message(validated, 'valid', 'You user permission ',
                                   ' didn\'t allow us to do an exhaustive check')
-            return [2, message]
+            return TestResult(success=True, severity=WARNING, message=message)
 
-    return validation_result(validated)
+    return TestResult(success=validation_result(validated))
