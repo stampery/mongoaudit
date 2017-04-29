@@ -234,13 +234,22 @@ def try_dedicated_user(test):
 
 def try_scram(test):
     try:
-        conn = test.tester.get_connection()
+        clean_up_connection(test)
         cred = test.tester.cred
-        return TestResult(success=conn[cred["database"]].authenticate(cred["username"],
-                                                                      cred["password"],
-                                                                      mechanism='SCRAM-SHA-1'))
+        return TestResult(success=test.tester.conn[cred["database"]]
+                          .authenticate(cred["username"],
+                                        cred["password"],
+                                        source=cred["database"],
+                                        mechanism='SCRAM-SHA-1'))
     except (pymongo.errors.OperationFailure, ValueError, TypeError):
         return TestResult(success=False)
+
+
+def clean_up_connection(test):
+    test.tester.conn.close()
+    del test.tester.conn
+    test.tester.conn = test.tester.get_connection()
+    test.tester.get_info()
 
 
 @decorators.requires_userinfo
