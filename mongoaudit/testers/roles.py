@@ -108,14 +108,14 @@ def get_message(validated, state, text1, text2):
 def validation_result(validated):
     if bool(validated['invalid']):
         # if the profile is invalid
-        return [False, decode_to_string(validated['invalid'])]
+        return TestResult(success=False, message=decode_to_string(validated['invalid']))
     elif bool(validated['custom']):
         # if the profile has custom permissions
         message = get_message(validated, 'valid', 'Your user\'s role set ',
-                              ' seem to be ok, but we couldn\'t do an exhaustive check.')
-        return [2, message]
+                              ' seems to be ok, but we couldn\'t do an exhaustive check.')
+        return TestResult(success=True, severity=WARNING, message=message)
     # if everything seems to be ok
-    return [True, decode_to_string(validated['valid'])]
+    return TestResult(success=True, message=decode_to_string(validated['valid']))
 
 
 def try_roles(test):
@@ -138,4 +138,4 @@ def try_roles(test):
                                   ' didn\'t allow us to do an exhaustive check')
             return TestResult(success=True, severity=WARNING, message=message)
 
-    return TestResult(success=validation_result(validated))
+    return validation_result(validated)
