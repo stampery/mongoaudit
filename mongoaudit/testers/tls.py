@@ -2,7 +2,7 @@
 import ssl
 
 from . import TestResult, OMITTED, WARNING
-from decorators import requires_userinfo
+from .decorators import requires_userinfo
 
 
 @requires_userinfo

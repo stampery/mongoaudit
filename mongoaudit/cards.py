@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import urwid
+import math
 
-from picmagic import read as picRead
-from testers.testers import Tester
-from tools import validate_uri, send_result, load_test, validate_email
-from widgets import TestRunner, Card, TextButton, ImageButton, \
+from .picmagic import read as picRead
+from .testers.testers import Tester
+from .tools import validate_uri, send_result, load_test, validate_email
+from .widgets import TestRunner, Card, TextButton, ImageButton, \
     DIV, FormCard, LineButton, DisplayTest
+from functools import reduce
 
 
 class Cards(object):
@@ -146,10 +148,10 @@ class Cards(object):
             ('text', 'Finished running ' + str(len(result)) + " tests:"))
         overview = reduce_result(total, values)
         overview = urwid.Text([
-            ('passed', str(overview[1])), ('text', ' passed   '),
-            ('failed', str(overview[0])), ('text', ' failed   '),
-            ('warning', str(overview[2])), ('text', ' warning   '),
-            ('info', str(overview[3])), ('text', ' omitted')])
+            ('passed', str(int(math.floor(overview[1])))), ('text', ' passed   '),
+            ('failed', str(int(math.floor(overview[0])))), ('text', ' failed   '),
+            ('warning', str(int(math.floor(overview[2])))), ('text', ' warning   '),
+            ('info', str(int(math.floor(overview[3])))), ('text', ' omitted')])
         footer = urwid.AttrMap(
             TextButton(
                 '< Back to main menu',

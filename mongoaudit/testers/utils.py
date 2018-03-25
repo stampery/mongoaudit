@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def in_range(num, minimum, maximum):
     return minimum <= num <= maximum
 

@@ -6,16 +6,16 @@ Is my mongo exposed?
 import os
 import sys
 import urwid
-from version import __version__
-from cards import Cards
-from palette import PALETTE
-from tools import check_version
+from .version import __version__
+from .cards import Cards
+from .palette import PALETTE
+from .tools import check_version
 
 
 class App(object):
     def __init__(self):
         self.name = 'mongoaudit'
-	self.version = __version__
+        self.version = __version__
         check_version(self.version)
         urwid.set_encoding("UTF-8")
         self.cards = Cards(self)
@@ -59,8 +59,10 @@ class App(object):
         except KeyboardInterrupt:
             return 0
 
+
 def main():
     App().main()
+
 
 if __name__ == "__main__":
     main()

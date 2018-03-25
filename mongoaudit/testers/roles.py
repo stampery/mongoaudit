@@ -1,7 +1,7 @@
 import pymongo
-
-from tools import decode_to_string
 from . import TestResult, WARNING
+from .utils import decode_to_string
+from functools import reduce
 
 
 def valid_role(role):

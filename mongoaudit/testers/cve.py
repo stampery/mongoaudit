@@ -1,9 +1,9 @@
-from decorators import return_version_on_fail
-from tools import in_range
 from . import TestResult
-
+from .decorators import return_version_on_fail
+from .utils import in_range
 
 # https://www.mongodb.com/alerts
+
 
 @return_version_on_fail
 def alerts_dec012015(test):
