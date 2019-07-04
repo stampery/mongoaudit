@@ -4,10 +4,11 @@ import os
 import sys
 try:
     # For Python 3.0 and later
-    from urllib.request import urlopen
+    from urllib import parse
+    from urllib.request import urlopen, HTTPError, URLError, Request
 except ImportError:
     # Fall back to Python 2's urllib2
-    from urllib2 import urlopen
+    from urllib2 import urlopen, HTTPError, URLError, Request
 import pkg_resources
 
 
@@ -85,10 +86,15 @@ def send_result(email, result, title, urn):
                'Accept': 'application/json'}
     values = {'email': email, 'result': result, 'title': title, 'urn': urn, 'date': get_date()}
     try:
-        req = urllib2.Request(url, json.dumps(values), headers)
-        response = urllib2.urlopen(req)
+        try:
+            req = Request(url, json.dumps(values), headers)
+            response = urlopen(req)
+        except TypeError:
+            # Python 3 compatibility
+            req = Request(url, json.dumps(values).encode('utf-8'), headers)
+            response = urlopen(req)
         return response.read()
-    except (urllib2.HTTPError, urllib2.URLError) as exc:
+    except (HTTPError, URLError) as exc:
         return "Sadly enough, we are having technical difficulties at the moment, " \
                "please try again later.\n\n%s" % str(exc)
 
@@ -118,7 +124,7 @@ def check_version(version):
     if getattr(sys, 'frozen', False):
         try:
             url = "https://api.github.com/repos/stampery/mongoaudit/releases/latest"
-            req = urllib2.urlopen(url)
+            req = urlopen(url)
             releases = json.loads(req.read())
             latest = releases["tag_name"]
             if version < latest:
@@ -126,7 +132,7 @@ def check_version(version):
                 print("There's a new version " + latest)
                 _upgrade(releases)
 
-        except (urllib2.HTTPError, urllib2.URLError):
+        except (HTTPError, URLError):
             print("Couldn't check for upgrades")
         except os.error:
             print("Couldn't write mongoaudit binary")
@@ -159,7 +165,7 @@ def _clean_upgrade(binary_ok, binary_path, path, temp_path):
 
 
 def _download_binary(release, temp_path):
-    req = urllib2.urlopen(release["binary"])
+    req = urlopen(release["binary"])
     binary_ok = False
     attempts = 0
     while not binary_ok and attempts < 3:
@@ -188,7 +194,7 @@ def _upgrade(releases):
 
 
 def _get_md5(link, uname):
-    md5 = urllib2.urlopen(link).read().split("\n")
+    md5 = urlopen(link).read().split("\n")
     for line in md5:
         if uname in line:
             return line.split()[0]
@@ -214,5 +220,3 @@ def get_platform():
     import platform
     platform_system = platform.system().lower()
     return "macosx" if platform_system == "darwin" else platform_system
-
-
