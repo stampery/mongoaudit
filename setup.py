@@ -23,7 +23,7 @@ setup(
         ]
     },
     install_requires=[
-        'pymongo>=3.3.1',
+        'pymongo>=3.9.0',
         'urwid>=1.3.1'
     ],
     classifiers=[

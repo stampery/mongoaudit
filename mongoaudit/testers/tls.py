@@ -22,7 +22,7 @@ def enabled(test):
         return TestResult(success=True, severity=OMITTED)
 
     try:
-        with test.tester.conn._socket_for_writes() as socket_info:
+        with test.tester.conn._socket_for_writes(None) as socket_info:
             socket = socket_info.sock
             return TestResult(success=isinstance(socket, ssl.SSLSocket))
     except (KeyError, AttributeError):
@@ -36,7 +36,7 @@ def valid(test):
     if not enabled(test) is True:
         return TestResult(success=True, severity=OMITTED)
 
-    with test.tester.conn._socket_for_writes() as socket_info:
+    with test.tester.conn._socket_for_writes(None) as socket_info:
         cert = socket_info.sock.getpeercert()
         if not cert:
             return TestResult(success=True,
